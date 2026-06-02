@@ -1295,22 +1295,6 @@ const QUESTIONS = [
           response: () => v(18,
             speech('I know.') + beat('*A pause.*') + speech('That is either wisdom or a failure of imagination and I find I hope it is the former.') + beat('*Something in his expression.*') + speech('I find I am glad of it. The not being afraid made this conversation possible in a way that fear would not have.'),
             speech('You should be.') + beat('*Gently. Not as a threat. As a fact he finds he wants you to have.*')) },
-        { label: 'Ask him to say her name', full: 'There is someone you have been carrying through this entire interview without naming. I want to ask you to say her name.',
-          hidden: () => trust >= 18,
-          dt: 2, dn: 0,
-          response: () => {
-            aislingNamed = true;
-            return beat('*The longest silence in the interview.*')
-              + beat('*The candle is very still.*')
-              + beat('*He looks at you.*')
-              + beat('*Another silence.*')
-              + speech('Aisling.')
-              + beat('*Nothing else. Just the name.*')
-              + beat('*He says it the way you say something you have been carrying in silence for a very long time.*')
-              + beat('*The room is completely quiet.*')
-              + beat('*You understand without being told that no one else has ever heard him say it.*');
-          }
-        }
       ]
     }
   ]
@@ -1357,7 +1341,23 @@ const QUESTIONS = [
           dt: 2, dn: 0,
           response: () => v(18,
             speech('Yes.') + beat('*A pause.*') + speech('Which surprises me. I want you to know that it surprises me.') + beat('*A pause.*') + speech('I do not trust easily. The fact that I find I trust you with this is not something I take lightly.') + beat('*A beat.*') + speech('Write it well.'),
-            speech('More than I expected to.') + beat('*Simply.*')) }
+            speech('More than I expected to.') + beat('*Simply.*')) },
+        { label: 'Ask him to say her name', full: 'There is someone you have been carrying through this entire interview without naming. I want to ask you to say her name.',
+          hidden: () => trust >= 18 && !aislingNamed,
+          dt: 2, dn: 0,
+          response: () => {
+            aislingNamed = true;
+            return beat('*The longest silence in the interview.*')
+              + beat('*The candle is very still.*')
+              + beat('*He looks at you.*')
+              + beat('*Another silence.*')
+              + speech('Aisling.')
+              + beat('*Nothing else. Just the name.*')
+              + beat('*He says it the way you say something you have been carrying in silence for a very long time.*')
+              + beat('*The room is completely quiet.*')
+              + beat('*You understand without being told that no one else has ever heard him say it.*');
+          }
+        }
       ]
     },
     {
