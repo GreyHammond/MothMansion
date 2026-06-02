@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Blood Type Are You? — The Dark Hours</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--gold-dim); }
+
+.result-type {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 8vw, 3.2rem);
+  font-weight: 700;
+  text-align: center;
+  color: var(--blood);
+  text-shadow: 0 0 40px rgba(139,0,0,0.6);
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.result-archetype {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 5px;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+</style>
+</head>
+<body>
+
+<div class="room-bg state-open" id="roomBg">
+  <div class="room-walls"></div>
+  <div class="room-vignette state-open"></div>
+  <div class="candle-scene">
+    <div class="candle amb" style="left:5%;bottom:30%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:28px"></div></div>
+    <div class="candle amb" style="left:11%;bottom:25%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:38px"></div></div>
+    <div class="candle amb" style="right:6%;bottom:28%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:32px"></div></div>
+    <div class="candle amb" style="right:12%;bottom:32%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:22px"></div></div>
+    <div class="candle amb" style="left:20%;bottom:15%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:20px"></div></div>
+    <div class="candle amb" style="right:20%;bottom:15%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:26px"></div></div>
+    <div class="candle sig" id="sigCandle" style="left:50%;transform:translateX(-50%);bottom:10%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:60px"></div></div>
+  </div>
+</div>
+
+<div class="content" style="padding-top:2rem">
+  <a href="index.html" class="back-link">← Return</a>
+
+  <div class="ornament">✦ ✦ ✦</div>
+  <h1 class="main-title">What Blood Type Are You?</h1>
+  <p class="subtitle">A gothic divination of your true nature</p>
+  <div class="divider"><div class="divider-line"></div><div class="divider-gem">⬥</div><div class="divider-line"></div></div>
+
+  <!-- QUIZ SECTION -->
+  <div id="quiz-section">
+    <div class="progress-text" id="progress-text">I of V</div>
+    <div class="progress-wrap"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+    <div class="q-number" id="q-num">Question I</div>
+    <div class="q-text" id="q-text"></div>
+    <div class="choice-prompt">Choose your answer</div>
+    <div class="choices" id="choices-col"></div>
+  </div>
+
+  <!-- RESULT SECTION -->
+  <div id="result-section" style="display:none">
+    <div style="text-align:center;font-size:1.1rem;color:var(--blood-dark);margin-bottom:0.5rem">🩸</div>
+    <div class="result-type" id="r-type"></div>
+    <div class="result-archetype" id="r-arch"></div>
+    <div class="divider"><div class="divider-line"></div><div class="divider-gem">⬥</div><div class="divider-line"></div></div>
+    <div class="result-card"><h3>Your Nature</h3><p id="r-nature"></p></div>
+    <div class="result-card"><h3>Your Lore</h3><p id="r-lore"></p></div>
+    <div class="result-card">
+      <h3>Traits of the Blood</h3>
+      <div class="traits-grid" id="r-traits"></div>
+    </div>
+    <div class="divider"><div class="divider-line"></div><div class="divider-gem">⬥</div><div class="divider-line"></div></div>
+    <button class="action-btn" onclick="restart()">✦ Begin Again ✦</button>
+    <div style="margin-top:0.75rem;text-align:center">
+      <a href="index.html" style="font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:3px;color:var(--gold-deep);text-decoration:none;text-transform:uppercase">← Return to the House</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const numerals = ['I','II','III','IV','V'];
+
+const questions = [
+  { text: "The midnight hour finds you most naturally...", opts: [
+    { label:"A", text:"Commanding the shadows from your throne", type:"A" },
+    { label:"B", text:"Wandering forgotten graveyards alone", type:"B" },
+    { label:"C", text:"Charming a crowded ballroom effortlessly", type:"O" },
+    { label:"D", text:"Studying ancient texts by candlelight", type:"AB" }
+  ]},
+  { text: "When you must feed, you prefer...", opts: [
+    { label:"A", text:"A single, carefully chosen vessel. Quality over all.", type:"AB" },
+    { label:"B", text:"The bold and fearless. Their courage invigorates you.", type:"O" },
+    { label:"C", text:"Those who come willingly to your embrace.", type:"A" },
+    { label:"D", text:"The solitary wanderer, found and lost in darkness.", type:"B" }
+  ]},
+  { text: "Your greatest power is...", opts: [
+    { label:"A", text:"Dominion. All living things bend to your will.", type:"A" },
+    { label:"B", text:"Invisibility. You are there, then gone like smoke.", type:"B" },
+    { label:"C", text:"Seduction. None can resist your terrible beauty.", type:"O" },
+    { label:"D", text:"Prophecy. You see what mortals cannot bear to know.", type:"AB" }
+  ]},
+  { text: "Your castle is...", opts: [
+    { label:"A", text:"A fortress of iron and stone, feared by all who pass", type:"A" },
+    { label:"B", text:"A ruin, beautiful in its decay, known only to you", type:"B" },
+    { label:"C", text:"A grand estate where your guests never truly leave", type:"O" },
+    { label:"D", text:"A hidden tower filled with centuries of forbidden knowledge", type:"AB" }
+  ]},
+  { text: "Your one true weakness...", opts: [
+    { label:"A", text:"Pride. You cannot resist a challenge to your supremacy.", type:"A" },
+    { label:"B", text:"Longing. You grieve for the mortal life you left behind.", type:"B" },
+    { label:"C", text:"Obsession. Once you want something, you cannot stop.", type:"O" },
+    { label:"D", text:"Curiosity. You will walk into any darkness to understand it.", type:"AB" }
+  ]}
+];
+
+const results = {
+  A: {
+    type:"Type A", archetype:"The Sovereign",
+    nature:"You are the oldest kind of vampire, the kind that empires are built and destroyed around. You do not chase your prey. You wait, and they come to you. Your patience is geological. Your wrath, when it finally arrives, reshapes the world around you. You have been called tyrant, king, and god. None of these words are wrong.",
+    lore:"You were turned in an age of conquest, perhaps by another Sovereign who saw in you a worthy successor, or perhaps by your own sheer refusal to die at the moment of your greatest triumph. Your bloodline is so old that younger vampires feel it like a pressure in the chest when you enter the room. You have outlived empires. You will outlive more.",
+    traits:[{label:"Domain",val:"Control and authority"},{label:"Century turned",val:"Ancient, pre-medieval"},{label:"Power",val:"Dominion over will"},{label:"Fatal flaw",val:"Unbreakable pride"}]
+  },
+  B: {
+    type:"Type B", archetype:"The Wraith",
+    nature:"You are the vampire that haunts the edges of things: the figure glimpsed in the fog, the cold that passes through a room. You do not rule. You endure. There is a melancholy at the center of you that has never left, not in all your centuries. You remember being human with a terrible clarity, and that memory is both your wound and your weapon.",
+    lore:"You were turned against your will, or perhaps at a moment of such profound grief that you barely noticed the transformation. You have spent your long existence moving, never staying long enough for anyone to notice you do not age. You have loved mortals, knowing what it costs. You have let them go. You are very, very good at disappearing.",
+    traits:[{label:"Domain",val:"Solitude and memory"},{label:"Century turned",val:"Medieval darkness"},{label:"Power",val:"Invisibility and mist-form"},{label:"Fatal flaw",val:"Consuming grief"}]
+  },
+  O: {
+    type:"Type O", archetype:"The Predator",
+    nature:"You are the vampire in its most essential, primal form. You do not agonize. You do not brood. You hunt, you take, and you revel in what you are. There is a terrible joy in you, an aliveness that most of the undead have long since lost. Mortals are drawn to you like moths, sensing both the warmth and the flame. You are always the most interesting person in the room.",
+    lore:"You were turned by someone who wanted a companion, a partner, an equal in the dark. Or perhaps you sought it out yourself. You have always wanted more than the small life you were given. You have built circles of devoted followers without ever meaning to. Wherever you go, things happen. You are the eye of the storm, and you love every moment of it.",
+    traits:[{label:"Domain",val:"Desire and pursuit"},{label:"Century turned",val:"Renaissance splendor"},{label:"Power",val:"Irresistible allure"},{label:"Fatal flaw",val:"Insatiable obsession"}]
+  },
+  AB: {
+    type:"Type AB", archetype:"The Oracle",
+    nature:"You are the rarest and most dangerous kind, not because of your strength, but because of what you know. You have spent your centuries studying the nature of your own curse, the history of your kind, and the architecture of fate itself. Other vampires come to you with questions they are afraid to ask. You answer them, because knowledge shared is power kept.",
+    lore:"You were turned by a vampire who was themselves a scholar, or perhaps by accident, in a moment so strange that it seemed like the universe had a plan for you. You have never quite belonged to any clan or bloodline. You observe, you record, and you understand. You have predicted the fall of three different vampire dynasties. You were right every time. No one thanks you for it.",
+    traits:[{label:"Domain",val:"Knowledge and prophecy"},{label:"Century turned",val:"Age of Enlightenment"},{label:"Power",val:"Sight beyond sight"},{label:"Fatal flaw",val:"Ruinous curiosity"}]
+  }
+};
+
+let answers = [], current = 0;
+
+function render() {
+  const q = questions[current];
+  document.getElementById('q-num').textContent = 'Question ' + numerals[current];
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('progress-text').textContent = numerals[current] + ' of V';
+  document.getElementById('progress-fill').style.width = ((current+1)/5*100)+'%';
+  const col = document.getElementById('choices-col');
+  col.innerHTML = '';
+  q.opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:2px;color:#6b1a1a;margin-right:8px;text-transform:uppercase">${opt.label}</span>${opt.text}`;
+    btn.onclick = () => choose(opt.type);
+    col.appendChild(btn);
+  });
+}
+
+function choose(type) {
+  answers.push(type);
+  if (current < 4) { current++; render(); } else { showResult(); }
+}
+
+function showResult() {
+  const counts = {A:0,B:0,O:0,AB:0};
+  answers.forEach(a => counts[a]++);
+  const winner = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+  const r = results[winner];
+  document.getElementById('r-type').textContent = r.type;
+  document.getElementById('r-arch').textContent = r.archetype;
+  document.getElementById('r-nature').textContent = r.nature;
+  document.getElementById('r-lore').textContent = r.lore;
+  document.getElementById('r-traits').innerHTML = r.traits.map(t=>`<div class="trait-item"><strong>${t.label}</strong><span>${t.val}</span></div>`).join('');
+  document.getElementById('quiz-section').style.display = 'none';
+  const rs = document.getElementById('result-section');
+  rs.style.display = 'block';
+  rs.style.animation = 'none'; rs.offsetHeight; rs.style.animation = 'fadeUp 0.8s ease';
+}
+
+function restart() {
+  answers = []; current = 0;
+  document.getElementById('quiz-section').style.display = 'block';
+  document.getElementById('result-section').style.display = 'none';
+  render();
+}
+
+render();
+</script>
+
+<!-- ATMOSPHERIC AUDIO -->
+<audio id="bg-audio" loop preload="auto" style="display:none">
+  <source src="atmosphere.mp3" type="audio/mpeg">
+</audio>
+
+<!-- MUTE BUTTON -->
+<button id="audio-toggle" onclick="toggleAudio()" title="Toggle music" aria-label="Toggle music">
+  <span id="audio-icon">♪</span>
+</button>
+
+<style>
+#audio-toggle {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 100;
+  width: 36px;
+  height: 36px;
+  background: rgba(13,6,8,0.85);
+  border: 1px solid #3a1010;
+  color: #6b1a1a;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+#audio-toggle:hover {
+  border-color: #8b1a1a;
+  color: #c8102e;
+}
+#audio-toggle.muted {
+  color: #3a1010;
+  border-color: #1a0808;
+}
+</style>
+
+<script>
+(function() {
+  const audio = document.getElementById('bg-audio');
+  const btn   = document.getElementById('audio-toggle');
+  const icon  = document.getElementById('audio-icon');
+
+  // Read mute state from localStorage
+  let muted = localStorage.getItem('dh-muted') === 'true';
+
+  function applyMute() {
+    audio.muted = muted;
+    icon.textContent = muted ? '♪' : '♪';
+    btn.classList.toggle('muted', muted);
+    btn.title = muted ? 'Unmute music' : 'Mute music';
+  }
+
+  // Fade in from silence
+  audio.volume = 0;
+
+  function tryPlay() {
+    if (muted) { applyMute(); return; }
+    audio.play().then(() => {
+      // Fade in to 0.18 over 3 seconds
+      let vol = 0;
+      const target = 0.18;
+      const step = target / 60;
+      const fade = setInterval(() => {
+        vol = Math.min(vol + step, target);
+        audio.volume = vol;
+        if (vol >= target) clearInterval(fade);
+      }, 50);
+    }).catch(() => {
+      // Autoplay blocked — attach to first user interaction
+      const unlock = () => {
+        tryPlay();
+        document.removeEventListener('click', unlock);
+        document.removeEventListener('keydown', unlock);
+      };
+      document.addEventListener('click', unlock);
+      document.addEventListener('keydown', unlock);
+    });
+    applyMute();
+  }
+
+  function toggleAudio() {
+    muted = !muted;
+    localStorage.setItem('dh-muted', muted);
+    if (muted) {
+      // Fade out
+      const fade = setInterval(() => {
+        audio.volume = Math.max(audio.volume - 0.02, 0);
+        if (audio.volume <= 0) { audio.muted = true; clearInterval(fade); }
+      }, 40);
+    } else {
+      audio.muted = false;
+      tryPlay();
+    }
+    applyMute();
+  }
+
+  window.toggleAudio = toggleAudio;
+
+  // Start on page load
+  tryPlay();
+})();
+</script>
+
+
+<!-- MUSIC CREDIT -->
+<div style="position:fixed;bottom:1.25rem;left:1.25rem;z-index:99;font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:2px;color:#2a0e0e;line-height:1.6;pointer-events:none">
+  MUSIC<br>
+  <span style="pointer-events:auto">
+    <a href="https://ende.app" target="_blank" rel="noopener"
+       style="color:#3a1010;text-decoration:none;transition:color 0.2s"
+       onmouseover="this.style.color='#8b1a1a'"
+       onmouseout="this.style.color='#3a1010'">
+      SASCHA ENDE / ENDE.APP
+    </a>
+  </span>
+</div>
+
+</body>
+</html>

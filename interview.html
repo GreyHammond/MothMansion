@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Interview — The Dark Hours</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: \'Cinzel\', serif; font-size: 0.58rem; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold-deep); text-decoration: none;
+  margin-bottom: 1.5rem; transition: color 0.2s;
+}
+.back-link:hover { color: var(--gold-dim); }
+
+.interview-content {
+  position: relative; z-index: 10;
+  max-width: 620px; margin: 0 auto;
+  padding: 2rem 1.25rem 5rem;
+  min-height: 100vh;
+}
+
+/* Q counter */
+.q-counter {
+  font-family: \'Cinzel\', serif; font-size: 0.58rem;
+  letter-spacing: 4px; color: var(--blood-dark);
+  text-transform: uppercase; text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.q-theme {
+  font-family: \'Cinzel\', serif; font-size: 1rem;
+  font-weight: 600; color: var(--parchment);
+  text-align: center; letter-spacing: 1px;
+  margin-bottom: 1.25rem; line-height: 1.4;
+}
+
+/* Reveal area — where full question text shows after label click */
+.q-reveal {
+  font-size: 1.15rem; font-style: italic;
+  color: var(--parchment); line-height: 1.65;
+  margin-bottom: 1.1rem;
+  min-height: 1.5rem;
+  animation: fadeIn 0.45s ease;
+}
+
+/* His response panel */
+.response-panel {
+  background: rgba(12,4,5,0.88);
+  border: 1px solid var(--void-border);
+  padding: 1.4rem 1.5rem;
+  margin-bottom: 1.25rem;
+  animation: fadeUp 0.55s ease;
+  display: none;
+}
+.response-panel.visible { display: block; }
+
+/* Sub-choices appear after response */
+.sub-choices-wrap { display: none; }
+.sub-choices-wrap.visible { display: block; }
+.sub-choice-prompt {
+  font-family: \'Cinzel\', serif; font-size: 0.6rem;
+  letter-spacing: 3px; color: var(--gold-deep);
+  text-transform: uppercase; margin-bottom: 0.6rem; margin-top: 1rem;
+}
+
+/* next-q button */
+.next-q-btn {
+  display: none; width: 100%; margin-top: 1.25rem;
+  background: transparent; border: 1px solid var(--border-bright);
+  color: var(--blood); font-family: \'Cinzel\', serif;
+  font-size: 0.78rem; padding: 0.75rem; cursor: pointer;
+  letter-spacing: 3px; text-transform: uppercase; transition: all 0.2s;
+}
+.next-q-btn:hover { background: var(--void-light); border-color: var(--blood); }
+.next-q-btn.visible { display: block; }
+
+/* pull line — his closing hook */
+.pull-line {
+  font-size: 0.88rem; font-style: italic;
+  color: var(--gold-deep); margin-top: 0.75rem;
+  border-top: 1px solid #1a0808; padding-top: 0.65rem;
+}
+
+/* Ending screen */
+#ending-screen { display: none; animation: fadeUp 1s ease; }
+#ending-screen.visible { display: block; }
+
+.ending-name {
+  font-family: \'Cinzel\', serif; font-size: 1.3rem; font-weight: 600;
+  color: var(--blood); text-align: center; letter-spacing: 2px;
+  margin-bottom: 1.25rem;
+}
+
+/* Death ending specific */
+.death-scene { animation: fadeUp 0.7s ease; }
+.death-pause { text-align: center; margin: 1.5rem 0; }
+.death-pause-line {
+  font-family: \'Cinzel\', serif; font-size: 0.65rem;
+  letter-spacing: 4px; color: #3a1010; text-transform: uppercase;
+}
+
+/* Why choices (Death ending) */
+.why-choices { display: flex; flex-direction: column; gap: 10px; margin: 1.25rem 0; }
+.why-btn {
+  background: rgba(8,2,3,0.95); border: 1px solid var(--border-dim);
+  color: var(--gold-dim); font-family: \'Crimson Text\', serif;
+  font-size: 1.05rem; padding: 1rem 1.25rem; cursor: pointer;
+  text-align: center; font-style: italic; transition: all 0.25s;
+}
+.why-btn:hover { border-color: var(--blood); color: var(--parchment); }
+
+/* Tape recorder */
+.tape-header {
+  font-family: \'Cinzel\', serif; font-size: 0.55rem;
+  letter-spacing: 4px; color: var(--blood-dark);
+  text-align: center; margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+  .interview-content { padding: 1.5rem 1rem 4rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ROOM BACKGROUND -->
+<div class="room-bg state-open" id="roomBg">
+  <div class="room-walls"></div>
+  <div class="room-vignette state-open" id="roomVignette"></div>
+  <div class="candle-scene" id="candleScene">
+    <div class="candle amb" style="left:4%;bottom:32%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:28px"></div></div>
+    <div class="candle amb" style="left:10%;bottom:26%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:40px"></div></div>
+    <div class="candle amb" style="left:7%;bottom:22%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:22px"></div></div>
+    <div class="candle amb" style="right:5%;bottom:30%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:35px"></div></div>
+    <div class="candle amb" style="right:11%;bottom:24%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:26px"></div></div>
+    <div class="candle amb" style="right:4%;bottom:40%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:18px"></div></div>
+    <div class="candle amb" style="left:20%;bottom:16%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:24px"></div></div>
+    <div class="candle amb" style="right:20%;bottom:16%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:30px"></div></div>
+    <div class="candle amb" style="left:2%;bottom:55%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:16px"></div></div>
+    <div class="candle amb" style="right:2%;bottom:55%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:20px"></div></div>
+    <div class="candle sig" id="sigCandle" style="left:50%;transform:translateX(-50%);bottom:10%">
+      <div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:65px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- INTERVIEW CONTENT -->
+<div class="interview-content">
+  <a href="index.html" class="back-link">&#8592; The House</a>
+
+  <!-- OPENING SCREEN -->
+  <div id="opening-screen">
+    <div class="ornament">&#10022; &#10022; &#10022;</div>
+    <h1 class="main-title">The Interview</h1>
+    <p class="subtitle">Some doors open only once</p>
+    <div class="divider"><div class="divider-line"></div><div class="divider-gem">&#11045;</div><div class="divider-line"></div></div>
+
+    <div class="panel" style="margin-bottom:1rem">
+      <p class="scene-text">The address came by hand. No return address. No name. Just a time, a location, and two words at the bottom: <em style="color:var(--gold);font-style:normal">Come alone.</em></p>
+      <p class="scene-text">The house is older than the street it sits on. The door opens before you knock. There is no one behind it.</p>
+      <p class="scene-text">He is in the chair by the window. Not quite looking at you. Still in the specific way that living things are not still.</p>
+    </div>
+
+    <div class="panel" style="margin-bottom:1.5rem">
+      <p class="speech">You found it without trouble, I hope. The street numbering in this city has always been somewhat optimistic."</p>
+      <p class="beat">*He looks at you now. His eyes are the colour of deep water. He gestures to the chair across from him.*</p>
+      <p class="speech">Sit. Please."</p>
+      <p class="beat">*You sit. The room settles around you. The candles do not move in any wind you can feel.*</p>
+      <p class="speech">You have ten questions. I will answer them as honestly as I am able. That is not a small offer. I want you to understand that before you waste any of them."</p>
+      <p class="beat">*A pause.*</p>
+      <p class="speech">Begin when you are ready."</p>
+    </div>
+
+    <button class="action-btn" onclick="startInterview()">&#10022; Begin the Interview &#10022;</button>
+  </div>
+
+  <!-- INTERVIEW SCREEN -->
+  <div id="interview-screen" style="display:none">
+    <div class="q-counter" id="q-counter">Question I of X</div>
+    <div class="q-theme" id="q-theme"></div>
+    <div class="divider"><div class="divider-line"></div><div class="divider-gem">&#11045;</div><div class="divider-line"></div></div>
+
+    <!-- Main label choices -->
+    <div class="choice-prompt" id="main-prompt">How do you ask it?</div>
+    <div class="choices" id="main-choices"></div>
+
+    <!-- Revealed full question -->
+    <div class="q-reveal" id="q-reveal" style="display:none"></div>
+
+    <!-- His response -->
+    <div class="response-panel" id="response-panel"></div>
+
+    <!-- Sub choices -->
+    <div class="sub-choices-wrap" id="sub-choices-wrap">
+      <div class="sub-choice-prompt">How do you respond?</div>
+      <div class="choices" id="sub-choices"></div>
+    </div>
+
+    <!-- Sub reveal — full question text -->
+    <div class="q-reveal" id="sub-reveal" style="display:none"></div>
+
+    <!-- Sub response -->
+    <div class="response-panel" id="sub-response-panel"></div>
+
+    <!-- Next question button -->
+    <button class="next-q-btn" id="next-q-btn" onclick="advanceQuestion()">Continue &#8594;</button>
+  </div>
+
+  <!-- ENDING SCREEN -->
+  <div id="ending-screen">
+    <div class="ornament">&#10022; &#10022; &#10022;</div>
+    <div class="ending-name" id="ending-name"></div>
+    <div class="divider"><div class="divider-line"></div><div class="divider-gem">&#11045;</div><div class="divider-line"></div></div>
+    <div class="ending-body" id="ending-body"></div>
+    <div style="margin-top:2rem;text-align:center">
+      <button class="action-btn" onclick="restartInterview()" style="max-width:320px;margin:0 auto 0.75rem;display:block">Begin Again</button>
+      <a href="index.html" style="font-family:\'Cinzel\',serif;font-size:0.58rem;letter-spacing:3px;color:var(--gold-deep);text-decoration:none;text-transform:uppercase">&#8592; Return to the House</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────────
+let trust = 0, tension = 0;
+let currentQ = 0;
+let aislingNamed = false;
+let deathTrigger = false;
+let selectedMain = null;
+
+// ─── ROOM STATES ──────────────────────────────────────────────────
+function getState() {
+  const t = trust, tn = tension;
+  if (t >= 14 && tn >= 14) return 'testing';
+  if (t >= 14 && tn < 8)   return 'open';
+  if (t >= 14)              return 'engaged';
+  if (t >= 8  && tn < 8)   return 'neutral';
+  if (t >= 8  && tn < 14)  return 'watchful';
+  if (t >= 8)               return 'withdrawing';
+  if (t >= 4  && tn < 8)   return 'cold';
+  if (t >= 4)               return 'impatient';
+  return 'critical';
+}
+
+function updateRoom() {
+  const s = getState();
+  const bg = document.getElementById('roomBg');
+  const vg = document.getElementById('roomVignette');
+  const ambs = document.querySelectorAll('.candle.amb');
+  const sig = document.getElementById('sigCandle');
+
+  ['open','engaged','testing','neutral','watchful','withdrawing','cold','impatient','critical'].forEach(c => {
+    bg.classList.remove('state-'+c);
+    vg.classList.remove('state-'+c);
+  });
+  bg.classList.add('state-'+s);
+  vg.classList.add('state-'+s);
+
+  ambs.forEach(a => {
+    ['state-withdrawing','state-impatient','state-critical','state-cold'].forEach(c => a.classList.remove(c));
+    if (['withdrawing','cold'].includes(s)) a.classList.add('state-withdrawing');
+    if (s === 'impatient') a.classList.add('state-impatient');
+    if (s === 'critical')  a.classList.add('state-critical');
+  });
+
+  ['state-withdrawing','state-impatient','state-critical'].forEach(c => sig.classList.remove(c));
+  if (['withdrawing','cold'].includes(s)) sig.classList.add('state-withdrawing');
+  if (s === 'impatient') sig.classList.add('state-impatient');
+  if (s === 'critical')  sig.classList.add('state-critical');
+}
+
+function adjust(dt, dn) {
+  trust   = Math.max(0, Math.min(20, trust + dt));
+  tension = Math.max(0, Math.min(20, tension + dn));
+  updateRoom();
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────────
+const NUM = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
+
+function v(hi_trust, high_text, low_text) {
+  return trust >= hi_trust ? high_text : low_text;
+}
+function vt(lo_tension, low_text, high_text) {
+  return tension <= lo_tension ? low_text : high_text;
+}
+
+function scrollTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderProse(html) {
+  return html;
+}
+
+function showPanel(id, html) {
+  const el = document.getElementById(id);
+  el.innerHTML = html;
+  el.style.display = '';
+  el.classList.add('visible');
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+}
+
+function speech(text) {
+  return '<p class="speech">' + text + '"</p>';
+}
+function beat(text) {
+  return '<p class="beat">' + text + '</p>';
+}
+function pull(text) {
+  return '<p class="pull-line">' + text + '</p>';
+}
+
+// ─── QUESTIONS DATA ───────────────────────────────────────────────
+
+const QUESTIONS = [
+
+// ════════════════════════════════════════════════
+// Q1: Why did you agree to this?
+// ════════════════════════════════════════════════
+{
+  theme: 'Ask why he agreed to speak with you',
+  mains: [
+    {
+      label: 'Be straightforward',
+      full: 'You said yes when everyone else was refused. I want to know why.',
+      dt: 1, dn: 0,
+      response: () => beat('*He regards you for a moment with an expression that is not quite patience and not quite its opposite.*')
+        + speech('Most people who ask that question want to feel special. As if my agreeing reflects something particular about them.')
+        + beat('*A pause.*')
+        + speech('It does not. I agreed because I felt like it. The reasons a person feels like something are rarely as coherent as we would prefer them to be.')
+        + pull('He tilts his head slightly. “Ask me something harder.”'),
+      subs: [
+        { label: 'Acknowledge the warning', full: 'Point taken. I will try.', dt: 1, dn: 0,
+          response: () => beat('*He nods once. Something settles.*') + speech('Good. I find I respond better to people who mean what they say.') },
+        { label: 'Ask what the wrong questions look like', full: 'What does a wasted question look like, from where you sit?', dt: 1, dn: 1,
+          response: () => speech('The kind that circles the thing you actually want to know for long enough that the conversation runs out of time to reach it.') + beat('*A beat.*') + speech('You have been warned.') }
+      ]
+    },
+    {
+      label: 'Ask why me',
+      full: 'Why me specifically? There must have been others who asked.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you for a moment.*')
+        + speech('There were. There always are.')
+        + beat('*A pause.*')
+        + speech('You asked differently. Not better, necessarily. Differently. There was something in the framing that suggested you were actually prepared to hear the answers rather than confirm what you already believed.')
+        + beat('*He looks at the candles.*')
+        + speech('I may be wrong about that. We will find out.')
+        + pull('“Ask me what you came to ask.”'),
+      subs: [
+        { label: 'Ask what being chosen means', full: 'Does being chosen mean anything? To you.', dt: 1, dn: 1,
+          response: () => speech('No more than any other choice. I chose to answer. What that reflects is mine. What you do with the access is yours.') },
+        { label: 'Follow the thread', full: 'What would confirming what I already believed have looked like?', dt: 1, dn: 0,
+          response: () => speech('Asking me if I am evil. Whether I feel remorse. Whether the hunger feels like addiction.') + beat('*A slight pause.*') + speech('Those questions have answers. They are not the interesting answers.') },
+        { label: 'Be honest about how it feels', full: 'I will admit it feels strange. Being chosen by something like you.', dt: 1, dn: -1,
+          response: () => speech('That is a more honest answer than most people give.') + beat('*Something in him settles slightly.*') + speech('Strange is the correct response. I find I trust people who land there rather than excited or frightened.') }
+      ]
+    },
+    {
+      label: 'Ask why accept at all',
+      full: 'You have refused everyone for decades. What changed?',
+      dt: 1, dn: 1,
+      response: () => beat('*He looks at you with an expression you cannot entirely read.*')
+        + speech('Refused implies I owed anyone an answer. I did not refuse. I simply did not respond. There is a difference.')
+        + beat('*A pause.*')
+        + speech('What changed. A particular kind of tiredness with my own silence, perhaps. Or curiosity about what questions you would ask. Both are true. Neither is the whole of it.')
+        + pull('“Ask me something else.”'),
+      subs: [
+        { label: 'Apologize for the framing', full: 'Fair point. I should not have framed it as a refusal.', dt: 1, dn: -1,
+          response: () => speech('No harm done. The framing was understandable. Most people do not make the distinction.') + beat('*He looks at you.*') + speech('Most people also do not correct themselves when they notice. I find I appreciate the correction.') },
+        { label: 'Reframe the question', full: 'What would the accurate framing be, in your view?', dt: 1, dn: 0,
+          response: () => speech('Not why did you change your mind. Why did you decide this time that someone had earned a yes.') + beat('*A pause.*') + speech('The answer to that question is considerably more interesting.') },
+        { label: 'Admit what you were really asking', full: 'I was really asking whether I should feel grateful or wary.', dt: 1, dn: 1,
+          response: () => speech('Both.') + beat('*He says it simply.*') + speech('In roughly equal measure. Anyone who tells you only one of those is appropriate is not being honest with you.') }
+      ]
+    },
+    {
+      label: 'Be candid',
+      full: 'I will be direct. I think you agreed because you wanted to. Because some part of you wanted to be known.',
+      dt: 1, dn: 0,
+      response: () => beat('*He is quiet for a moment. Then something in his expression shifts.*')
+        + speech('That is either very perceptive or very lucky. I have not yet decided which.')
+        + beat('*A pause.*')
+        + speech('You may be right. I find I am not going to confirm or deny it yet. Ask me again at the end of the evening.')
+        + pull('“What is your first question.”'),
+      subs: [
+        { label: 'Accept the challenge quietly', full: 'Understood. I will ask again.', dt: 1, dn: 0,
+          response: () => beat('*He nods once.*') + speech('Good. I like people who remember what they said they would do.') },
+        { label: 'Ask what others got wrong', full: 'What did the others get wrong? The ones you did not answer.', dt: 1, dn: 1,
+          response: () => speech('They wanted confirmation. They had already decided what I was and wanted me to perform it for them.') + beat('*A beat.*') + speech('I find that particular kind of certainty very boring.') },
+        { label: 'Press beneath the surface', full: 'I think there is more to it than wanting to be known. I think you are lonely.',
+          dt: () => trust >= 2 ? 1 : -1,
+          dn: () => trust >= 2 ? 0 : 3,
+          response: () => trust >= 2
+            ? beat('*A very long pause.*') + speech('That is not a word I would have chosen. It is not inaccurate.') + beat('*He looks at the candles.*') + speech('Ask me something else.')
+            : beat('*The candle nearest to him flickers.*') + speech('You do not know me well enough to say that yet.') + beat('*A pause that has an edge in it.*') + speech('Ask me something else.') }
+      ]
+    }
+  ]
+},
+
+// ════════════════════════════════════════════════
+// Q2: What are you?
+// ════════════════════════════════════════════════
+{
+  theme: 'Ask what he is',
+  mains: [
+    {
+      label: 'Ask plainly',
+      full: 'I want to ask you something plain before anything else. What are you?',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you with the quality of someone who has been asked this before and found every version of the answer inadequate.*')
+        + speech('Something old. Something that continues when it should not. Something that was a person once and, I would argue, still is.')
+        + beat('*A pause.*')
+        + speech('The mythology gets most of it wrong. The parts it gets right are not the parts people find interesting.')
+        + pull('“Ask me what you actually want to know.”'),
+      subs: [
+        { label: 'Ask what remains of the person', full: 'You said still is. What remains of the person?', dt: 1, dn: 0,
+          response: () => speech('More than I expected when this started. Less than I sometimes wish.') + beat('*A pause.*') + speech('The stubbornness. The capacity to be affected by things. The particular way I have always had of caring too much about things I cannot change.') + beat('*He looks at you.*') + speech('Those are still entirely intact.') },
+        { label: 'Press on the word', full: 'You said something. Not someone. Why that word?', dt: 0, dn: 2,
+          response: () => v(8, beat('*He considers this.*') + speech('Because something is more honest about the ambiguity of it. Someone implies a continuity I am not certain I can claim without qualification.') + beat('*A pause.*') + speech('I use the word deliberately. I do not use it comfortably.'),
+            beat('*He looks at you.*') + speech('The word choice was deliberate. I will leave you to work out what it means.')) },
+        { label: 'Ask what changed', full: 'What changed when you became this?', dt: 1, dn: 1,
+          response: () => speech('Everything that was not essential. The fear of dying. The need for ordinary sustenance. The particular quality of time that mortals have where the future feels genuinely open.') + beat('*A pause.*') + speech('What did not change is the part that was already most itself. Which is either reassuring or troubling depending on what you think of who I was.') }
+      ]
+    },
+    {
+      label: 'Name it directly',
+      full: 'You are a vampire. I am going to use the word because I think not using it would be a kind of dishonesty.',
+      dt: 1, dn: 1,
+      response: () => beat('*He looks at you for a moment.*')
+        + speech('You are correct that not using it would be a kind of dishonesty.')
+        + beat('*A pause.*')
+        + speech('I find I do not use the word myself. Not because it frightens me. Because it is insufficient. It points at the thing without describing it. Like calling a two-hundred-year-old tree a plant.')
+        + beat('*He settles back slightly.*')
+        + speech('But yes. By the common usage of the term. That is what I am.')
+        + pull('“Ask me what you want to know about it.”'),
+      subs: [
+        { label: 'Answer honestly what the word means to you', full: 'When I say the word, I think of something ancient and dangerous. Something that has chosen to be in this room with me.', dt: 2, dn: 0,
+          response: () => beat('*Something in him stills.*') + speech('Ancient. Yes. Dangerous. Contingently. Something that has chosen to be here.') + beat('*A pause.*') + speech('That last part. That is the one that matters. The choice to be here rather than not. That is the whole question, really.') },
+        { label: 'Turn it back on him', full: 'If not vampire, what word would you use?', dt: 1, dn: 0,
+          response: () => speech('I have tried several over the years. None of them are satisfying.') + beat('*A slight pause.*') + speech('The one I come back to most often is simply: what I am. Which is not a word but it is accurate.') },
+        { label: 'Press on what it gets wrong', full: 'What does the word get most wrong about what you actually are?', dt: 1, dn: 2,
+          response: () => v(8, speech('The mythology assumes hunger is the primary thing. That everything else, the person, the history, the specific weight of what the years have done, is secondary to the appetite.') + beat('*He looks at you.*') + speech('The appetite is real. It is not primary. That distinction is the whole of it.'),
+            speech('The assumptions it carries. Ask me something else.')) }
+      ]
+    },
+    {
+      label: 'Question the word',
+      full: 'I am not sure vampire is the right word for what you are. I am not sure I have a better one.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you with something that might be appreciation.*')
+        + speech('That is a more honest position than certainty in either direction.')
+        + beat('*A pause.*')
+        + speech('Most people arrive with the word already decided. It does a certain kind of work for them. It puts me in a category and the category manages the fear.')
+        + beat('*He looks at you.*')
+        + speech('You are sitting with the uncertainty. I find I prefer that.')
+        + pull('“What would you like to know.”'),
+      subs: [
+        { label: 'Say the word anyway', full: 'For the sake of having something to call you, I will use it. With the caveat that I know it is insufficient.', dt: 1, dn: 0,
+          response: () => speech('That caveat is worth more than the word.') + beat('*A slight nod.*') + speech('Proceed.') },
+        { label: 'Admit you do not have one', full: 'I genuinely do not have a better word. What would you suggest?', dt: 2, dn: 0,
+          response: () => speech('What I am.') + beat('*He says it simply.*') + speech('Two words. Imprecise. Accurate. Honest about the limits of language in the face of something language was not built to describe.') + beat('*A pause.*') + speech('You may find you arrive at your own word by the end of tonight. Or not. Either is acceptable.') },
+        { label: 'Ask him what word he would use', full: 'If you were writing about yourself, what word would you put on the page?', dt: 1, dn: 1,
+          response: () => speech('Something that continued.') + beat('*A pause.*') + speech('Four words. Still insufficient. Closer than most.') }
+      ]
+    },
+    {
+      label: 'Show your hand',
+      full: 'I want to be honest with you. I have spent three years researching this. I came in here believing you are real and I want to know if I was right.',
+      dt: 2, dn: 0,
+      response: () => beat('*He looks at you for a long moment.*')
+        + speech('Three years.')
+        + beat('*A pause.*')
+        + speech('Yes. You were right. Though I would be curious to know what convinced you before tonight.')
+        + beat('*He settles back.*')
+        + speech('What a person chooses to believe before they have proof tells you something about the quality of their attention. I find yours is considerable.')
+        + pull('“Ask me what you came to verify.”'),
+      subs: [
+        { label: 'Be honest about the obsession', full: 'I am not sure I can explain it. Something in the evidence felt different from the noise. More specific.', dt: 2, dn: 0,
+          response: () => speech('Specificity is exactly the right word.') + beat('*Something in him shifts slightly.*') + speech('The mythology is full of noise. What is real has a different quality. You noticed that. That is not a small thing.') },
+        { label: 'Keep it professional', full: 'I followed the evidence. It led here.', dt: 0, dn: 0,
+          response: () => speech('A clean answer.') + beat('*He looks at you.*') + speech('True, I imagine, and not the whole of it. But acceptable for now.') },
+        { label: 'Turn it back on him', full: 'Were you aware of the research? Were you watching me?', dt: 1, dn: 2,
+          response: () => v(8, speech('I was aware of you, yes. Not closely. The specific quality of your attention creates a kind of trace that is difficult to ignore if you know what to look for.') + beat('*A pause.*') + speech('I want to be clear that I did not interfere with anything you found. I was curious where you would land.'),
+            speech('That is a question I am not going to answer directly.') + beat('*A pause.*') + speech('Ask me something else.')) },
+        { label: 'Answer what real means to you', full: 'By real I mean something with a history. A specific weight. Not a story people tell.', dt: 2, dn: 0,
+          response: () => speech('Yes.') + beat('*He says it simply.*') + speech('A history. A specific weight. Things that happened in specific places at specific times that can be verified by anyone willing to look carefully enough.') + beat('*A pause.*') + speech('I am real in exactly that sense.') }
+      ]
+    }
+  ]
+},
+
+// ════════════════════════════════════════════════
+// Q3: Do you miss being human?
+// ════════════════════════════════════════════════
+{
+  theme: 'Ask if he misses being human',
+  mains: [
+    {
+      label: 'Ask directly',
+      full: 'Do you miss it? Being human.',
+      dt: 1, dn: 0,
+      response: () => beat('*He is quiet for a moment. Not avoiding the question. Weighing the honest answer.*')
+        + speech('Yes. Though not uniformly and not all the time.')
+        + beat('*A pause.*')
+        + speech('What I miss most is not the body’s pleasures or even mortality itself. It is the particular quality of ordinary time. The days that had no significance. The particular freedom of not yet knowing how things would go.')
+        + pull('“Ask me what you want to know about it.”'),
+      subs: [
+        { label: 'Press on the grief', full: 'What is the grief like? After this long.', dt: 1, dn: 2,
+          response: () => v(8,
+            beat('*A pause that is longer than usual.*') + speech('Specific. That is the thing people do not understand. The grief does not become general with time. It stays attached to particular things. Particular people.') + beat('*He looks at the candles.*') + speech('There is one I have been carrying for a very long time. Forty years of it, in a sense. A specific choice I still have not resolved to my satisfaction.') + beat('*A pause.*') + speech('I find it is still sharp. Which I think means it still matters. I have stopped deciding whether that is good or bad.'),
+            speech('It does not resolve in the way grief is supposed to resolve. That is the most honest thing I can tell you.') + beat('*He does not elaborate.*')) },
+        { label: 'Ask about the texture', full: 'What does it feel like specifically? The missing.', dt: 1, dn: 0,
+          response: () => speech('Like standing outside a house you used to live in. You can see through the windows. You remember every room.') + beat('*A pause.*') + speech('But the door is not one you can open anymore. And after a certain amount of time you stop reaching for the handle because the reaching hurts more than the looking.') },
+        { label: 'Ask if grief is the worst of it', full: 'Is the grief the worst part? Of what you lost.', dt: 1, dn: 1,
+          response: () => speech('No. The worst part is the distance.') + beat('*He looks at you.*') + speech('Grief is at least a form of closeness. You are still in contact with what you lost, still affected by it. The distance is something else. The gradual quality of being less and less inside things. More and more a witness.') + beat('*A pause.*') + speech('I work against that. With varying success.') }
+      ]
+    },
+    {
+      label: 'Ask what specifically',
+      full: 'What do you miss specifically? Not in general terms.',
+      dt: 1, dn: 0,
+      response: () => beat('*He considers the specificity of the question.*')
+        + speech('Being cold. Genuinely cold, the kind that gets into the bones and requires another person or a fire to resolve.')
+        + beat('*A pause.*')
+        + speech('I know that sounds small. But there was a quality of being held by the weather, by the season, by the body’s needs that I did not understand I valued until it was gone. Being cold meant you needed warmth. Needing warmth meant you sought it somewhere.')
+        + beat('*He looks at the candles.*')
+        + speech('The candles are habit now. I do not need them. I find I keep them anyway.')
+        + pull('“What else do you want to know.”'),
+      subs: [
+        { label: 'Ask who held him that way', full: 'Who did you seek warmth from? When you were alive.', dt: 1, dn: 2,
+          response: () => v(10,
+            beat('*A long pause.*') + speech('My sister, mostly. When we were young.') + beat('*He says it simply. Not performing grief.*') + speech('She had a particular quality of warmth. Not just physical. The way certain people make the room they are in feel safer than it was before they entered.') + beat('*A pause.*') + speech('I have not described that before. I find I am not sorry I did.'),
+            speech('Someone a long time ago.') + beat('*He does not continue.*')) },
+        { label: 'Ask about memory as poor company', full: 'You said you remember warmth. Is memory enough? As a substitute.', dt: 1, dn: 0,
+          response: () => speech('No.') + beat('*Simply.*') + speech('Memory is accurate. It is not warm. The specific quality of a real experience, the weight of it, the unexpectedness of it, memory cannot replicate those. Memory is a very faithful painting of a place you can no longer visit.') },
+        { label: 'Ask if anything has replaced it', full: 'Has anything replaced that? The warmth.', dt: 1, dn: 0,
+          response: () => speech('Partially. Conversations that go somewhere real. The specific quality of someone actually paying attention.') + beat('*He looks at you.*') + speech('Imperfect substitutes. Not nothing.') },
+        { label: 'Receive without pressing', full: '[Say nothing. Simply receive what he said.]', dt: 2, dn: -1,
+          response: () => beat('*He is quiet for a moment.*') + speech('You are not going to ask me anything else about that.') + beat('*A pause.*') + speech('Good. Some things are not questions.') }
+      ]
+    },
+    {
+      label: 'Ask what remained',
+      full: 'What remained of your humanity? After the transformation.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you.*')
+        + speech('More than the mythology suggests. The capacity for feeling. The specific habits of attention I had developed. The things I cared about before I was this.')
+        + beat('*A pause.*')
+        + speech('What I find most persistent is the stubbornness. I was stubborn as a young man and I am stubborn now and the centuries have not resolved that in any direction.')
+        + beat('*Almost a smile. Not quite.*')
+        + speech('Whatever I am, I am thoroughly, persistently, irritatingly myself. I have stopped expecting that to change.')
+        + pull('“What do you want to know.”'),
+      subs: [
+        { label: 'Ask what mortals miss without knowing', full: 'What do mortals have that they do not realise they have?', dt: 1, dn: 0,
+          response: () => speech('The ability to be inside the present tense completely.') + beat('*A pause.*') + speech('Mortals experience the present without fully knowing how it ends. That unknowing is not nothing. It is almost everything. The quality of genuine surprise. The way something can matter before you know if it will last.') + beat('*He looks at you.*') + speech('You have that right now. In this conversation. I am watching you have it.') },
+        { label: 'Ask if the attention is gift or burden', full: 'You said the things you cared about stayed. Is that a gift or a burden?', dt: 1, dn: 1,
+          response: () => speech('Both. Always both.') + beat('*He looks at the candles.*') + speech('The things you care about are the things that can be taken from you. Caring is inseparable from vulnerability. I have had a very long time to understand that and I have not found a way around it.') + beat('*A pause.*') + speech('I have found I do not want a way around it. Which may say something about my character.') },
+        { label: 'Ask if he envies mortals', full: 'Do you envy them? Mortals.', dt: 0, dn: 1,
+          response: () => speech('Occasionally. Specific things about specific people.') + beat('*A pause.*') + speech('The ease they have in rooms like this one, for instance. The ability to enter a conversation without the other person having to manage something they cannot name.') + beat('*He looks at you.*') + speech('You have been managing it fairly well, for what it is worth.') }
+      ]
+    },
+    {
+      label: 'Ask if he would go back',
+      full: 'If you could go back. To being mortal. Would you.',
+      dt: 1, dn: 0,
+      response: () => beat('*He is quiet for a long moment.*')
+        + speech('That question assumes going back means returning to what I was. It does not. Going back would mean becoming something I am not and have not been for a very long time.')
+        + beat('*A pause.*')
+        + speech('I do not grieve the condition. I grieve specific things I have lost within the condition. Those are different griefs.')
+        + pull('“Ask me what you actually want to know.”'),
+      subs: [
+        { label: 'Accept the reframe and ask again', full: 'Then let me ask it differently. Do you wish you had never become what you are?', dt: 1, dn: 1,
+          response: () => speech('On the days when what I am has cost something I could not afford to lose, yes.') + beat('*A pause.*') + speech('On the days when what I am has allowed me to do something that mattered, no.') + beat('*He looks at you.*') + speech('The balance shifts. I have stopped expecting it to settle.') },
+        { label: 'Push back on the reframe', full: 'I think you answered a different question than the one I asked.', dt: 1, dn: 2,
+          response: () => v(8, beat('*A slight pause. Something in him reassesses.*') + speech('You’re right. I did.') + beat('*A longer pause.*') + speech('The honest answer to the question you actually asked is: I do not know. I have had long enough to resolve it and I have not. That tells me something about the nature of the question.'),
+            speech('I answered the question I found more interesting. A habit of mine.') + beat('*A beat.*') + speech('Ask me something else.')) },
+        { label: 'Ask what the person needs that this cannot give', full: 'What does the person inside all of this still need that being what you are cannot give them?', dt: 2, dn: 1,
+          response: () => beat('*A long pause. Something genuine working through him.*') + speech('To matter to someone in real time. Not to be remembered or studied or feared.') + beat('*A pause.*') + speech('To matter while it is happening, to someone who is not managing the awareness of what I am.') + beat('*He looks at the candles.*') + speech('That is what this condition cannot give me. I find I still want it. After all this time.') },
+        { label: 'Sit with what he said', full: '[Say nothing. Let what he said sit.]', dt: 2, dn: -1,
+          response: () => beat('*He looks at you.*') + beat('*You say nothing.*') + beat('*The silence is not uncomfortable.*') + speech('Yes. Exactly like that.') + beat('*He looks at the candles.*') + speech('Ask me the next question.') }
+      ]
+    }
+  ]
+},
+
+// Q4 through Q10 abbreviated for file size — will be completed in second pass
+// ════════════════════════════════════════════════
+// Q4: Origins
+// ════════════════════════════════════════════════
+{
+  theme: 'Ask about his origins',
+  mains: [
+    {
+      label: 'Ask where he is from',
+      full: 'Before I ask you anything else, I want to ask about the beginning. Where are you from? Originally.',
+      dt: 1, dn: 0,
+      response: () => beat('*Something shifts in his expression. Not pain exactly. More the quality of someone opening a door they have not opened in some time.*')
+        + speech('Ireland. The west of it. A part of the country that was already old when I was born into it and is considerably older now.')
+        + beat('*A pause.*')
+        + speech('That surprises people sometimes. They expect somewhere more dramatic. Romania. Transylvania. Something that matches the mythology.')
+        + speech('Ireland has its own mythology. It simply does not export as well.')
+        + pull('“What do you want to know about it.”'),
+      subs: [
+        { label: 'Ask which part specifically', full: 'Which part specifically? Where exactly?', dt: 1, dn: 0,
+          response: () => v(8,
+            speech('A place called Kilbaha. At the very tip of the Loop Head peninsula, where the land runs out into the Atlantic and seems almost surprised to find itself there.') + beat('*He is quiet.*') + speech('I have not said that name in a very long time. It sounds different out loud after a long silence. More real than the memory of it.'),
+            speech('County Clare. The coast. It is a particular kind of landscape. The kind that gets into you.')) },
+        { label: 'Ask what Ireland was like when he left', full: 'What was Ireland like when you left?', dt: 1, dn: 0,
+          response: () => speech('Hungry. That is the word. Not yet at the worst of it when I left, but you could feel it coming the way you can feel weather. Something in the quality of the air. The way people moved through markets.') + beat('*A pause.*') + speech('I was gone by then. I could not go back. I watched it from the other side of an ocean and understood for the first time what it costs to be the kind of thing that continues when everything it came from does not.') },
+        { label: 'Ask if he ever went back', full: 'Did you ever go back? After everything.', dt: () => trust >= 10 ? 2 : 1, dn: 1,
+          response: () => v(10,
+            speech('Once. Many years after.') + beat('*He is quiet.*') + speech('The house was gone. There was a gate at the edge of what had been the property. Iron. Rusted to a particular shade of red that iron only gets when it has been left alone for a very long time.') + beat('*He looks at his hands briefly.*') + speech('There was a tree growing through the space where the gate had been. Rowan. I stood at that gate for a long time trying to decide if it mattered. I decided it did not. I was wrong. It mattered considerably. I left anyway.'),
+            speech('No.') + beat('*The word carries enough that elaboration would be a kind of violence against it.*')) }
+      ]
+    },
+    {
+      label: 'Ask how it happened',
+      full: 'I want to ask about the turning itself. How it happened.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you with an expression that means he is deciding how much of the truth is in the question.*')
+        + speech('That is a question that has a short answer and a long answer. The short answer is that I chose it, in the way that a drowning man chooses the hand that reaches for him.')
+        + beat('*He settles back.*')
+        + speech('The long answer is considerably more complicated.')
+        + pull('“Which would you like.”'),
+      subs: [
+        { label: 'Ask if it was his choice', full: 'Was it your choice? Genuinely.', dt: 1, dn: 1,
+          response: () => v(6,
+            speech('Yes and no. Which I understand is not a satisfying answer.') + beat('*He looks toward the window.*') + speech('I wanted it. The fear of dying had become the central fact of my life in a way I found exhausting. But wanting something and choosing it are not the same thing. Choice implies a full understanding of what you are choosing. I did not have that.') + beat('*A pause.*') + speech('Whether that constitutes a choice I have not resolved to my satisfaction.'),
+            speech('Yes.') + beat('*He says it in a way that closes the subject.*')) },
+        { label: 'Ask what the moment was like', full: 'What do you remember of the moment itself? The night it happened.', dt: 1, dn: 1,
+          response: () => v(8,
+            speech('Cold. That is what I remember most immediately. A cold that was different from ordinary cold. Not just temperature but something more total. As if warmth were a quality of being alive and I was in the process of that quality leaving.') + beat('*He looks at his hands.*') + speech('A road. Night. The particular quality of Irish dark, which has a weight to it, a presence. It was not like the accounts. No drama. No ceremony. Mostly it felt like a door being opened in a house you have lived in all your life that you never knew was there.') + beat('*A pause.*') + speech('And then the cold became something else. And then I was still there. Which surprised me more than anything else.'),
+            speech('It was a long time ago. The specific details have faded.') + beat('*He says it simply. This is the only moment in the interview he is not fully honest.*')) },
+        { label: 'Ask if he was afraid', full: 'Were you afraid? When it happened.', dt: 1, dn: 0,
+          response: () => speech('Yes.') + beat('*Without hesitation.*') + speech('I think the honest answer is that I have been afraid for most of my existence, before and after. The specific texture of the fear changed considerably. But fear itself has been a fairly constant companion.') + beat('*He says this without self-pity.*') + speech('I was afraid in the specific quiet way you are afraid when you are doing something that cannot be undone and you know it and you proceed anyway.') },
+        { label: 'Ask what he remembers most', full: 'Of all of it, the whole night, what stays with you most clearly?',
+          hidden: () => trust >= 8,
+          dt: 2, dn: 1,
+          response: () => v(12,
+            beat('*The longest pause of the question.*') + speech('Her name.') + beat('*He says it simply. Not performing grief.*') + speech('My sister. She had been dead for two years by then. Fever. And then at the end of that night, at the exact moment when I was between one thing and another, she was simply there. The way she looked when she was laughing at something I had said.') + beat('*He looks at you.*') + speech('I have thought about that a great deal. Whether it was her or whether it was my mind finding something to hold onto. I have not arrived at an answer I trust.'),
+            beat('*A pause that is different from the others.*') + speech('Someone I was thinking of. At the end of it. Before the cold became something else.') + beat('*He does not say who.*')) }
+      ]
+    },
+    {
+      label: 'Ask if he wanted it',
+      full: 'Did you want it? Before it happened, did you want to become what you are?',
+      dt: 1, dn: 1,
+      response: () => beat('*He looks at you with something that is not quite surprise.*')
+        + speech('Most people do not ask that directly.')
+        + beat('*A pause.*')
+        + speech('The answer is yes. With the qualification that wanting something when you are twenty-three and afraid of your own mortality is a particular kind of wanting. Not fully informed. Not entirely free. But genuine.')
+        + pull('“What made you ask it that way. Directly.”'),
+      subs: [
+        { label: 'Ask what he was running from', full: 'What were you running from? When you made that choice.', dt: 1, dn: 1,
+          response: () => v(8,
+            speech('I was not running from something. I was running toward something. There is a difference.') + beat('*He looks at you.*') + speech('I wanted to stop being afraid of dying. Not to live forever in some grand sense. Just to stop carrying that particular weight every single day.') + beat('*A pause.*') + speech('What I did not understand is that what I traded it for was not the absence of fear. It was a different fear. Larger in some ways. More specific in others.'),
+            speech('The same things everyone runs from at that age. Limitation. Mortality. The sense that the life available to you is considerably smaller than the one you can imagine.')) },
+        { label: 'Ask if he regretted wanting it', full: 'Have you ever regretted wanting it? Not the consequences. The wanting itself.', dt: 1, dn: 1,
+          response: () => vt(8,
+            speech('Yes and no. And the yes and no have traded places many times over the years.') + beat('*He looks at you.*') + speech('There are days when I regret the wanting the way you regret a hunger that led you somewhere you should not have gone. And then there are days when the wanting feels like the most honest thing I have ever done.') + beat('*A beat.*') + speech('I find I cannot hold both of those at once. I move between them.'),
+            speech('That is a question I find I need to answer differently on different days. I will not give you the version that makes a clean story of it.')) }
+      ]
+    },
+    {
+      label: 'Ask what he left behind',
+      full: 'I want to ask about the cost of it. Not what you gained. What you left behind.',
+      dt: 1, dn: 0,
+      response: () => beat('*Something in the question reaches him in a way the others have not quite managed.*')
+        + speech('That is a more interesting question than most people ask.')
+        + beat('*A pause.*')
+        + speech('What I left behind. The list is longer than a single conversation can hold. But the things I think about most are not the obvious ones. Not the body’s pleasures. What I think about most is the texture of ordinary time. The days that had no significance and were significant precisely because of that.')
+        + pull('“What specifically would you like to know.”'),
+      subs: [
+        { label: 'Ask about his family', full: 'Tell me about your family. The people you left.', dt: 1, dn: 1,
+          response: () => v(6,
+            speech('My mother was gone by then. My father also. That particular grief was already done.') + beat('*He is quiet.*') + speech('There was a sister. Younger than me. She died the winter before. Fever.') + beat('*He says it with that quality of having already carried it for a very long time.*') + speech('I have had a great deal of time since to think about her. It has not resolved in the way that grief is supposed to resolve. I find I do not mind that.'),
+            speech('Everyone leaves something behind. I left what everyone leaves. People. A place. A version of myself that belonged to both.')) },
+        { label: 'Ask about the person he was before', full: 'Tell me about the person you were before all of this.', dt: 1, dn: 0,
+          response: () => speech('A young man from the west of Ireland who was afraid of most things and stubborn about the rest.') + beat('*He says it simply. Without embarrassment.*') + speech('He read too much and argued too readily. He was not especially remarkable. He wanted to be. He thought wanting to be remarkable was the same as being it, which is a common mistake at that age.') + beat('*A pause.*') + speech('He was kind, I think. In the specific way that people are kind when they have not yet been given enough reason not to be.') + beat('*He looks at you.*') + speech('I find I still like him. Considerably more than I expected to.') },
+        { label: 'Ask if that person would recognise him now', full: 'Would he recognise you? The person you just described.', dt: 1, dn: 1,
+          response: () => v(10,
+            speech('Yes. Reluctantly.') + beat('*Almost a smile. Not quite.*') + speech('The stubbornness is still there. Intact. Possibly amplified. The fear is considerably diminished, which I think he would find satisfying.') + beat('*A pause.*') + speech('The kindness is more complicated. It is still there but it has learned to be more careful about where it goes. Which I am not certain is an improvement.'),
+            speech('I have stopped asking that question. At a certain point it stops being useful and starts being a way of avoiding other questions.')) },
+        { label: 'Ask if he misses who he was', full: 'Do you miss him? The person you were.',
+          hidden: () => trust >= 10,
+          dt: 2, dn: 0,
+          response: () => v(14,
+            speech('Yes. Specific things about him.') + beat('*He looks toward the candles.*') + speech('The hope most of all. Not optimism. The particular quality of hope that only exists when your life is still mostly ahead of you. When the future is large and genuinely unknown.') + beat('*A pause.*') + speech('I know how things tend to go now. That knowledge is useful and it cost me something real to acquire it.'),
+            speech('Yes.') + beat('*Simply. The yes carries more weight than most of his longer answers.*')) }
+      ]
+    }
+  ]
+},
+
+// Q5: The Morality
+{
+  theme: 'Ask how he lives with what he has done',
+  mains: [
+    {
+      label: 'Ask about the violence carefully',
+      full: 'I want to ask about the violence of what you are. Not to condemn it. I want to understand how you live with it.',
+      dt: 1, dn: 0,
+      response: () => beat('*He regards you for a moment.*')
+        + speech('That is a more careful framing than the question usually gets.')
+        + beat('*A pause.*')
+        + speech('Most people want to know if I have killed. The answer is yes and it seems to resolve their curiosity in either direction before they have properly understood anything.')
+        + speech('You are asking something different. How I live with it. That is the question that takes longer to answer honestly.')
+        + pull('“Ask me what you actually want to know.”'),
+      subs: [
+        { label: 'Ask how he manages the hunger', full: 'How do you manage it? Day to day.', dt: 1, dn: 0,
+          response: () => v(8,
+            speech('Carefully. There is a discipline to it that took years to develop. The hunger is not the same as the person who carries it. Learning to hold that distinction clearly in moments when clarity is very difficult, that is the work.') + beat('*A pause.*') + speech('I make choices about proximity. About how much time I spend among people. Not out of fear of myself exactly. More the way someone with a particular susceptibility makes careful choices because they understand their own edges.'),
+            speech('It is managed. With discipline and experience.')) },
+        { label: 'Ask if he has ever lost control', full: 'Have you ever lost control of it?', dt: 0, dn: 2,
+          response: () => v(10,
+            speech('Yes. Once that I know of with certainty.') + beat('*He says it without drama.*') + speech('Not the hunger specifically. Something adjacent to it. Grief and rage and the hunger all at once, in a moment when I was not prepared for any of them.') + beat('*A pause.*') + speech('Once that I know of with certainty. There may be other times I have been less honest with myself about.'),
+            speech('That is not a question I will answer directly.') + beat('*A pause that has weight to it.*')) },
+        { label: 'Ask what it cost', full: 'What did it cost? The time you lost control.',
+          hidden: () => trust >= 10,
+          dt: 2, dn: 2,
+          response: () => v(14,
+            speech('A person.') + beat('*He is quiet.*') + speech('Not someone who deserved it. I do not know their name. I made a decision not to find out because it seemed obscene, as if knowing it would be a way of claiming ownership over what I had done.') + beat('*A pause.*') + speech('I carry the not-knowing as part of the cost. It seems appropriate.'),
+            speech('Something permanent.') + beat('*He says it simply.*')) }
+      ]
+    },
+    {
+      label: 'Ask why he chose to survive',
+      full: 'Given all the damage, to yourself and others, why did you choose to survive? Why keep choosing it?',
+      dt: 0, dn: 1,
+      response: () => beat('*He is very still for a moment.*')
+        + speech('That is a question I find I respect.')
+        + beat('*A pause.*')
+        + speech('Most people ask it with an accusation underneath it. You are asking it as if you actually want the answer.')
+        + speech('I will try to give you one that is worth the asking.')
+        + pull('*He shifts slightly in the chair. For the first time tonight he seems to be working out what he actually thinks.*'),
+      subs: [
+        { label: 'Ask if survival felt like a choice', full: 'Did it feel like a choice? Each time.', dt: 1, dn: 1,
+          response: () => v(8,
+            speech('In the early years it did not feel like much of anything. Survival was simply the next thing.') + beat('*A pause.*') + speech('Later it became more deliberate. There were specific periods where I thought about it carefully. Whether to continue. What continuing meant.') + beat('*He looks at you.*') + speech('I kept choosing it. Whether option and choice are the same thing I am still working out. Which is either meaning or habit and I have not always been able to tell the difference.'),
+            speech('Yes. It felt like a choice.') + beat('*A pause.*')) },
+        { label: 'Ask if he deserves to survive', full: 'Do you think you deserve to survive? After everything.', dt: 1, dn: 3,
+          response: () => v(12,
+            beat('*He sits with the question. Genuinely.*') + speech('I stopped asking that a long time ago.') + beat('*A pause.*') + speech('Not because the answer is obviously yes. But because the question assumes a framework I am not certain applies to me. Deserving is a concept built around judgment and consequence that I have largely outlived.') + beat('*He looks at you.*') + speech('The question of whether I deserve to continue is one I have set down. Not resolved. Set down. There is a difference.'),
+            beat('*The candle nearest to him flickers.*') + speech('That is a dangerous question to ask in this room.') + beat('*He says it quietly. Not as a threat. As a fact he wants you to have.*')) },
+        { label: 'Ask what would make survival not worth it', full: 'Is there something that would make it not worth continuing?',
+          hidden: () => trust >= 12,
+          dt: 2, dn: 2,
+          response: () => beat('*A very long silence.*') + speech('I have asked myself that. Many times.') + beat('*A pause.*') + speech('I have not yet arrived at an answer that satisfies me. There are things I told myself would constitute that line. I have watched some of them be crossed without the line holding.') + beat('*He looks at you.*') + speech('I find I keep choosing to continue. In the specific quiet way you make a choice when you are not entirely sure it is the right one but the alternative is a door you are not ready to walk through.') + beat('*A pause.*') + speech('I am not always sure what that says about me. I have stopped requiring it to say something clean.') }
+      ]
+    },
+    {
+      label: 'Challenge the justifications',
+      full: 'People have been hurt. People have died. I want to ask you about the justifications you use for that.',
+      dt: 0, dn: 2,
+      response: () => beat('*He looks at you with an expression that is neither hostile nor welcoming.*')
+        + speech('You are being direct.')
+        + beat('*A pause.*')
+        + speech('I find I prefer that to the version of this question that circles around the point for twenty minutes.')
+        + speech('Ask what you mean to ask.')
+        + pull('*He waits. He is testing whether you will actually follow through.*'),
+      subs: [
+        { label: 'Ask if he has made peace with what he is', full: 'Have you made peace with what you are? The full weight of it.', dt: 1, dn: 1,
+          response: () => v(8,
+            speech('Mostly. Not entirely, and I do not think entirely is available to me.') + beat('*A pause.*') + speech('There are specific things I have not made peace with and probably will not. A person I cannot name. The not-knowing.') + beat('*He looks at the candles.*') + speech('The broad fact of what I am I have made peace with. The details are more complicated.'),
+            speech('That is a complicated question.') + beat('*A pause that does not invite further inquiry.*')) },
+        { label: 'Ask if the people he killed would agree', full: 'The people you have killed. Do you think they would agree with your justifications?', dt: 0, dn: 3,
+          response: () => v(14,
+            speech('No. Probably not.') + beat('*A pause.*') + speech('And I do not think they should. Justifications are for the person making them. The people who are gone are not available to adjudicate my conscience and it would be obscene to require them to.') + beat('*He looks at you.*') + speech('I carry what I have done because I should. Not because carrying it resolves anything. Because it is true.'),
+            v(8, beat('*The candle drops.*') + speech('You are testing something. I am deciding whether I mind.') + beat('*A pause.*') + speech('No. They would not agree.'),
+              beat('*The room changes.*') + beat('*He does not answer. He simply looks at you.*'))) },
+        { label: 'Ask what he would say to them', full: 'If you could say something to them. What would you say.',
+          hidden: () => trust >= 14,
+          dt: 3, dn: 2,
+          response: () => beat('*A very long silence.*') + speech('I would say I am sorry.') + beat('*A pause.*') + speech('Not because it changes anything. It does not. Not because it earns me anything. It earns me nothing.') + beat('*He looks at you.*') + speech('Because it is true. And because I have had a very long time to understand that the truth does not require an audience to be worth saying.') }
+      ]
+    },
+    {
+      label: 'Ask about a specific act',
+      full: 'I want to ask you about something specific. A specific act. Something you think about.',
+      dt: 0, dn: 1,
+      response: () => beat('*He looks at you with an expression you cannot entirely read.*')
+        + speech('That is a more direct approach than most people take.')
+        + beat('*A pause.*')
+        + speech('I find I respect the specificity. I will answer carefully. Ask what you mean to ask.')
+        + pull('*He waits. The candle is steady.*'),
+      subs: [
+        { label: 'Ask if there is one he thinks about most', full: 'Is there one? One death you come back to more than the others.', dt: 1, dn: 2,
+          response: () => v(10,
+            speech('Yes.') + beat('*He says it simply.*') + speech('There is one that was different in its nature. Not different in the sense of worse. Different in that it was not the hunger. The hunger I understand.') + beat('*He looks at you.*') + speech('This one was something else. Rage. Grief. A moment of losing hold of something I thought I had a firm grip on.'),
+            speech('They all have weight. I do not rank them.') + beat('*A pause that closes the subject.*')) },
+        { label: 'Ask what it was if not hunger', full: 'What was it? The thing that drove it, if not hunger.',
+          hidden: () => trust >= 9,
+          dt: 2, dn: 2,
+          response: () => v(12,
+            beat('*A pause. He looks at the candles.*') + speech('There was a man.') + beat('*He says it the way you say something you have been carrying for a long time.*') + speech('A man with authority in his community and in his household. The kind of authority that does not get questioned because it comes from too many directions at once. Religious. Civic. Familial.') + beat('*A pause.*') + speech('He was doing something with that authority that I will not describe in detail.') + beat('*He looks at you.*') + speech('I intervened. The manner of the intervention was not measured. I made a choice in that moment to be what I am in full and I do not regret it.') + beat('*A pause.*') + speech('What I regret is what came after.'),
+            speech('Rage.') + beat('*A pause.*') + speech('I had just lost someone. The person who died had nothing to do with the loss. They were simply there.')) },
+        { label: 'Ask if he regrets it', full: 'Do you regret it? What you did to him.',
+          hidden: () => trust >= 12,
+          dt: 2, dn: 1,
+          response: () => v(14,
+            speech('No.') + beat('*Without hesitation.*') + speech('That is the one I cannot regret. Which is its own kind of problem. What he was doing deserved to end. The manner in which it ended, I cannot regret that either.') + beat('*A pause.*') + speech('What came after. That I regret. Entirely and without qualification.'),
+            speech('That is complicated.') + beat('*He says it and does not continue.*')) },
+        { label: 'Ask what came after', full: 'What came after? You keep saying that.',
+          hidden: () => trust >= 14,
+          dt: 3, dn: 2,
+          response: () => {
+            if (trust >= 16) {
+              return beat('*The longest pause yet.*') + beat('*He looks at the candles for a very long time.*')
+                + speech('There was a girl.')
+                + beat('*He says it simply. The simplicity is the thing that lands.*')
+                + speech('She was fifteen. She was dying. Not because of me, but because of what had happened before I arrived and what the community decided to do about my arrival.')
+                + beat('*A pause.*')
+                + speech('She asked me to save her.')
+                + beat('*He looks at you.*')
+                + speech('I said yes.')
+                + beat('*A very long pause.*')
+                + speech('She was with me for eleven years. I named her Aisling. It is an Irish word. It means dream, or vision.')
+                + beat('*He does not say what happened to her. He does not say her name again.*')
+                + beat('*The candle is very still.*');
+            } else {
+              return speech('Something I do not discuss.') + beat('*He says it with a finality that is different from his other closed answers. This one is not protecting himself. It is protecting something else.*');
+            }
+          }
+        }
+      ]
+    }
+  ]
+},
+
+// Q6: The Family
+{
+  theme: 'Ask about love and those he has made',
+  mains: [
+    {
+      label: 'Ask about turning others',
+      full: 'You are what you are. Have you ever made another like yourself? Turned someone.',
+      dt: 1, dn: 1,
+      response: () => beat('*He looks at you with an expression that means the question has touched something real.*')
+        + speech('The answer is yes. Once.')
+        + beat('*He says it with a finality that closes around the fact like a hand.*')
+        + pull('*He does not offer more. But he did not close the door entirely.*'),
+      subs: [
+        { label: 'Ask if it was only once', full: 'Just once? In all this time.', dt: 1, dn: 1,
+          response: () => v(8,
+            speech('Yes. Once. In all this time.') + beat('*A pause.*') + speech('What I made once, and what happened as a result, was sufficient to make it a line I have not crossed since. Once was enough to understand what it means. What you are taking on. What you are responsible for.'),
+            speech('That is not something I discuss readily.') + beat('*A pause that is firm.*')) },
+        { label: 'Ask why only once', full: 'Why only once? What stopped you?',
+          hidden: () => trust >= 8,
+          dt: 2, dn: 1,
+          response: () => v(12,
+            speech('Because of what happened after.') + beat('*He says it simply.*') + speech('Not what I did. What happened to what I made. Despite everything I tried to do. Despite eleven years of trying to be equal to it.') + beat('*He looks at you.*') + speech('I made something. I was responsible for it. And at the end of it I was not there when it mattered.') + beat('*A pause.*') + speech('I have not trusted myself with that responsibility again.'),
+            speech('Once was enough to understand the responsibility of it. What you make, you are responsible for. I was not equal to that responsibility in the end.')) },
+        { label: 'Ask what the responsibility felt like', full: 'What did that responsibility feel like? Day to day.',
+          hidden: () => trust >= 12,
+          dt: 2, dn: 0,
+          response: () => v(14,
+            beat('*He is quiet for long enough that you think he will not answer.*') + speech('Like being a parent, I imagine. The specific weight of knowing that what you do and what you fail to do shapes something that did not ask to be shaped.') + beat('*A pause.*') + speech('She had not asked for any of it. She asked only for the immediate thing, to not die that night, and I said yes without fully understanding what yes would require.') + beat('*He looks at you.*') + speech('She was extraordinary at it. Faster than I had any right to expect. Braver about it than I was when I was learning.') + beat('*Something moves through his expression.*') + speech('She deserved more time.'),
+            speech('Enormous.') + beat('*He says it and changes the subject.*')) }
+      ]
+    },
+    {
+      label: 'Ask if he has ever loved someone',
+      full: 'Have you loved someone? In all this time.',
+      dt: 1, dn: 1,
+      response: () => beat('*He looks at you with a particular quality of stillness.*')
+        + speech('Yes.')
+        + beat('*Without hesitation. This surprises you.*')
+        + speech('More than once. Over a very long time. It does not become easier.')
+        + beat('*A pause.*')
+        + speech('That is probably not the answer you expected.')
+        + pull('“What did you expect me to say.”'),
+      subs: [
+        { label: 'Ask if love is possible for something like him', full: 'I wondered if it was still possible. For something like you.', dt: 0, dn: 1,
+          response: () => v(8,
+            speech('Yes. Irritatingly so.') + beat('*Something in his expression that might be the ghost of wry.*') + speech('I have occasionally wished it were not. The capacity for it would be considerably more convenient to have lost. It would simplify a number of things.') + beat('*A pause.*') + speech('But no. It is still entirely possible. More intact than I sometimes find comfortable.'),
+            speech('That question contains an assumption I do not accept.') + beat('*A pause.*') + speech('Something like me is still a person.')) },
+        { label: 'Ask who he has loved', full: 'Who have you loved? In all this time.', dt: 1, dn: 2,
+          response: () => v(12,
+            speech('Two people I will tell you about.') + beat('*A pause.*') + speech('One was mortal. A woman I knew for thirty years. I watched her grow old. I had the option to change that and I chose not to. That choice still sits with me.') + beat('*He looks at you.*') + speech('The other was not mortal. Someone I made. Someone I was responsible for.') + beat('*A pause.*') + speech('I loved them differently. The mortal one I loved the way you love something you know you will lose. The other one I loved the way you love something you were supposed to protect.'),
+            speech('Several people. Over a long time.') + beat('*A pause that closes gently.*')) },
+        { label: 'Ask which loss was harder', full: 'Which loss was harder?',
+          hidden: () => trust >= 12 && tension < 12,
+          dt: 2, dn: 2,
+          response: () => v(16,
+            speech('The second one.') + beat('*Without hesitation.*') + speech('With the first I had time to prepare. Thirty years is long enough to understand what is coming. The grief when it comes has been worked on in advance.') + beat('*He looks at the candles.*') + speech('With the second one I did not have time. It was sudden in the way things are sudden when you believed you had more time and find out you were wrong.') + beat('*A pause.*') + speech('I also could not grieve it properly. The first loss I could mourn openly. The second I could not explain to anyone. There is a particular quality of isolation in a grief you cannot share.') + beat('*He looks at you.*') + speech('I have shared it with no one. Until tonight, to some degree.'),
+            speech('They were different kinds of hard. I do not compare them.') + beat('*A pause that is final.*')) }
+      ]
+    },
+    {
+      label: 'Ask about responsibility to those made',
+      full: 'If you have ever made another like yourself, the responsibility of that seems enormous. How do you think about that.',
+      dt: 1, dn: 1,
+      response: () => beat('*He looks at you.*')
+        + speech('You are asking about responsibility before the act itself. Most people want to know first if I have done it.')
+        + beat('*He settles slightly.*')
+        + speech('Yes. I have. Once. The responsibility was not an afterthought.')
+        + pull('“Ask me what you want to know.”'),
+      subs: [
+        { label: 'Ask if he considers himself responsible', full: 'Do you consider yourself fully responsible? For what you made.', dt: 1, dn: 1,
+          response: () => speech('Yes. Completely.') + beat('*Without hesitation.*') + speech('I do not think that is a complicated position. You make something, you are responsible for it. What I made did not ask to be made. She asked only for the most immediate version of survival and I provided something considerably larger without explaining the full scope.') + beat('*He looks at you.*') + speech('The responsibility for that does not diminish with time.') },
+        { label: 'Ask if he fulfilled it', full: 'Did you fulfill it? That responsibility.', dt: 1, dn: 2,
+          response: () => v(14,
+            beat('*The longest pause in this branch.*') + speech('No.') + beat('*Simply. Without qualification.*') + speech('Not in the way that mattered at the end. I was not there. That is the fact. I had been careful, I had taught her well, I had believed the distance between where I was and where she was would not matter.') + beat('*He looks at the candles.*') + speech('I was wrong about that.') + beat('*A pause.*') + speech('Being wrong about that is the thing I have the most difficulty setting down.'),
+            v(8, speech('I tried.') + beat('*He says it with the flatness of someone who knows trying and succeeding are not the same.*'),
+              speech('That is not something I will discuss.') + beat('*A final pause.*'))) },
+        { label: 'Ask what he would have done differently', full: 'If you could do it differently. What would you change.',
+          hidden: () => trust >= 14,
+          dt: 3, dn: 1,
+          response: () => v(16,
+            beat('*A pause.*') + speech('I would have found her sooner.') + beat('*He says it simply.*') + speech('Before the damage. Before the man who caused it had as many years as he had to cause it. I was in that part of the country. I noticed things.') + beat('*A pause.*') + speech('I did not notice the right things soon enough.') + beat('*He looks at you.*') + speech('She was fifteen when I found her on that road. She should have been younger when I found her. Not on a road. Not dying.') + beat('*He says this without drama. The flatness is the thing that lands.*'),
+            speech('I would have been less afraid of what it would cost me.') + beat('*He says it quietly.*')) }
+      ]
+    },
+    {
+      label: 'Ask what family means to him now',
+      full: 'What does family mean to you now? After all of this.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you with an expression that takes a moment to read.*')
+        + speech('That is a question I did not expect.')
+        + beat('*A pause.*')
+        + speech('Family is what you carry forward. Not who is living. Not who you see regularly. What you carry forward.')
+        + pull('“Ask me what you actually want to know.”'),
+      subs: [
+        { label: 'Ask if he still has a family', full: 'Do you still think of yourself as having a family? In any sense.', dt: 1, dn: 0,
+          response: () => v(8,
+            speech('Yes. The people I have lost are still mine. That possession does not end when the person does.') + beat('*A pause.*') + speech('The people who knew you, who were shaped by knowing you and shaped you in return, they remain yours in the sense that the relationship was real and real things do not simply stop.'),
+            speech('Family is a word that does not map cleanly onto my situation.')) },
+        { label: 'Ask who he considers his people', full: 'Who are they? The people you carry forward.', dt: 2, dn: 1,
+          response: () => v(14,
+            beat('*A pause. Long enough that you sense something is being weighed.*') + speech('A sister whose name I have not said aloud in a very long time. Someone I made who deserved more time than I gave her. Someone I watched grow old from a distance.') + beat('*He looks at you.*') + speech('And possibly, at the moment, one other.') + beat('*He does not elaborate. He does not need to.*'),
+            v(12, speech('A sister. Someone I made. Someone I watched grow old.') + beat('*He names the categories without naming the people.*'),
+              speech('The list is shorter than it used to be.') + beat('*A pause.*'))) },
+        { label: 'Ask if he fears adding to the list', full: 'Are you afraid of adding to it? The list.', dt: 1, dn: 1,
+          response: () => v(10,
+            speech('Yes. That is the right word.') + beat('*A pause.*') + speech('Every person I allow to matter is a future loss. I understand that arithmetically in a way that mortal people are largely protected from understanding.') + beat('*He looks at you.*') + speech('The carefulness is its own kind of loss. You manage one kind of damage by incurring a different kind.'),
+            speech('Careful is the word I would use.') + beat('*He says it in a way that suggests careful and afraid mean the same thing and he knows it.*')) },
+        { label: 'Ask if he is allowing you to matter', full: 'Are you allowing me to matter? Is that what is happening in this room.',
+          hidden: () => trust >= 14,
+          dt: 3, dn: 2,
+          response: () => v(16,
+            beat('*A very long pause.*') + speech('I am deciding.') + beat('*Simply.*') + speech('Which is further than most people get. I want you to know that.') + beat('*He looks at you.*') + speech('I find I am still deciding. That is unusual for me at this stage of a conversation.'),
+            beat('*He looks at you for a long moment. Then:*') + speech('Ask me something else.') + beat('*He says it not as a deflection but as an answer.*')) }
+      ]
+    }
+  ]
+},
+
+// Q7: The Power
+{
+  theme: 'Ask about power and what it has cost him',
+  mains: [
+    {
+      label: 'Ask about his maker',
+      full: 'I want to ask about the person who made you. Your maker. What do you know about them.',
+      dt: 0, dn: 1,
+      response: () => beat('*He looks at you with something between careful and resigned.*')
+        + speech('That is a question I have complicated feelings about.')
+        + beat('*A pause.*')
+        + speech('Not because I am protective of them. Because the question of my maker is also a question about me, and I find I have less distance from it than I would like.')
+        + pull('*He waits. The candle flickers once and steadies.*'),
+      subs: [
+        { label: 'Ask if he knew them well', full: 'Did you know them well? Your maker.', dt: 1, dn: 0,
+          response: () => v(8,
+            speech('I knew them the way you know someone who has complete power over a formative period of your existence. Thoroughly and with very little objectivity.') + beat('*A pause.*') + speech('They were old. Considerably older than I am now. The kind of old that has stopped being interested in most things. I was interesting to them for a specific period and then less interesting, and the transition between those two states was instructive.') + beat('*He looks at you.*') + speech('I learned what I wanted to become and what I did not want to become. The second lesson may have been the more valuable one.'),
+            speech('Well enough.') + beat('*He says it with a flatness that closes the subject.*')) },
+        { label: 'Ask what his maker wanted from him', full: 'What did they want from you? When they made you.', dt: 1, dn: 1,
+          response: () => v(10,
+            speech('I am not entirely sure. That uncertainty has bothered me for a long time.') + beat('*A pause.*') + speech('Company, perhaps. Or a student. Or something to outlast them.') + beat('*He looks at you.*') + speech('If that was the purpose, I have spent two centuries deciding whether to fulfill it or refuse it. I am not certain which I have been doing.'),
+            speech('That is not something I have ever fully resolved.') + beat('*A pause.*')) },
+        { label: 'Ask if he has become his maker', full: 'Have you become them? Your maker. After all this time.', dt: 1, dn: 3,
+          response: () => v(14,
+            beat('*A very long pause.*') + speech('In some ways.') + beat('*He says it with the flatness of someone saying something they have been avoiding.*') + speech('In the ways I spent a long time insisting I had not. The patience. The particular quality of distance I keep between myself and most things.') + beat('*He looks at you.*') + speech('What I have tried very deliberately not to become is the thing they were at the end. When interest had replaced feeling and observation had replaced participation.') + beat('*A pause.*') + speech('I do not think I am there. I am less certain than I used to be that I am nowhere near it.'),
+            v(8, beat('*He is quiet.*') + speech('That is a question I find I need to think about before answering.') + beat('*He thinks about it. Then does not answer.*'),
+              beat('*The candle drops.*') + beat('*He looks at you for a very long time.*') + beat('*He does not answer.*'))) }
+      ]
+    },
+    {
+      label: 'Ask about control and power',
+      full: 'I want to ask about power. What you are capable of. How that has shaped you.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you with an expression that is neither flattered nor defensive.*')
+        + speech('That question usually comes earlier. People are generally more interested in what I can do than in what it has cost me.')
+        + beat('*A pause.*')
+        + speech('You have been asking it the other way around all evening.')
+        + pull('*He waits.*'),
+      subs: [
+        { label: 'Ask if he feels powerful', full: 'Do you feel powerful? Is that how you experience what you are.', dt: 0, dn: 1,
+          response: () => v(8,
+            speech('That is a more complicated question than it sounds. Power over what, exactly.') + beat('*A pause.*') + speech('Physically, yes. But the things that have mattered most to me, the things I most wanted to protect or hold onto, I have had very little power over those. Grief does not respond to physical capability.') + beat('*A pause.*') + speech('I am very powerful in ways that have rarely been useful for the things that actually mattered to me.'),
+            speech('Yes in some ways and no in the ones that matter.') + beat('*A pause.*')) },
+        { label: 'Ask what he cannot control', full: 'What can you not control? What is outside your reach.', dt: 2, dn: 0,
+          response: () => v(10,
+            speech('Grief. Memory. The specific quality of absence that certain losses leave.') + beat('*A pause.*') + speech('Those three are entirely outside my reach. The hunger I understand. These I do not.') + beat('*He looks at you.*') + speech('There is something I remember from a road in Ireland that I would give a great deal to remember less clearly. I cannot. I have tried various approaches. None of them work.'),
+            speech('The hunger, occasionally.') + beat('*A pause.*')) },
+        { label: 'Ask if power has cost him something', full: 'Has it cost you something? The power.', dt: 1, dn: 1,
+          response: () => v(12,
+            speech('Everything.') + beat('*He says it quietly. The word is small and final.*') + speech('Not all at once. The way anything real is lost. A little at a time. Over a very long period.') + beat('*He looks at you.*') + speech('The hunger made me powerful. The power required a kind of distance to manage responsibly. The distance over time became its own kind of problem. The problem reshaped me in ways I did not fully notice until I was already reshaped.') + beat('*A pause.*') + speech('That is the cost. Not any specific thing. The gradual compound interest of what it requires to be what I am.'),
+            speech('Most things worth having.') + beat('*Simply.*')) }
+      ]
+    },
+    {
+      label: 'Ask about influence and manipulation',
+      full: 'You have the ability to influence people. To manipulate them. I want to ask about that directly.',
+      dt: 0, dn: 2,
+      response: () => beat('*He looks at you with an expression that is careful and not entirely comfortable.*')
+        + speech('You are being very direct this evening.')
+        + beat('*A pause.*')
+        + speech('I find I have stopped minding it.')
+        + speech('Yes. I have those abilities. The specific mechanics of them I will not describe in detail. But yes.')
+        + pull('“Ask what you actually want to know.”'),
+      subs: [
+        { label: 'Ask if he has ever used it', full: 'Have you used it? Against someone. Deliberately.', dt: 1, dn: 2,
+          response: () => v(10,
+            speech('Yes.') + beat('*A pause.*') + speech('Not frequently. Not casually. But yes, there have been specific occasions where I used what I am to get something I wanted from someone who did not know what I was.') + beat('*He looks at you.*') + speech('The specific quality of guilt that comes from that is different from other kinds of guilt. It is not just the harm done. It is the knowledge that the person could not consent because they did not have the information that would have made consent meaningful.'),
+            speech('That is a word I would push back on slightly.') + beat('*A pause.*')) },
+        { label: 'Ask if he is manipulating you right now', full: 'Are you manipulating me right now? In this room, tonight.', dt: 1, dn: 3,
+          response: () => v(16,
+            beat('*A pause.*') + speech('No.') + beat('*He says it with a particular quality of directness.*') + speech('And I want to be clear about something. I could. That is the honest answer. I could, and you would not necessarily know, and I am not.') + beat('*He looks at you.*') + speech('The fact that I am not is the most honest thing I have said tonight. I find I want this to be real.'),
+            v(8, beat('*He looks at you with what appears to be genuine surprise. Then something shifts.*') + beat('*For the first time in the entire interview he smiles. It does not fully reach his eyes but it is real.*') + speech('What an interesting question to ask in this room.') + beat('*A pause.*') + speech('No. I am not. I find I want this to be a real conversation.'),
+              beat('*The candle goes very low.*') + beat('*He looks at you for a very long time. He does not answer.*'))) },
+        { label: 'Ask how you would know', full: 'How would I know? If you were.',
+          hidden: () => trust >= 10,
+          dt: 2, dn: 1,
+          response: () => speech('You would not. That is the honest answer.') + beat('*He looks at you.*') + speech('You would feel entirely certain you were thinking your own thoughts. And you would be right about that, mostly. And also possibly wrong, in specific ways.') + beat('*A pause.*') + speech('The only protection available to you is this: I find I do not want to. Tonight. With you. That is the best protection I can offer.') }
+      ]
+    },
+    {
+      label: 'Ask about what he has done with his time',
+      full: 'How have you actually spent it? Two centuries. You, personally.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you with something that might be the ghost of amused.*')
+        + speech('Most people who ask it want to know about history. What I witnessed. Who I knew.')
+        + beat('*A pause.*')
+        + speech('You mean something else.')
+        + pull('“What do you mean.”'),
+      subs: [
+        { label: 'Ask how he has spent two centuries', full: 'Cities. Solitude. What did you actually do.', dt: 1, dn: 0,
+          response: () => v(8,
+            speech('Cities, mainly. The anonymity of them. Periods of solitude, more of those than I expected. Long stretches where I withdrew and tried to understand what I was becoming.') + beat('*A pause.*') + speech('Periods of trying to be among people. More difficult than the solitude. The specific challenge of being present with people you cannot be fully honest with.') + beat('*He looks at you.*') + speech('Reading. A great deal of reading. I find I am still curious. That surprises me occasionally.'),
+            speech('Moving, mostly.') + beat('*A pause.*')) },
+        { label: 'Ask if he tried to do good', full: 'Have you tried to use what you are for something good?', dt: 1, dn: 1,
+          response: () => v(10,
+            speech('Yes. Not consistently. Not always successfully. But yes.') + beat('*He looks at you.*') + speech('There have been specific interventions. Times when what I am allowed me to do something a mortal person could not have done safely or quickly enough.') + beat('*A pause.*') + speech('I do not talk about them in detail. Partly because specificity would require naming people who did not ask to be named. Partly because tallying good acts as a counterweight to damage is a kind of arithmetic I do not trust.'),
+            speech('That is a complicated frame.') + beat('*A pause.*')) },
+        { label: 'Ask if doing good absolves anything', full: 'Does it? Doing good with it. Does that absolve anything.', dt: 0, dn: 2,
+          response: () => v(12,
+            speech('No.') + beat('*Flatly. Without equivocation.*') + speech('Good things done do not cancel harm caused. That is not how any of this works. Anyone who tells you otherwise is doing arithmetic to avoid feeling things.') + beat('*He looks at you.*') + speech('The good I have done is its own thing. It exists alongside the damage. It does not replace it.'),
+            speech('I do not think in those terms.') + beat('*A pause.*')) },
+        { label: 'Ask what he is most proud of', full: 'In all of it. What are you most proud of.',
+          hidden: () => trust >= 12,
+          dt: 2, dn: 0,
+          response: () => v(16,
+            speech('Eleven years.') + beat('*Two words. No elaboration. No context.*') + beat('*The player who has been paying attention understands exactly what he means.*') + beat('*The candle is very still.*'),
+            speech('Something I made that lasted longer than I had any right to expect.') + beat('*Simply. He does not say what it was.*')) }
+      ]
+    }
+  ]
+},
+
+// Q8: The Society and The Faith
+{
+  theme: 'Ask about God and what he believes',
+  mains: [
+    {
+      label: 'Ask about his relationship with the world',
+      full: 'After two centuries of watching it. What is it like to have that much history behind you.',
+      dt: 1, dn: 0,
+      response: () => beat('*He is quiet for a moment.*')
+        + speech('That question contains the assumption that history accumulates in a useful way.')
+        + beat('*A pause.*')
+        + speech('Sometimes that is true. Sometimes what accumulates is not understanding but a kind of weight that makes it harder to be fully inside any particular moment.')
+        + speech('Both are true for me simultaneously.')
+        + pull('“Ask what you want to know about it.”'),
+      subs: [
+        { label: 'Ask how he moved through history', full: 'How have you moved through it? As something actually present in it.', dt: 1, dn: 0,
+          response: () => v(8,
+            speech('Not as a spectator. That is the important distinction. I was inside it, subject to it, shaped by it.') + beat('*A pause.*') + speech('What the duration gives you is pattern recognition. You begin to understand how things move. How events that seem unprecedented are usually not.') + beat('*He looks at you.*') + speech('What it takes from you is the ability to be fully inside any single moment. When you know how this tends to go, it is difficult to experience the present with the same quality of presence that people have when the future is genuinely unknown.'),
+            speech('Carefully.') + beat('*A pause.*')) },
+        { label: 'Ask if distance gave him perspective', full: 'Has the distance given you perspective? Being outside it the way you are.', dt: 1, dn: 1,
+          response: () => v(10,
+            speech('Yes. And it has also taken something.') + beat('*He looks at you.*') + speech('Perspective without the ability to be fully inside something is its own kind of limitation. I can see the shape of things clearly. What I have lost is the experience of being genuinely surprised by any of it. Of feeling the specific weight of a moment before I know how it ends.') + beat('*A pause.*') + speech('Mortals have that. I can remember it. I cannot replicate it.'),
+            speech('Some.') + beat('*A pause.*')) },
+        { label: 'Ask if he believes in anything', full: 'Do you believe in anything? After all of this.', dt: 1, dn: 1,
+          response: () => v(12,
+            speech('Yes. Though not in the forms I started with.') + beat('*He looks at the candles.*') + speech('I believe in the persistence of certain things. Grief outlasting its cause. Kindness appearing in situations that do not call for it. The specific quality of attention that one person can give another when they are genuinely trying.') + beat('*A pause.*') + speech('I believe those things are real in a way that does not require a divine framework to sustain them.'),
+            speech('Less than I used to.') + beat('*A pause.*')) }
+      ]
+    },
+    {
+      label: 'Ask about God directly',
+      full: 'I want to ask about faith. Specifically. Do you believe in God.',
+      dt: 0, dn: 1,
+      response: () => beat('*He looks at you with an expression that is neither surprised nor offended.*')
+        + speech('That question comes up eventually in most conversations of any depth. I have been waiting for it.')
+        + beat('*A pause.*')
+        + speech('The answer is complicated. Not because I want it to be. Because it genuinely is.')
+        + pull('“Ask me what you actually want to know.”'),
+      subs: [
+        { label: 'Ask if he believes in God', full: 'Do you? Believe in God.', dt: 0, dn: 1,
+          response: () => v(8,
+            speech('I stopped believing. Not in an abstract drift over time but in a specific moment. Something happened that made the framework I had been working with seem not just insufficient but actively dishonest.') + beat('*He looks at the candles.*') + speech('I will not describe that moment yet. But it was specific. It had a location and a season and a particular quality of light.') + beat('*A pause.*') + speech('What I am left with is the absence of the belief rather than a replacement for it.'),
+            speech('I do not know. I have stopped expecting to find out.') + beat('*A pause.*')) },
+        { label: 'Ask what took his faith', full: 'What was it? The specific thing that took it.', dt: 1, dn: 2,
+          response: () => v(14,
+            speech('A man.') + beat('*He says it quietly.*') + speech('A man with authority in the Church and in the civic structure of his community. He was doing something with that authority. Something the Church’s framework was supposed to prevent.') + beat('*He looks at the candles.*') + speech('Not only did the framework fail to prevent it, when I removed the man, that same framework was turned against the person I was trying to protect.') + beat('*A pause.*') + speech('The institution that was supposed to represent divine order used its power to hunt someone who had done nothing wrong. That is what took my faith. A specific event. A specific girl. A specific institutional response.'),
+            v(8, speech('Something specific happened. A man with authority in a religious community using that authority in a way the community then protected. And then using that same authority to harm someone who had done nothing wrong.') + beat('*A pause.*'),
+              speech('Experience took it.') + beat('*Simply.*'))) },
+        { label: 'Ask if he has ever prayed since', full: 'Have you prayed since? After losing the faith.', dt: () => trust >= 12 ? 3 : 2, dn: 0,
+          response: () => v(12,
+            speech('Yes. Sometimes.') + beat('*A pause.*') + speech('Not to God specifically. Not to anything I can name. More as a habit that survived the belief that originally produced it. There is something about the specific posture of prayer that I find I still need.') + beat('*He looks at the candles.*') + speech('There is a prayer I say occasionally. In Irish. From before.') + beat('*A pause. Then quietly:*') + speech('Ná tréig mé.') + beat('*He does not translate it. He does not explain it.*'),
+            speech('No.') + beat('*A pause.*')) }
+      ]
+    },
+    {
+      label: 'Ask about what he has witnessed',
+      full: 'Two centuries of history. What does that do to a person.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you with something that might be the ghost of wry.*')
+        + speech('Most people ask this expecting something impressive. A list of historical figures I have met.')
+        + beat('*A pause.*')
+        + speech('What it has actually done to me is considerably less dramatic and considerably more permanent.')
+        + pull('“What do you want to know.”'),
+      subs: [
+        { label: 'Ask what history has taught him', full: 'What has it taught you? All of it.', dt: 1, dn: 0,
+          response: () => v(8,
+            speech('That people are capable of extraordinary things in both directions. That has not changed in two centuries.') + beat('*A pause.*') + speech('That most of what gets called history is the story of structures rather than people. The individuals inside those structures are more interesting and considerably less remembered.') + beat('*He looks at you.*') + speech('That grief is the most consistent feature of human experience across all the time I have observed. People grieve in every era, in every culture. The specific content changes. The fact of it does not.'),
+            speech('More than I wanted to know.') + beat('*A pause.*')) },
+        { label: 'Ask if anything surprised him', full: 'Has anything surprised you? In all of it.', dt: () => trust >= 14 ? 3 : 2, dn: 0,
+          response: () => v(14,
+            speech('Yes.') + beat('*A pause.*') + speech('Grace in situations that do not call for it. Kindness with no survival advantage. The specific quality of attention that some people are capable of that seems to exceed what any reasonable accounting of self-interest would produce.') + beat('*He looks at you.*') + speech('And this conversation. The specific quality of your attention tonight. I did not expect that.') + beat('*He says it simply. As a fact he has noticed and decided to name.*'),
+            v(12, speech('Grace, mostly. The specific instances of it that appear in situations that do not call for it. I find those harder to explain than the darkness.'),
+              speech('Occasionally.') + beat('*A pause.*'))) },
+        { label: 'Ask if he has hope for the world', full: 'Do you have hope for it? After everything you have seen.', dt: 1, dn: 0,
+          response: () => v(10,
+            beat('*A long pause.*') + speech('Yes.') + beat('*Quietly.*') + speech('In the way that someone has hope when they have seen enough to know better and persist anyway. That is the only kind of hope I find credible at this point.') + beat('*He looks at the candles.*') + speech('The darkness I have seen is real. The grace I have seen is also real. I find I am still here. That probably says something about hope.'),
+            speech('I work on it.') + beat('*A pause.*')) }
+      ]
+    },
+    {
+      label: 'Ask the faith question at its sharpest',
+      full: 'If this world has no plan for anything, what does it mean to keep going? What is the point of continuing.',
+      dt: 0, dn: 2,
+      response: () => beat('*He looks at you.*')
+        + speech('You are asking the question I have been asking myself for two centuries.')
+        + beat('*A pause.*')
+        + speech('I do not have a clean answer.')
+        + pull('“Ask me what you want to know.”'),
+      subs: [
+        { label: 'Ask what it means to keep living', full: 'What does it mean? Practically. To keep living when you believe the world has no plan.', dt: 0, dn: 2,
+          response: () => v(12,
+            speech('I want to push back on the word godless first.') + beat('*A pause.*') + speech('I do not know if the world is godless. What I know is that it does not appear to operate according to any benevolent plan I can identify. Those are different statements.') + beat('*He looks at you.*') + speech('A world without a plan is not the same as a world without meaning. Meaning is something you make rather than something you find. I have been making it, imperfectly, for a very long time.'),
+            speech('You find reasons.') + beat('*Flatly.*')) },
+        { label: 'Ask if existence without meaning is enough', full: 'Is it enough? Making meaning rather than finding it. Is that actually sufficient.', dt: 1, dn: 2,
+          response: () => v(14,
+            speech('Some days yes. Some days no.') + beat('*He looks at you.*') + speech('The days it is sufficient are the days I am genuinely inside something. A conversation. A book. A specific quality of light.') + beat('*A pause.*') + speech('The days it is not are the days I am outside everything. Watching rather than inside. Those days the made meaning feels thin.'),
+            speech('It has to be.') + beat('*A pause.*')) },
+        { label: 'Ask what his meaning is right now', full: 'What is it right now? Your meaning. Tonight.',
+          hidden: () => trust >= 12,
+          dt: 2, dn: 1,
+          response: () => v(16,
+            beat('*A very long pause.*') + speech('This conversation.') + beat('*Simply.*') + speech('Which is either sad or hopeful and I find I am not certain which. Possibly both.') + beat('*A pause.*') + speech('I have not had a conversation I wanted to continue for a considerable amount of time. I find I want to continue this one. That is not nothing.'),
+            beat('*He looks at you in a way that suggests the answer has something to do with the room he is currently in.*') + speech('I am still working on that.') + beat('*A pause.*')) },
+        { label: 'Ask if he is afraid of what comes after', full: 'Are you afraid of it? What comes after. For something like you.',
+          hidden: () => trust >= 14,
+          dt: 3, dn: 1,
+          response: () => speech('Yes.') + beat('*Simply.*') + speech('I do not know what comes after for something like me. The usual frameworks do not obviously apply.') + beat('*He looks at the candles.*') + speech('I find I am more afraid of that than I expected to be. Which surprises me. After all this time the unknown still has the power to unsettle me.') + beat('*A pause.*') + speech('I find I am grateful for that rather than troubled by it. It means something in me is still paying attention. Still capable of being unsettled by things it does not understand.') + beat('*He looks at you.*') + speech('That seems worth preserving.') }
+      ]
+    }
+  ]
+},
+
+// Q9: The Regret and The Warning
+{
+  theme: 'Ask about regret',
+  mains: [
+    {
+      label: 'Ask about regret carefully',
+      full: 'I want to ask about regret. Not generally. Specifically. What do you carry.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you with an expression you have not seen before. Something that is not quite open and not quite closed.*')
+        + speech('That is a question I have been waiting for this interview to find its way to.')
+        + pull('“Ask me what you want to know.”'),
+      subs: [
+        { label: 'Ask what he regrets most', full: 'What is it? The thing you regret most.', dt: 1, dn: 1,
+          response: () => v(12,
+            beat('*A very long pause.*') + speech('Something I did not say.') + beat('*Simply.*') + speech('There was someone I was responsible for. Someone I cared about in a way that I did not, at the time, fully allow myself to acknowledge. Because acknowledging it would have required acknowledging how much there was to lose.') + beat('*He looks at the candles.*') + speech('I did not say the things I should have said while there was still time to say them. I have had a considerable amount of time to understand that the economy of withheld feeling is a false one.'),
+            speech('The things everyone regrets. Compressed across a much longer timeline.') + beat('*A pause.*')) },
+        { label: 'Ask if regret serves any purpose', full: 'Does it serve any purpose? The regret.', dt: 2, dn: 0,
+          response: () => v(10,
+            speech('Yes. A specific purpose.') + beat('*He looks at you.*') + speech('It keeps the losses from becoming abstract. Without regret the people become memories. Memories become stories. Stories become something you can tell without feeling it. The regret prevents that flattening.') + beat('*A pause.*') + speech('The people I have lost deserve to remain specific. To remain people rather than events. The regret is what keeps them that way.'),
+            speech('I have not found a better alternative.') + beat('*A pause.*')) },
+        { label: 'Ask if he has forgiven himself for anything', full: 'Have you? Forgiven yourself. For any of it.',
+          hidden: () => trust >= 12,
+          dt: 2, dn: 1,
+          response: () => v(16,
+            speech('Some things. Yes.') + beat('*He looks at you.*') + speech('The small failures. The ordinary lapses of judgment and patience. Those I have mostly released.') + beat('*A pause.*') + speech('The large one I carry because I think I should. Not as punishment. Because the weight of it is a form of fidelity to what it cost.') + beat('*He looks at the candles.*') + speech('She deserved someone who was fully present. I was mostly present. The difference between those two things was the difference that mattered at the end.') + beat('*A pause.*') + speech('I do not think I will forgive myself for that. I do not think I am supposed to.'),
+            speech('I am working on it.') + beat('*He says it without conviction.*')) }
+      ]
+    },
+    {
+      label: 'Ask the sharpest version of regret',
+      full: 'Is it your humanity you grieve? Or is it the loss of the ability to be surprised by life.',
+      dt: 1, dn: 2,
+      response: () => v(14,
+        beat('*He stops.*') + beat('*He looks at you for a very long time.*') + speech('That is the most accurate question anyone has asked me tonight.') + beat('*A pause.*') + speech('Both. But the surprise more than I expected.') + beat('*He looks at the candles.*') + speech('Humanity I can remember. The memory is precise and detailed. Surprise requires the present tense. You cannot remember being surprised in the same way you remember warmth. The quality of surprise is inseparable from not knowing it is coming.') + beat('*He looks at you.*') + speech('What I miss most is the not knowing. The future being genuinely open.')
+        + pull('“Ask me something else.”'),
+        v(8, speech('Both.') + beat('*He says it without elaboration.*'),
+          beat('*The candle flickers.*') + speech('Where did that come from.') + beat('*He says it as a genuine question. Something in it reached him.*'))),
+      subs: [
+        { label: 'Ask what the last thing was that surprised him', full: 'What was it? The last thing that genuinely surprised you.',
+          hidden: () => trust >= 14,
+          dt: 3, dn: 1,
+          response: () => v(16,
+            beat('*A very long silence.*') + speech('This conversation.') + beat('*He looks at you.*') + speech('You. The specific quality of your attention. The questions you chose and the way you chose them.') + beat('*A pause.*') + speech('I have had a very long time to become difficult to surprise. You have managed it.'),
+            speech('Something recent. I will not be more specific than that.') + beat('*A pause.*')) },
+        { label: 'Ask if the interview has given him anything', full: 'Has it? This interview. Has it given you something.',
+          hidden: () => trust >= 16,
+          dt: 3, dn: 0,
+          response: () => beat('*A very long silence.*') + speech('Yes.') + beat('*Simply. The honesty of it is total.*') + speech('I did not expect that.') + beat('*A pause.*') + speech('I agreed to this for reasons I described early on. What I did not expect was to find that the interview gave something back.') + beat('*He looks at the candles.*') + speech('I find I am glad you came.') + beat('*The candle steadies. Something in the room settles.*') }
+      ]
+    },
+    {
+      label: 'Ask about the interview itself',
+      full: 'I want to ask about this. Tonight. What this has been for you.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you.*')
+        + speech('That is an unusual question to ask toward the end of an interview.')
+        + beat('*A pause.*')
+        + speech('Most journalists do not ask what the interview was like for the person being interviewed.')
+        + pull('“Ask what you want to know.”'),
+      subs: [
+        { label: 'Ask if it has been what he expected', full: 'Has it been what you expected? Tonight.', dt: 1, dn: 0,
+          response: () => v(10,
+            speech('No. In specific ways I did not anticipate.') + beat('*He looks at the candles.*') + speech('I expected to be more guarded than I have been. Something about the specific sequence of your questions made the guarding feel like more effort than it was worth.') + beat('*A pause.*') + speech('I do not know if that is a compliment to you or a commentary on my own current state. Possibly both.'),
+            speech('More or less.') + beat('*A pause.*')) },
+        { label: 'Ask what he will do with having said all of this', full: 'What will you do with it? Having said all of this out loud.', dt: 1, dn: 1,
+          response: () => v(12,
+            speech('I do not know.') + beat('*Simply.*') + speech('I have not said most of this before. The saying of it changes something. I am not certain yet what it changes.') + beat('*He looks at the candles.*') + speech('There is a particular quality to things said aloud versus things carried silently. The saying makes them more real in one sense and releases them in another.') + beat('*A pause.*') + speech('I do not think I regret saying it.'),
+            speech('That remains to be seen.') + beat('*A pause.*')) },
+        { label: 'Ask if he is glad he agreed', full: 'Are you glad? That you agreed to this.', dt: 2, dn: 0,
+          response: () => v(14,
+            speech('Yes.') + beat('*Without hesitation. The most unguarded answer he has given all night.*'),
+            v(8, speech('I think so.') + beat('*He says it with the quality of someone who means it but will not overcommit.*'),
+              speech('The jury is still out on that.') + beat('*A pause.*'))) },
+        { label: 'Ask if Aisling would think less of him', full: 'I want to ask you something. About the girl you described. Aisling. Do you think she would think less of you for what you have said tonight.',
+          hidden: () => trust >= 14 && tension >= 14,
+          dt: 0, dn: 4,
+          response: () => {
+            deathTrigger = true;
+            return beat('*He goes very still.*')
+              + beat('*Not the stillness of consideration. A different kind entirely.*')
+              + beat('*The candle does not flicker. It simply dims.*')
+              + beat('*A very long silence.*')
+              + speech('How do you know that name.')
+              + beat('*He does not wait for an answer.*')
+              + beat('*The room changes.*');
+          }
+        }
+      ]
+    },
+    {
+      label: 'The question that cannot be taken back',
+      full: 'Is this penance or poison? Are you doing this because you need to confess, or because you want to infect me with the weight of it.',
+      hidden: () => trust >= 14,
+      dt: 0, dn: 4,
+      response: () => v(18,
+        beat('*He is completely still for a moment.*')
+        + beat('*Then something unexpected happens. He laughs.*')
+        + beat('*Not with cruelty. Not with performance. With genuine recognition.*')
+        + speech('That is the first genuinely dangerous question you have asked me.')
+        + beat('*A pause.*')
+        + speech('I find I respect it enormously.')
+        + beat('*He looks at you.*')
+        + speech('Both. That is the answer. It is always both. Every confession is also an infection. Every act of honesty about damage is also a way of sharing it.')
+        + beat('*A pause.*')
+        + speech('The question is whether what you carry out of this room is worth the weight of it. I believe it is.')
+        + pull('“Ask me the last thing.”'),
+        beat('*He looks at you for a very long time.*')
+        + speech('You have been very careful all evening.')
+        + beat('*A pause.*')
+        + speech('That question was not careful. I am deciding how I feel about that.')
+        + beat('*The tension rises.*')),
+      subs: [
+        { label: 'Ask if he expected you to leave unchanged', full: 'Did you expect me to leave here unchanged?', dt: 3, dn: 2,
+          response: () => v(16,
+            speech('No.') + beat('*Simply.*') + speech('I want to be honest about what that means and what it does not mean. It does not mean I intended harm. It means genuine conversations leave marks.') + beat('*He looks at you.*') + speech('What you carry out of this room is yours. I did not put it there against your will. Every question was a choice.'),
+            speech('That is an interesting assumption.') + beat('*He watches you carefully.*')) },
+        { label: 'Tell him you are not afraid', full: 'I want you to know something. I am not afraid of you.', dt: 2, dn: -2,
+          response: () => v(18,
+            speech('I know.') + beat('*A pause.*') + speech('That is either wisdom or a failure of imagination and I find I hope it is the former.') + beat('*Something in his expression.*') + speech('I find I am glad of it. The not being afraid made this conversation possible in a way that fear would not have.'),
+            speech('You should be.') + beat('*Gently. Not as a threat. As a fact he finds he wants you to have.*')) },
+        { label: 'Ask him to say her name', full: 'There is someone you have been carrying through this entire interview without naming. I want to ask you to say her name.',
+          hidden: () => trust >= 18,
+          dt: 2, dn: 0,
+          response: () => {
+            aislingNamed = true;
+            return beat('*The longest silence in the interview.*')
+              + beat('*The candle is very still.*')
+              + beat('*He looks at you.*')
+              + beat('*Another silence.*')
+              + speech('Aisling.')
+              + beat('*Nothing else. Just the name.*')
+              + beat('*He says it the way you say something you have been carrying in silence for a very long time.*')
+              + beat('*The room is completely quiet.*')
+              + beat('*You understand without being told that no one else has ever heard him say it.*');
+          }
+        }
+      ]
+    }
+  ]
+},
+
+// Q10: The Conclusion
+{
+  theme: 'Ask how the interview ends',
+  mains: [
+    {
+      label: 'Ask if you can leave',
+      full: 'I want to ask you something simple. Are you going to let me leave.',
+      dt: 0, dn: 0,
+      response: () => v(14,
+        beat('*He looks at you for a moment.*') + speech('Yes.') + beat('*Without hesitation.*') + speech('The door is open. It has been open for some time.'),
+        v(8, beat('*A pause before the answer. Long enough that you feel it.*') + speech('Yes.') + beat('*The pause before the yes is the part you will think about later.*'),
+          beat('*The candle dims.*'))),
+      subs: [
+        { label: 'Ask if you will see him again', full: 'Will I see you again?', dt: 1, dn: 0,
+          response: () => v(14,
+            speech('Perhaps. If you want to.') + beat('*A pause.*') + speech('The door works in both directions. I want you to know that.') + beat('*A beat.*') + speech('It has been a long time since I said that to anyone.'),
+            v(8, speech('That depends on several things.') + beat('*A pause.*'),
+              beat('*This question is not available in this version of the room.*'))) }
+      ]
+    },
+    {
+      label: 'Ask what happens now',
+      full: 'What happens now? After tonight.',
+      dt: 1, dn: 0,
+      response: () => beat('*He looks at you.*')
+        + speech('That is a question with several possible answers depending on what you mean by it.')
+        + pull('*He waits.*'),
+      subs: [
+        { label: 'Ask what he will do after you leave', full: 'You. What will you do after I leave.', dt: 1, dn: 0,
+          response: () => v(14,
+            speech('Continue. As I always have.') + beat('*A pause.*') + speech('Though I find tonight has shifted something slightly. I am not certain yet what it has shifted.') + beat('*He looks at you.*') + speech('I will have time to find out. A considerable amount of time.'),
+            v(8, speech('What I always do.') + beat('*A pause.*'), speech('That is not your concern.') + beat('*A pause.*'))) },
+        { label: 'Ask what you should do with what he told you', full: 'What should I do with it? Everything you have told me.', dt: 1, dn: 1,
+          response: () => v(14,
+            speech('Write it carefully.') + beat('*A pause.*') + speech('Give it the weight it deserves. Not more. Not less.') + beat('*He looks at the candles.*') + speech('There is a version of this story that is about what I am. The hunger. The centuries. That story is true and it is not the story.') + beat('*A pause.*') + speech('The story is the person inside all of that. If you write that story, write it so the person is visible.') + beat('*A beat.*') + speech('That is all I ask.'),
+            v(8, speech('That is your job. Not mine.') + beat('*A pause.*'), speech('I have not decided whether you should do anything.') + beat('*A pause.*'))) },
+        { label: 'Ask if he trusts you', full: 'Do you trust me? With this.',
+          hidden: () => trust >= 14,
+          dt: 2, dn: 0,
+          response: () => v(18,
+            speech('Yes.') + beat('*A pause.*') + speech('Which surprises me. I want you to know that it surprises me.') + beat('*A pause.*') + speech('I do not trust easily. The fact that I find I trust you with this is not something I take lightly.') + beat('*A beat.*') + speech('Write it well.'),
+            speech('More than I expected to.') + beat('*Simply.*')) }
+      ]
+    },
+    {
+      label: 'Say something instead of asking',
+      full: 'Thank you. For tonight. For speaking to me.',
+      dt: 1, dn: -1,
+      response: () => v(14,
+        beat('*He nods once. Something in the nod that is more than acknowledgment.*') + speech('Thank you for the questions.') + beat('*A pause.*') + speech('The ones that were careful and the one that was not.') + beat('*He looks at you.*') + speech('Both kinds were necessary.'),
+        v(8, beat('*He accepts it without responding. A slight nod.*'), speech('Goodnight.') + beat('*The door opens.*'))),
+      subs: [
+        { label: 'Tell him what this meant to you', full: 'I want to tell you something. This meant something to me. Tonight.', dt: 2, dn: 0,
+          response: () => v(16,
+            speech('I know.') + beat('*A pause.*') + speech('I could tell. That is, in part, why you are still here.') + beat('*Something in his expression that is the closest he has come all evening to warmth.*') + speech('It meant something to me as well.'),
+            v(10, speech('I am glad.') + beat('*Simply.*'), speech('Goodnight.') + beat('*The door opens.*'))) },
+        { label: 'Say nothing. Just stand to leave.', full: '[You say nothing. You simply stand.]',
+          hidden: () => trust >= 14,
+          dt: 2, dn: -2,
+          response: () => beat('*He stands when you do.*') + beat('*He crosses to the door and opens it himself. Does not say anything.*') + beat('*The silence is not cold. It is the silence of something complete. Something that does not need to be spoken because it has already been said.*') + beat('*You leave.*') }
+      ]
+    },
+    {
+      label: 'Ask the final question',
+      full: 'The girl. Aisling. Do you think she would have liked me.',
+      hidden: () => trust >= 18 && aislingNamed,
+      dt: 2, dn: 0,
+      response: () => beat('*He is very still for a moment.*')
+        + beat('*The candle is very still.*')
+        + speech('Yes.')
+        + beat('*A pause.*')
+        + speech('I think she would have.')
+        + beat('*He looks at you with an expression you have not seen on him before.*')
+        + speech('She had very good judgment about people. Better than mine at the time.')
+        + beat('*A pause.*')
+        + speech('She would have asked better questions than you did in the first hour. She always went straight to the thing.')
+        + beat('*Something that might be a smile. The realest one you have seen all evening.*')
+        + speech('And then she would have stayed for the rest of it anyway.')
+        + beat('*He opens the door.*')
+        + speech('Come back sometime. If you want to. There is more.')
+        + beat('*A pause.*')
+        + speech('There is one more thing.'),
+      subs: [
+        { label: 'Ask what you should call him', full: 'Before I go. What should I call you.', dt: 1, dn: 0,
+          response: () => speech('Soren.') + beat('*A pause.*') + speech('For now.') + beat('*He looks at you.*') + speech('Perhaps eventually something else.') + beat('*He does not say what the something else is. You understand that the something else is a door that is not yet open. That it might open.') }
+      ]
+    }
+  ]
+}
+
+]; // end QUESTIONS
+
+// ─── ENDING TEXT ─────────────────────────────────────────────────
+
+function getEnding() {
+  if (deathTrigger) return 'death';
+  if (trust >= 18 && aislingNamed) return 'trust';
+  if (trust >= 20 && tension < 10 && aislingNamed) return 'offer';
+  if (trust >= 14 && tension < 12) return 'changed';
+  if (trust >= 14 && tension >= 12) return 'narrow';
+  if (trust >= 8 && tension < 10) return 'safe';
+  if (trust >= 8 && tension >= 10) return 'warning';
+  return 'dark';
+}
+
+const ENDINGS = {
+  offer: {
+    name: 'The Offer',
+    body: () => '<p class="ending-text">He is at the open door.</p>' +
+      '<p class="ending-text">He pauses. Something changes in the quality of his stillness.</p>' +
+      speech('There is one more thing I want to ask you. Before you go.') +
+      beat('*A pause.*') +
+      speech('You could leave tonight as you are. With the story. With everything this room gave you. That is not a small thing.') +
+      beat('*He looks at you with the full weight of two centuries behind his eyes.*') +
+      speech('Or you could stay.') +
+      '<p class="ending-text" style="margin-top:1rem">He does not elaborate. He does not need to. You understand exactly what he is offering and exactly what it would cost.</p>' +
+      '<p class="ending-text">The door is open either way.</p>'
+  },
+  trust: {
+    name: 'The Trust Ending',
+    body: () => '<p class="ending-text">He opens the door himself.</p>' +
+      '<p class="ending-text">You walk out into the night and the cold arrives immediately, particular and complete.</p>' +
+      '<p class="ending-text">You write the story. Not immediately. You sit with it for a week first. Then you write it in one sitting, from memory, at three in the morning.</p>' +
+      '<p class="ending-text">It is published.</p>' +
+      '<p class="ending-text">People read it and something happens to them while they read it that they do not have words for afterward.</p>' +
+      '<p class="ending-text">You receive a letter, some months later. No return address. No signature.</p>' +
+      '<p class="ending-text">It says: <em>you wrote it carefully. Thank you.</em></p>' +
+      '<p class="ending-text">You go back.</p>'
+  },
+  changed: {
+    name: 'The Changed Ending',
+    body: () => '<p class="ending-text">The door opens when you approach it.</p>' +
+      '<p class="ending-text">You leave. The night air is different than it was when you arrived. Not threatening. Just different. Sharper. More present.</p>' +
+      '<p class="ending-text">You write the story in one sitting. It is the best thing you have ever written. You are not entirely sure how you wrote it.</p>' +
+      '<p class="ending-text">The story is published.</p>' +
+      '<p class="ending-text">You do not go back.</p>' +
+      '<p class="ending-text">You think about going back.</p>'
+  },
+  narrow: {
+    name: 'The Narrow Escape',
+    body: () => '<p class="ending-text">He says yes. The pause before he says it is very long.</p>' +
+      '<p class="ending-text">You leave quickly. You do not look back.</p>' +
+      '<p class="ending-text">You write the story. Some of it. There are parts you leave out and you are not entirely sure why. Something about certain sections feels like it should not be printed.</p>' +
+      '<p class="ending-text">The story you publish is very good. It is not the whole story.</p>' +
+      '<p class="ending-text">You never go back.</p>'
+  },
+  safe: {
+    name: 'The Safe Exit',
+    body: () => '<p class="ending-text">You leave with a good interview.</p>' +
+      '<p class="ending-text">More than most people would get. You know that. You also know, walking down the street, that there was more in that room that you did not reach.</p>' +
+      '<p class="ending-text">You write the story. It is very good. It is not extraordinary.</p>' +
+      '<p class="ending-text">You think about going back and asking the right questions.</p>' +
+      '<p class="ending-text">You do not.</p>'
+  },
+  warning: {
+    name: 'The Warning',
+    body: () => '<p class="ending-text">You leave.</p>' +
+      '<p class="ending-text">The night air hits you and something in you is very glad to be outside.</p>' +
+      '<p class="ending-text">You write the story. It is excellent. The best thing you have written in years. You know it and you feel, strangely, that you should not publish it.</p>' +
+      '<p class="ending-text">You sit with it for three weeks. Then a month. Then two.</p>' +
+      '<p class="ending-text">You never submit it.</p>'
+  },
+  dark: {
+    name: 'The Dark Ending',
+    body: () => {
+      // Kill all candles
+      setTimeout(() => {
+        document.querySelectorAll('.c-flame').forEach(f => { f.style.opacity = '0'; f.style.transition = 'opacity 3s ease'; });
+        document.getElementById('roomBg').style.background = '#000';
+        document.getElementById('roomBg').style.transition = 'background 3s ease';
+      }, 500);
+      return '<p class="ending-text">The candles go out.</p>' +
+        '<p class="ending-text">All of them. All at once. Not one by one.</p>' +
+        '<p class="speech">You asked the wrong things. Or perhaps you asked them the wrong way."</p>' +
+        beat('*A pause.*') +
+        '<p class="speech">The interview is over."</p>' +
+        '<p class="ending-text" style="margin-top:1.5rem">The door does not open.</p>'
+    }
+  },
+  death: {
+    name: '',
+    body: () => buildDeathEnding()
+  }
+};
+
+function buildDeathEnding() {
+  // Dim ambient candles, keep one
+  document.querySelectorAll('.candle.amb .c-flame').forEach(f => {
+    f.style.opacity = '0'; f.style.transition = 'opacity 4s ease';
+  });
+
+  return '<div class="death-scene">' +
+    beat('*The candle dims but does not go out.*') +
+    beat('*That is the difference. In the dark ending the candles go out all at once. Here one remains.*') +
+    beat('*He stands.*') +
+    beat('*He crosses to you. Not with urgency. With the particular patience of something that has all the time in the world.*') +
+    speech('You got further than most people do. I want you to know I noticed that.') +
+    beat('*A pause.*') +
+    speech('And then you used it.') +
+    beat('*He is not angry. That is the most unsettling thing. He is something quieter than anger.*') +
+    beat('*The cold arrives.*') +
+    beat('*You are on the floor. The room is tilted. The one remaining candle is very far away.*') +
+    beat('*He is above you.*') +
+    beat('*He looks at you for a long time in the light of the one remaining candle.*') +
+    beat('*Then something unexpected happens. He straightens. Something working through him.*') +
+    '<div class="death-pause"><div class="death-pause-line">&#10022; &#10022; &#10022;</div></div>' +
+    '<div class="death-choices">' +
+      '<button class="death-btn" onclick="deathChoice(\\\'help\\\')">Ask him for help</button>' +
+      '<button class="death-btn" onclick="deathChoice(\\\'close\\\')">Close your eyes</button>' +
+    '</div>' +
+    '</div>';
+}
+
+function deathChoice(choice) {
+  const container = document.getElementById('ending-body');
+  if (choice === 'close') {
+    // All candles out
+    document.querySelectorAll('.c-flame').forEach(f => { f.style.opacity = '0'; f.style.transition = 'opacity 2s ease'; });
+    setTimeout(() => { document.getElementById('roomBg').style.background = '#000'; }, 2000);
+    container.innerHTML += '<div style="animation:fadeUp 0.7s ease">' +
+      beat('*The last candle goes out.*') +
+      '<p class="ending-text" style="margin-top:1.5rem">In the morning, someone finds the room. A notebook. A tape recorder.</p>' +
+      '<div class="tape-block" style="margin-top:1rem">' +
+        '<div style="font-family:Cinzel,serif;font-size:0.5rem;letter-spacing:3px;color:var(--blood);opacity:0.5;margin-bottom:0.75rem">⏺ RECORDING</div>' +
+        '<p class="tape-line his">[ completely silent ]</p>' +
+        '<p class="tape-line his">[ no audio recorded ]</p>' +
+        '<p class="tape-line his">[ blank ]</p>' +
+      '</div>' +
+      '<p class="ending-text" style="margin-top:1rem;font-family:Cinzel,serif;font-size:0.6rem;letter-spacing:2px">The tape contains nothing. Not even your voice. As if no one was ever there.</p>' +
+      '<p class="ending-text" style="margin-top:0.75rem">The story dies with you.</p>' +
+    '</div>';
+  } else {
+    container.innerHTML += '<div style="animation:fadeUp 0.7s ease">' +
+      '<p class="speech" style="margin-top:1.25rem">Please.\\"</p>' +
+      beat('*Your voice comes out smaller than you expected.*') +
+      '<p class="speech">Please. Don’t let me die."</p>' +
+      beat('*He is very still.*') +
+      beat('*Something stirs in him. You can see it happen. Something old.*') +
+      beat('*He looks at you for a very long time.*') +
+      beat('*Then, very quietly:*') +
+      speech('Do you want to live.') +
+      beat('*A pause.*') +
+      speech('And why.') +
+      '<div class="why-choices">' +
+        '<button class="why-btn" onclick="whyChoice(\\\'fear\\\')">Because I am afraid to die</button>' +
+        '<button class="why-btn" onclick="whyChoice(\\\'unfinished\\\')">Because I have not finished what I came here to do</button>' +
+        '<button class="why-btn" onclick="whyChoice(\\\'saw\\\')">Because of what I saw in you tonight</button>' +
+      '</div>' +
+    '</div>';
+  }
+}
+
+function whyChoice(why) {
+  const container = document.getElementById('ending-body');
+
+  const responses = {
+    fear: beat('*He considers this for a long time.*') + speech('That is the most honest answer.') + beat('*He does not say it warmly.*'),
+    unfinished: speech('That is an interesting answer.') + beat('*Something in his expression that is not quite warmth and not quite its opposite.*') + speech('Finish it then.'),
+    saw: beat('*The longest silence yet.*') + beat('*He looks at you with an expression you have not seen before.*') + speech('That is either the most honest thing you have said or the most strategic.') + beat('*A pause.*') + speech('I find I am choosing to believe it is honest.')
+  };
+
+  const tapeContent = '<p class="tape-line yours">Are you a vampire?</p>' +
+    '<p class="tape-line his">[ no response recorded ]</p>' +
+    '<p class="tape-line yours">What do you miss about being human?</p>' +
+    '<p class="tape-line his">[ no response recorded ]</p>' +
+    '<p class="tape-line yours" style="font-style:italic">*a long pause*  I see. Yes. I think I understand that.</p>' +
+    '<p class="tape-line his">[ no response recorded ]</p>' +
+    '<p class="tape-line yours">Tell me about her.</p>' +
+    '<p class="tape-line his">[ no response recorded ]</p>' +
+    '<p class="tape-line yours" style="font-style:italic">*very quietly*  Aisling.</p>' +
+    '<p class="tape-line his">[ no response recorded ]</p>';
+
+  container.innerHTML += '<div style="animation:fadeUp 0.7s ease">' +
+    responses[why] +
+    beat('*What happens next happens in darkness.*') +
+    '<div style="margin-top:2rem">' +
+    '<p class="ending-text">When people come looking for you, they find the room. A notebook. A tape recorder.</p>' +
+    '<div class="tape-block" style="margin-top:1.25rem">' +
+      '<div style="font-family:Cinzel,serif;font-size:0.5rem;letter-spacing:3px;color:var(--blood);opacity:0.5;margin-bottom:0.75rem">⏺ RECORDING</div>' +
+      tapeContent +
+    '</div>' +
+    '<p style="font-size:0.8rem;color:#4a2a2a;font-style:italic;margin-top:0.75rem;text-align:center;font-family:Cinzel,serif;letter-spacing:1px">The tape contains only your voice. His half of the conversation is simply absent.</p>' +
+    '<p class="ending-text" style="margin-top:1.5rem">A new story begins.</p>' +
+    '<p class="ending-text">This one is not written yet.</p>' +
+    '</div></div>';
+}
+
+// ─── RENDER ENGINE ────────────────────────────────────────────────
+
+function startInterview() {
+  document.getElementById('opening-screen').style.display = 'none';
+  document.getElementById('interview-screen').style.display = 'block';
+  renderQuestion();
+  scrollTop();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  document.getElementById('q-counter').textContent = 'Question ' + (currentQ + 1) + ' of 10';
+  document.getElementById('q-theme').textContent = q.theme || '';
+
+  // Reset panels
+  document.getElementById('q-reveal').style.display = 'none';
+  document.getElementById('q-reveal').textContent = '';
+  const rp = document.getElementById('response-panel');
+  rp.innerHTML = ''; rp.classList.remove('visible'); rp.style.display = '';
+  const scw = document.getElementById('sub-choices-wrap');
+  scw.classList.remove('visible'); scw.style.display = '';
+  const sr = document.getElementById('sub-reveal');
+  if (sr) { sr.style.display = 'none'; sr.textContent = ''; }
+  const srp = document.getElementById('sub-response-panel');
+  srp.innerHTML = ''; srp.classList.remove('visible'); srp.style.display = '';
+  document.getElementById('next-q-btn').classList.remove('visible');
+  document.getElementById('main-prompt').style.display = 'block';
+
+  // Render main choices — hidden ones are skipped entirely, no empty buttons
+  const mainChoices = document.getElementById('main-choices');
+  mainChoices.innerHTML = '';
+  q.mains.forEach((m, i) => {
+    if (m.hidden && !m.hidden()) return;
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn' + (m.hidden ? ' hidden-q' : '');
+    btn.textContent = m.label;
+    btn.onclick = () => selectMain(i, btn);
+    mainChoices.appendChild(btn);
+  });
+
+  scrollTop();
+}
+function selectMain(idx, btn) {
+  const q = QUESTIONS[currentQ];
+  const main = q.mains[idx];
+  selectedMain = main;
+
+  // Mark selected
+  document.querySelectorAll('#main-choices .choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.querySelectorAll('#main-choices .choice-btn').forEach(b => { b.disabled = true; });
+
+  // Show full question
+  const reveal = document.getElementById('q-reveal');
+  reveal.textContent = '"' + main.full + '"';
+  reveal.style.display = 'block';
+
+  // Apply trust/tension
+  const dt = typeof main.dt === 'function' ? main.dt() : main.dt;
+  const dn = typeof main.dn === 'function' ? main.dn() : main.dn;
+  adjust(dt, dn);
+
+  // Show response
+  const resp = typeof main.response === 'function' ? main.response() : main.response;
+  showPanel('response-panel', resp);
+
+  // Check death trigger
+  if (deathTrigger) {
+    setTimeout(() => triggerDeathEnding(), 1800);
+    return;
+  }
+
+  // Show sub choices
+  if (main.subs && main.subs.length > 0) {
+    renderSubChoices(main.subs);
+  } else {
+    document.getElementById('next-q-btn').classList.add('visible');
+  }
+}
+
+function renderSubChoices(subs) {
+  const wrap = document.getElementById('sub-choices-wrap');
+  const col = document.getElementById('sub-choices');
+  col.innerHTML = '';
+  let visibleCount = 0;
+  subs.forEach((s, i) => {
+    if (s.hidden && !s.hidden()) return;
+    visibleCount++;
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn' + (s.hidden ? ' hidden-q' : '');
+    btn.textContent = s.label;
+    btn.onclick = () => selectSub(i, subs, btn);
+    col.appendChild(btn);
+  });
+  if (visibleCount > 0) {
+    wrap.classList.add('visible');
+    setTimeout(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+  } else {
+    document.getElementById('next-q-btn').classList.add('visible');
+  }
+}
+
+function selectSub(idx, subs, btn) {
+  const sub = subs[idx];
+
+  document.querySelectorAll('#sub-choices .choice-btn').forEach(b => { b.disabled = true; b.classList.remove('selected'); });
+  btn.classList.add('selected');
+
+  // Reveal full sub question text
+  const subReveal = document.getElementById('sub-reveal');
+  if (sub.full) {
+    const cleanFull = sub.full.replace(/^\[|\]$/g, '').replace(/^\*|\*$/g, '');
+    subReveal.textContent = '"' + cleanFull + '"';
+    subReveal.style.display = 'block';
+  }
+
+  const dt = typeof sub.dt === 'function' ? sub.dt() : sub.dt;
+  const dn = typeof sub.dn === 'function' ? sub.dn() : sub.dn;
+  adjust(dt, dn);
+
+  const resp = typeof sub.response === 'function' ? sub.response() : sub.response;
+  showPanel('sub-response-panel', resp);
+
+  if (deathTrigger) {
+    setTimeout(() => triggerDeathEnding(), 1800);
+    return;
+  }
+
+  document.getElementById('next-q-btn').classList.add('visible');
+  setTimeout(() => document.getElementById('next-q-btn').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
+}
+
+function advanceQuestion() {
+  currentQ++;
+  if (currentQ >= QUESTIONS.length) {
+    showEnding();
+    return;
+  }
+  const rp = document.getElementById('response-panel');
+  rp.innerHTML = ''; rp.classList.remove('visible'); rp.style.display = '';
+  const scw = document.getElementById('sub-choices-wrap');
+  scw.classList.remove('visible'); scw.style.display = '';
+  const sr = document.getElementById('sub-reveal');
+  if (sr) { sr.style.display = 'none'; sr.textContent = ''; }
+  const srp = document.getElementById('sub-response-panel');
+  srp.innerHTML = ''; srp.classList.remove('visible'); srp.style.display = '';
+  document.getElementById('next-q-btn').classList.remove('visible');
+  renderQuestion();
+}
+
+function triggerDeathEnding() {
+  document.getElementById('interview-screen').style.display = 'none';
+  const es = document.getElementById('ending-screen');
+  document.getElementById('ending-name').textContent = '';
+  document.getElementById('ending-body').innerHTML = ENDINGS.death.body();
+  es.classList.add('visible');
+  scrollTop();
+}
+
+function showEnding() {
+  const key = getEnding();
+  const ending = ENDINGS[key];
+  document.getElementById('interview-screen').style.display = 'none';
+  const es = document.getElementById('ending-screen');
+  document.getElementById('ending-name').textContent = ending.name;
+  document.getElementById('ending-body').innerHTML = ending.body();
+  es.classList.add('visible');
+  scrollTop();
+}
+
+function restartInterview() {
+  trust = 0; tension = 0; currentQ = 0;
+  aislingNamed = false; deathTrigger = false; selectedMain = null;
+  document.querySelectorAll('.c-flame').forEach(f => { f.style.opacity = ''; f.style.transition = ''; });
+  document.getElementById('roomBg').style.background = '';
+  document.getElementById('roomBg').style.transition = '';
+  updateRoom();
+  document.getElementById('ending-screen').classList.remove('visible');
+  document.getElementById('ending-screen').style.display = 'none';
+  document.getElementById('interview-screen').style.display = 'none';
+  document.getElementById('opening-screen').style.display = 'block';
+  scrollTop();
+}
+
+// Init
+updateRoom();
+</script>
+
+<!-- ATMOSPHERIC AUDIO -->
+<audio id="bg-audio" loop preload="auto" style="display:none">
+  <source src="atmosphere.mp3" type="audio/mpeg">
+</audio>
+
+<!-- MUTE BUTTON -->
+<button id="audio-toggle" onclick="toggleAudio()" title="Toggle music" aria-label="Toggle music">
+  <span id="audio-icon">♪</span>
+</button>
+
+<style>
+#audio-toggle {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 100;
+  width: 36px;
+  height: 36px;
+  background: rgba(13,6,8,0.85);
+  border: 1px solid #3a1010;
+  color: #6b1a1a;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+#audio-toggle:hover {
+  border-color: #8b1a1a;
+  color: #c8102e;
+}
+#audio-toggle.muted {
+  color: #3a1010;
+  border-color: #1a0808;
+}
+</style>
+
+<script>
+(function() {
+  const audio = document.getElementById('bg-audio');
+  const btn   = document.getElementById('audio-toggle');
+  const icon  = document.getElementById('audio-icon');
+
+  // Read mute state from localStorage
+  let muted = localStorage.getItem('dh-muted') === 'true';
+
+  function applyMute() {
+    audio.muted = muted;
+    icon.textContent = muted ? '♪' : '♪';
+    btn.classList.toggle('muted', muted);
+    btn.title = muted ? 'Unmute music' : 'Mute music';
+  }
+
+  // Fade in from silence
+  audio.volume = 0;
+
+  function tryPlay() {
+    if (muted) { applyMute(); return; }
+    audio.play().then(() => {
+      // Fade in to 0.18 over 3 seconds
+      let vol = 0;
+      const target = 0.18;
+      const step = target / 60;
+      const fade = setInterval(() => {
+        vol = Math.min(vol + step, target);
+        audio.volume = vol;
+        if (vol >= target) clearInterval(fade);
+      }, 50);
+    }).catch(() => {
+      // Autoplay blocked — attach to first user interaction
+      const unlock = () => {
+        tryPlay();
+        document.removeEventListener('click', unlock);
+        document.removeEventListener('keydown', unlock);
+      };
+      document.addEventListener('click', unlock);
+      document.addEventListener('keydown', unlock);
+    });
+    applyMute();
+  }
+
+  function toggleAudio() {
+    muted = !muted;
+    localStorage.setItem('dh-muted', muted);
+    if (muted) {
+      // Fade out
+      const fade = setInterval(() => {
+        audio.volume = Math.max(audio.volume - 0.02, 0);
+        if (audio.volume <= 0) { audio.muted = true; clearInterval(fade); }
+      }, 40);
+    } else {
+      audio.muted = false;
+      tryPlay();
+    }
+    applyMute();
+  }
+
+  window.toggleAudio = toggleAudio;
+
+  // Start on page load
+  tryPlay();
+})();
+</script>
+
+
+<!-- MUSIC CREDIT -->
+<div style="position:fixed;bottom:1.25rem;left:1.25rem;z-index:99;font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:2px;color:#2a0e0e;line-height:1.6;pointer-events:none">
+  MUSIC<br>
+  <span style="pointer-events:auto">
+    <a href="https://ende.app" target="_blank" rel="noopener"
+       style="color:#3a1010;text-decoration:none;transition:color 0.2s"
+       onmouseover="this.style.color='#8b1a1a'"
+       onmouseout="this.style.color='#3a1010'">
+      SASCHA ENDE / ENDE.APP
+    </a>
+  </span>
+</div>
+
+</body>
+</html>

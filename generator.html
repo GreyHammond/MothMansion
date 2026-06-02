@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vampire Name Generator — The Dark Hours</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold-deep); text-decoration: none;
+  margin-bottom: 1.5rem; transition: color 0.2s;
+}
+.back-link:hover { color: var(--gold-dim); }
+
+.steps { display: flex; justify-content: center; gap: 0; margin-bottom: 2rem; }
+.step {
+  font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 2px;
+  text-transform: uppercase; padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border-dim); color: #4a2a2a;
+  background: rgba(18,5,6,0.7); transition: all 0.3s;
+}
+.step:not(:last-child) { border-right: none; }
+.step.active { border-color: var(--blood); color: var(--blood); background: rgba(26,5,5,0.85); }
+.step.done   { border-color: var(--border-bright); color: var(--gold-deep); }
+
+.continent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+.continent-btn {
+  background: rgba(26,8,8,0.85); border: 1px solid var(--border-dim); color: var(--gold);
+  font-family: 'Crimson Text', serif; font-size: 1rem; padding: 0.85rem 1rem;
+  cursor: pointer; text-align: left; transition: all 0.22s; line-height: 1.3;
+  display: flex; align-items: center; gap: 10px;
+}
+.continent-btn:hover { background: rgba(32,10,10,0.9); border-color: var(--border-bright); color: var(--parchment); }
+.continent-btn .c-icon { font-size: 1.3rem; flex-shrink: 0; }
+.continent-btn .c-name { font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 600; display: block; }
+.continent-btn .c-sub  { font-size: 0.78rem; color: var(--gold-deep); font-style: italic; }
+
+.region-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+.region-btn {
+  background: rgba(26,8,8,0.85); border: 1px solid var(--border-dim); color: var(--gold);
+  font-family: 'Crimson Text', serif; font-size: 1rem; padding: 0.75rem 1rem;
+  cursor: pointer; text-align: left; transition: all 0.22s;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.region-btn:hover { background: rgba(32,10,10,0.9); border-color: var(--border-bright); color: var(--parchment); }
+.region-btn .r-name { font-family: 'Cinzel', serif; font-size: 0.85rem; display: block; }
+.region-btn .r-flavor { font-size: 0.8rem; color: var(--gold-deep); font-style: italic; }
+
+.vampire-name {
+  font-family: 'Cinzel', serif; font-size: clamp(1.6rem, 6vw, 2.4rem); font-weight: 700;
+  text-align: center; color: var(--blood); text-shadow: 0 0 30px rgba(139,0,0,0.5);
+  line-height: 1.2; margin-bottom: 0.2rem;
+}
+.pronunciation { text-align: center; font-style: italic; color: var(--gold-deep); font-size: 0.85rem; margin-bottom: 0.2rem; }
+.region-tag { text-align: center; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 4px; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 1.5rem; }
+
+.motto-block { background: rgba(26,8,8,0.8); border: 1px solid var(--void-border); padding: 1rem 1.25rem; margin-bottom: 1rem; text-align: center; }
+.motto-original { font-size: 1.1rem; font-style: italic; color: var(--parchment); line-height: 1.5; }
+.motto-translation { font-size: 0.82rem; color: var(--gold-deep); margin-top: 0.3rem; letter-spacing: 1px; }
+
+.age-banner { display: flex; justify-content: space-around; margin-bottom: 1rem; }
+.age-stat { text-align: center; }
+.age-stat-num { font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 600; color: var(--blood); display: block; }
+.age-stat-label { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 2px; color: var(--gold-deep); text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<div class="room-bg state-open" id="roomBg">
+  <div class="room-walls"></div>
+  <div class="room-vignette state-open"></div>
+  <div class="candle-scene">
+    <div class="candle amb" style="left:5%;bottom:28%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:30px"></div></div>
+    <div class="candle amb" style="left:12%;bottom:22%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:40px"></div></div>
+    <div class="candle amb" style="right:6%;bottom:30%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:26px"></div></div>
+    <div class="candle amb" style="right:14%;bottom:24%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:36px"></div></div>
+    <div class="candle amb" style="left:25%;bottom:14%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:22px"></div></div>
+    <div class="candle amb" style="right:25%;bottom:14%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:28px"></div></div>
+    <div class="candle sig" id="sigCandle" style="left:50%;transform:translateX(-50%);bottom:8%"><div class="c-glow"></div><div class="c-flame"></div><div class="c-body" style="height:58px"></div></div>
+  </div>
+</div>
+
+<div class="content" style="padding-top:2rem">
+  <a href="index.html" class="back-link">← Return</a>
+
+  <div class="ornament">✦ ✦ ✦</div>
+  <h1 class="main-title">The Vampire Name Generator</h1>
+  <p class="subtitle">Enter the darkness under a new name</p>
+  <div class="divider"><div class="divider-line"></div><div class="divider-gem">⬥</div><div class="divider-line"></div></div>
+
+  <div class="steps">
+    <div class="step active" id="step1">I. Name</div>
+    <div class="step" id="step2">II. Continent</div>
+    <div class="step" id="step3">III. Region</div>
+    <div class="step" id="step4">IV. Fate</div>
+  </div>
+
+  <!-- SCREEN 1: Name -->
+  <div id="screen-name">
+    <p class="scene-text">The name you carry into the dark will be unmade and remade. What your mother called you is the seed from which your true name will grow.</p>
+    <div style="margin-bottom:1rem">
+      <label class="input-label">Your mortal name</label>
+      <input class="gothic-input" type="text" id="mortal-name" placeholder="Enter your name" maxlength="40">
+    </div>
+    <button class="action-btn" onclick="goToContinent()">✦ Continue ✦</button>
+  </div>
+
+  <!-- SCREEN 2: Continent -->
+  <div id="screen-continent" style="display:none">
+    <p class="scene-text">From what corner of the world did the darkness first find you?</p>
+    <div class="continent-grid" id="continent-grid"></div>
+  </div>
+
+  <!-- SCREEN 3: Region -->
+  <div id="screen-region" style="display:none">
+    <button class="back-link" onclick="goBack()" style="border:none;background:none;cursor:pointer;margin-bottom:1rem">← Back</button>
+    <p class="scene-text" id="region-prompt"></p>
+    <div class="region-list" id="region-list"></div>
+  </div>
+
+  <!-- SCREEN 4: Result -->
+  <div id="screen-result" style="display:none">
+    <div class="vampire-name" id="r-name"></div>
+    <div class="pronunciation" id="r-pron"></div>
+    <div class="region-tag" id="r-tag"></div>
+    <div class="age-banner">
+      <div class="age-stat"><span class="age-stat-num" id="r-clan-disp">—</span><span class="age-stat-label">Clan</span></div>
+      <div class="age-stat"><span class="age-stat-num" id="r-title-disp">—</span><span class="age-stat-label">Title</span></div>
+    </div>
+    <div class="motto-block">
+      <div class="motto-original" id="r-motto"></div>
+      <div class="motto-translation" id="r-motto-trans"></div>
+    </div>
+    <div class="result-card"><h3>Your Origin</h3><p id="r-lore"></p></div>
+    <div class="result-card">
+      <h3>Traits of the Blood</h3>
+      <div class="traits-grid">
+        <div class="trait-item"><strong>Power</strong><span id="r-power"></span></div>
+        <div class="trait-item"><strong>Century</strong><span id="r-century"></span></div>
+      </div>
+    </div>
+    <div class="divider"><div class="divider-line"></div><div class="divider-gem">⬥</div><div class="divider-line"></div></div>
+    <button class="action-btn" onclick="restart()">✦ Begin Again ✦</button>
+    <div style="margin-top:0.75rem;text-align:center">
+      <a href="index.html" style="font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:3px;color:var(--gold-deep);text-decoration:none;text-transform:uppercase">← Return to the House</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CONTINENTS = [
+  { id:'europe',   icon:'🏰', name:'Europe',       sub:'From the British Isles to the Black Sea' },
+  { id:'americas', icon:'🌲', name:'The Americas', sub:'New World darkness, old world blood' },
+  { id:'asia',     icon:'🌙', name:'Asia',         sub:'Ancient hunger from East to West' },
+  { id:'africa',   icon:'🏜', name:'Africa',       sub:'The oldest dark on earth' },
+  { id:'mideast',  icon:'⚔️', name:'Middle East',  sub:'Desert sands and immortal courts' },
+  { id:'oceania',  icon:'🌊', name:'Oceania',      sub:'Island spirits and southern night' },
+];
+
+const REGIONS = {
+  europe:   [
+    {id:'ireland',    name:'Ireland',           flavor:'Mist, fairy mounds, and old hunger'},
+    {id:'scotland',   name:'Scotland',          flavor:'Highland lochs and ancient clans'},
+    {id:'england',    name:'England',           flavor:'Gothic manors and Victorian shadow'},
+    {id:'wales',      name:'Wales',             flavor:'Dragon-blooded and deeply strange'},
+    {id:'romania',    name:'Romania',           flavor:'The Carpathian heart of vampire lore'},
+    {id:'hungary',    name:'Hungary',           flavor:'Courts of blood and baroque excess'},
+    {id:'russia',     name:'Russia',            flavor:'Frozen steppes and iron will'},
+    {id:'poland',     name:'Poland',            flavor:'Upir and old Slavic night'},
+    {id:'italy',      name:'Italy',             flavor:'Renaissance poison and noble decay'},
+    {id:'spain',      name:'Spain',             flavor:'Inquisition shadow and dark faith'},
+    {id:'greece',     name:'Greece',            flavor:'Ancient gods and chthonic hunger'},
+    {id:'norway',     name:'Norway',            flavor:'Draugr and the long northern dark'},
+    {id:'iceland',    name:'Iceland',           flavor:'Fire, ice, and old Norse blood'},
+    {id:'germany',    name:'Germany',           flavor:'Romantic forests and iron philosophy'},
+    {id:'france',     name:'France',            flavor:'Salons of the undead and guillotine nights'},
+  ],
+  americas: [
+    {id:'newengland', name:'New England, USA',  flavor:'Puritan guilt and Salem shadows'},
+    {id:'deepsouth',  name:'Deep South, USA',   flavor:'Bayou hunger and plantation darkness'},
+    {id:'canada',     name:'Quebec, Canada',    flavor:'French Catholic dread in the frozen north'},
+    {id:'mexico',     name:'Mexico',            flavor:'Aztec blood rites and Day of the Dead'},
+    {id:'brazil',     name:'Brazil',            flavor:'Lobishomem and jungle night'},
+    {id:'argentina',  name:'Argentina',         flavor:'Pampas darkness and European exile'},
+  ],
+  asia:     [
+    {id:'japan',      name:'Japan',             flavor:'Gashadokuro and Edo-period shadow'},
+    {id:'china',      name:'China',             flavor:'Jiangshi and dynastic hunger'},
+    {id:'india',      name:'India',             flavor:'Vetala and ancient Sanskrit night'},
+    {id:'southeast',  name:'Southeast Asia',    flavor:'Pontianak and jungle spirits'},
+  ],
+  africa:   [
+    {id:'egypt',      name:'Egypt',             flavor:'Pharaonic blood and eternal night'},
+    {id:'westafr',    name:'West Africa',       flavor:'Adze and the living dark'},
+  ],
+  mideast:  [
+    {id:'persia',     name:'Persia / Iran',     flavor:'Al-Ghul and the desert court'},
+    {id:'ottoman',    name:'Ottoman / Turkey',  flavor:'Byzantine shadow and crescent night'},
+  ],
+  oceania:  [
+    {id:'australia',  name:'Australia',         flavor:'Dreamtime hunger and red earth dark'},
+    {id:'pacific',    name:'Pacific Islands',   flavor:'Taniwha and the deep sea shadow'},
+  ],
+};
+
+const RD = {
+  ireland:    { lang:'Old Irish', pre:['Ciar','Fionn','Donn','Mael','Dub','Conn','Fergus','Bran','Niall','Aed'], mid:['an','each','ach','uil','oir','ua'], suf:['dorchadais','fola','oiche','anama','dubh','scath','mara'], titles:['Bantiarna na Fola','Tiarna an Dorchadais','An Dubh Flaith','Righ na hOiche'], clans:['Clann Scatha','Muintir Dubh','Fine na Fola'], powers:['Shape of the wolf','The mist walk','Glamour of the fair folk'], centuries:['The Iron Age','The age of the High Kings','The Norman conquest'], mottos:[{t:'Is fearr an dorchadas na an bhreag',tr:'Darkness is better than a lie'},{t:'As an oiche tagann neart',tr:'From the night comes strength'}], lore:(n,v)=>`${n} was taken on a night when the fairy mounds stood open, somewhere between Samhain and the first frost. When ${n} woke as ${v}, the old language came naturally, as though it had always lived beneath the tongue.` },
+  scotland:   { lang:'Scottish Gaelic', pre:['Dubh','Fionn','Alasdair','Ruari','Coinneach','Seumas','Fearchar','Tormod'], mid:['ach','an','air','ich'], suf:['na dorch','fhuil','na h-oidhche','nan spiorad','mhor'], titles:['Morair na Fala','Bean-tighe an Dorchadais','An Dubh Righ'], clans:['Clann Dubh','Muinntir na Fala','Sliochd an Dorchadais'], powers:['The second sight','Walking the grey between worlds','Command of the dead'], centuries:['The age of the clans','The Jacobite rising','The Highland Clearances'], mottos:[{t:'Chan eil bas ann dhuinn',tr:'There is no death for us'},{t:'Tron oidhche thig neart',tr:'Through the night comes strength'}], lore:(n,v)=>`The Highlands took ${n} on a night the clan would not speak of afterward. When ${n} returned three days later as ${v}, the clan knew better than to ask questions.` },
+  england:    { lang:'Middle English', pre:['Aldric','Mordecai','Seraphel','Vane','Ashton','Blackwood','Corvus','Draven'], mid:['more','hurst','ton','wick','field'], suf:['of the Hollow','the Grey','of Ashfen','the Pale','the Undying'], titles:['Lord of the Crypt','Lady of the Pale','The Hollow Count'], clans:['House Ashfen','The Pale Court','Order of the Hollow'], powers:['Mesmerism','Command of fog','Memory of centuries'], centuries:['The Norman conquest','The Tudor courts','The Victorian age'], mottos:[{t:'In darkness, dominion',tr:''},{t:'The grave is only a door',tr:''}], lore:(n,v)=>`${n} was turned in a manor house that has since been demolished. ${v} learned quickly that the old rules apply. Never enter without invitation. Never be seen in the same city for more than a decade. The aristocracy barely noticed.` },
+  wales:      { lang:'Welsh', pre:['Cad','Mor','Rhi','Gwyd','Beli','Dwy','Llu','Ner'], mid:['fan','wyn','aeth','ion','awr'], suf:['y nos','yr wybren ddu','y gwaed','yr ysbryd'], titles:['Arglwydd y Nos','Brenin y Gwaed','Y Tywyll Un'], clans:['Tylwyth y Gwaed','Llys y Nos','Plant y Ddraig Ddu'], powers:['Dragon sight','Speaking with the dead','Shapeshifting into black hound'], centuries:['The age of the princes','The Glyndwr rebellion','The age of the bards'], mottos:[{t:'Gwaed yw ein hetifeddiaeth',tr:'Blood is our inheritance'},{t:'O ddwfn y nos, daw nerth',tr:'From the deep of night, strength comes'}], lore:(n,v)=>`Wales has its own name for what ${n} became: something older than the Norman word, something the bards coded into their poetry. ${v} carries a lineage the mountains remember.` },
+  romania:    { lang:'Romanian', pre:['Vlad','Radu','Mircea','Dracul','Lucian','Marius','Dorin','Razvan','Sorin','Stefan'], mid:['escu','aru','ean','ici','ov'], suf:['cel Intunecat','al Noptii','cel Fara Moarte','de Sange','al Umbrelor'], titles:['Voievod al Noptii','Domn al Sangelui','Printul Intunecat'], clans:['Casa Dracul','Ordinul Umbrelor','Fratia Sangelui'], powers:['Command of wolves','Shapeshifting into bat or mist','The evil eye'], centuries:['The Wallachian principate','The Ottoman wars','The age of the boyars'], mottos:[{t:'Noaptea este tara noastra',tr:'The night is our country'},{t:'Moartea nu ne cunoaste',tr:'Death does not know us'}], lore:(n,v)=>`The Carpathians have been making vampires since before the word existed. ${n} was taken in the mountain passes by something that had watched the principates rise and fall. ${v} is the genuine article: old-lineage, deep-mountain.` },
+  hungary:    { lang:'Hungarian', pre:['Fekete','Veres','Arden','Laszlo','Imre','Bela','Sandor','Zoltan'], mid:['falvi','vari','hegyi'], suf:['a Sotetseg','a Ver','az Ejszaka','a Halal'], titles:['Az Ejszaka Ura','A Ver Grof','Az Arnyekkiraly'], clans:['Fekete Ház','A Ver Rendje','Az Arnyék Udvara'], powers:['Mastery of dreams','Feeding through sleep','Memory theft'], centuries:['The Magyar conquest','The Ottoman occupation','The Habsburg courts'], mottos:[{t:'Ver az orok kotes',tr:'Blood is the eternal bond'},{t:'A halal csak egy ajto',tr:'Death is only a door'}], lore:(n,v)=>`Hungary remembers the Bathory name. What ${n} became is of that tradition. ${v} operates within structures of obligation that have not changed since the Ottoman siege.` },
+  russia:     { lang:'Russian', pre:['Voron','Chern','Mrak','Groz','Vlad','Volk','Smert','Noch'], mid:['kov','ev','in','sky','nikov'], suf:['Temnyi','Krovavyi','Nochnoi','Bessmertnyi','Ledianoi'], titles:['Kniaz Nochi','Graf Krovi','Vladyka Tmy'], clans:['Dom Vorona','Bratstvo Nochi','Orden Krovi'], powers:['Endurance of the Russian winter','Command of wolves and ravens','Iron will over centuries'], centuries:['The Kievan Rus','The Mongol occupation','The court of the Tsars'], mottos:[{t:'V nochi est sila',tr:'In the night there is strength'},{t:'My ne umiraem, my zhdem',tr:'We do not die, we wait'}], lore:(n,v)=>`Russia has a word, upyr, that is older than the Slavic migrations. ${n} was taken somewhere in the vastness between cities. What others call eternity, ${v} calls a winter that has not yet ended.` },
+  poland:     { lang:'Polish', pre:['Mrocz','Ciem','Krwaw','Noc','Czarn','Biel'], mid:['ny','ski','ek','icz'], suf:['z Ciemnosci','Krwawy','Nocny','Bezsmiertny'], titles:['Pan Nocy','Ksiaze Krwi','Wladca Ciemnosci'], clans:['Dom Mroku','Bractwo Krwi','Zakon Nocy'], powers:['Controlling the weather','Feeding on sorrow as well as blood','Calling the plague'], centuries:['The Piast dynasty','The Commonwealth era','The partitions'], mottos:[{t:'Krew jest nasza wola',tr:'Blood is our will'},{t:'Noc jest naszym domem',tr:'The night is our home'}], lore:(n,v)=>`The Polish upior is restless, hungry, and deeply attached to the land it died in. ${n} was turned during a period of great national suffering, which gave ${v} an edge of grief that has never quite faded.` },
+  italy:      { lang:'Italian', pre:['Lucrezia','Aldric','Serafino','Niccolo','Corvino','Tenebra','Oscuro'], mid:['di','della','de'], suf:['Sangue','Notte','Oscura','Morte Dolce','Tenebre'], titles:['Signore del Sangue','Contessa della Notte','Il Principe Oscuro'], clans:['Casa Sangue','Ordine della Notte','Casata delle Tenebre'], powers:['Political manipulation across centuries','Artistic mastery as a hunting tool','Immunity to all mortal illness'], centuries:['The Borgia courts','The Renaissance','The Venetian Republic'], mottos:[{t:'Il sangue non mente mai',tr:'Blood never lies'},{t:'La bellezza è il nostro veleno',tr:'Beauty is our poison'}], lore:(n,v)=>`Italy produced the most elegant vampires and the most ruthless ones, and ${v} is both. ${n} was turned in a palazzo, by something that had watched the Borgias operate and found them almost admirable.` },
+  spain:      { lang:'Spanish', pre:['Rodrigo','Sangre','Noche','Sombra','Maldito','Oscuro'], mid:['de la','del','de los'], suf:['Sangre','Sombra Eterna','Noche Oscura','Cruz Negra'], titles:['Señor de la Sangre','Conde de la Noche','El Oscuro Príncipe'], clans:['Casa de la Sangre','Orden de la Sombra','La Corte Nocturna'], powers:['Resistance to holy relics','Feeding through confession','Inquisitorial will'], centuries:['The Reconquista','The Spanish Inquisition','The age of empire'], mottos:[{t:'La sangre nunca miente',tr:'Blood never lies'},{t:'La muerte es solo el principio',tr:'Death is only the beginning'}], lore:(n,v)=>`The Spanish Inquisition did not find all the heretics. ${n} encountered old knowledge in a cellar in Seville and did not survive the encounter as a mortal. ${v} finds the irony pleasurable.` },
+  greece:     { lang:'Greek', pre:['Vryko','Strigi','Thanat','Nekro','Skoto','Haima','Nyx','Erebo'], mid:['lakas','s','os','as'], suf:['tis Nychtas','tou Skotous','tis Aimas','ton Thanatou'], titles:['Archon tis Nychtas','O Athanatos Vasileias'], clans:['Oikos Nychtas','Tagma tou Skotous','Adelfotita Aimas'], powers:['Ancient divine hunger beyond mortal gods','Knowledge of fate and prophecy','The Gorgon gaze'], centuries:['The age of the gods','Classical Athens','The Byzantine Empire'], mottos:[{t:'To aima einai i zoi mas',tr:'Blood is our life'},{t:'I nychta einai i patrida mas',tr:'The night is our homeland'}], lore:(n,v)=>`The Greeks called them vrykolakas. ${n} was taken in a place where the ancient world bleeds through into the modern one. What turned ${n} remembers when the gods were real and hungry.` },
+  norway:     { lang:'Old Norse', pre:['Draug','Hraun','Kveld','Natt','Blod','Skuggi','Myrkr','Dauð'], mid:['ulf','helm','stein','bjorn'], suf:['inn Dvergi','inn Dimmi','blodugr','nattmara','skuggi'], titles:['Nattkonungr','Blodjarll','Draugrinn Gamli'], clans:['Blodshird','Nattmannafolk','Draugahird'], powers:['Draugr strength beyond death','Walking on water and through walls','Immunity to cold'], centuries:['The Viking age','The age of the sagas','The Christianization of the North'], mottos:[{t:'Bloð er band okkat',tr:'Blood is our bond'},{t:'Vér deyðum eigi',tr:'We do not die'}], lore:(n,v)=>`The Norse draugar are not elegant. They are the dead who refused, who came back through sheer will and ancient fury. ${n} died badly and came back worse. ${v} retains the Viking\'s relationship with violence: direct and without apology.` },
+  iceland:    { lang:'Icelandic', pre:['Myrk','Blod','Nott','Hraf','Ulf','Skuggi','Kalt','Eld'], mid:['ur','inn','ar','sson'], suf:['hinn Dimmi','hinn Blodugur','Nattfarinn','Skugginn'], titles:['Nattkonungur','Blodjarll','Galdramaðurinn'], clans:['Bloðsætt','Nóttmenn','Draugsætt'], powers:['Sight through volcanic darkness','Walking lava fields without harm','Memory of the world before Christianity'], centuries:['The settlement age','The Commonwealth era','The age of the sagas'], mottos:[{t:'Blod er bond okkar',tr:'Blood is our bond'},{t:'Eldr og is eru eitt',tr:'Fire and ice are one'}], lore:(n,v)=>`Iceland has fire under the ice and darkness half the year. ${n} was taken near a geothermal pool. ${v} is one of the few vampires who genuinely does not mind the cold. The fire inside is more than sufficient.` },
+  germany:    { lang:'German', pre:['Dunkel','Nacht','Blut','Schatten','Schwarz','Grau','Kalt','Tod'], mid:['stein','burg','berg','thal','wald'], suf:['von der Nacht','des Blutes','der Schatten','dem Dunkel'], titles:['Fürst der Nacht','Graf des Blutes','Der Dunkle Herr'], clans:['Haus der Nacht','Orden des Blutes','Bruderschaft der Schatten'], powers:['Philosophical domination of the mind','Shapeshifting into black wolf','Knowledge of alchemy'], centuries:['The Holy Roman Empire','The Thirty Years War','The Romantic age'], mottos:[{t:'Blut ist unser Band',tr:'Blood is our bond'},{t:'Wir sterben nicht, wir warten',tr:'We do not die, we wait'}], lore:(n,v)=>`The German Romantic movement was not entirely metaphor. ${n} encountered the real thing somewhere in the Black Forest. ${v} has since developed a philosophical framework for the condition that would impress Schopenhauer.` },
+  france:     { lang:'French', pre:['Noir','Sang','Ombre','Nuit','Mort','Ténèbre','Froid'], mid:['de','du','de la','des'], suf:['Nuit Éternelle','Sang Ancien','Ombre Pure','Mort Douce'], titles:['Seigneur du Sang','Comtesse de la Nuit','Le Prince des Ombres'], clans:['Maison du Sang','Ordre de la Nuit','Cour des Ténèbres'], powers:['Hypnotic beauty beyond mortal endurance','Perfect social mimicry','Memory of every court from Versailles onward'], centuries:['The court of Versailles','The Revolution and the Terror','La Belle Epoque'], mottos:[{t:'Le sang ne ment jamais',tr:'Blood never lies'},{t:'Dans les ténèbres, nous régnons',tr:'In the darkness, we reign'}], lore:(n,v)=>`Paris has been feeding its vampires for centuries and they have learned to be civilized about it. ${n} was turned in a salon. ${v} learned quickly that French vampiric society operates on aesthetics as much as blood.` },
+  newengland: { lang:'Puritan English', pre:['Mather','Gallow','Ashcroft','Grimsdale','Hollow','Raven','Grave','Coffin'], mid:['sworth','field','more','stone'], suf:['of the Gallows','the Pale','of Salem','the Ungiven'], titles:['The Unrepentant','Warden of the Gallows','The Pale Witness'], clans:['The Gallows Court','House of the Hollow','The Salem Remnant'], powers:['Immunity to Puritan faith','Feeding on guilt as well as blood','Memory of the first settlements'], centuries:['The colonial period','The Salem witch trials','The American Revolution'], mottos:[{t:'The covenant was with darkness first',tr:''},{t:'Salem proved nothing except that we are patient',tr:''}], lore:(n,v)=>`New England made its own vampires through guilt and cold and Puritan certainty turned inward until it curdled. ${n} was turned in a village that no longer appears on any map, sometime between the Salem trials and the Revolution.` },
+  deepsouth:  { lang:'Southern Gothic', pre:['Beaumont','Delacroix','Laveau','Thibodaux','Fontaine','Moreau'], mid:['de','du','la'], suf:['of the Bayou','the Undying','of the Cane','the Root'], titles:['Baron of the Bayou','The Root Queen','Keeper of the Cane'], clans:['Clan Laveau','The Bayou Court','The Root Circle'], powers:['Vodou command over the dead','Bayou invisibility','Dream walking through generations'], centuries:['The colonial plantation era','The Civil War','The Reconstruction'], mottos:[{t:'The bayou keeps what it takes',tr:''},{t:'Root work runs deeper than blood',tr:''}], lore:(n,v)=>`The Deep South built a vampire tradition out of African spiritual knowledge, French colonial excess, and the specific weight of a history that does not resolve. ${n} was taken in the bayou, in that hour before dawn when the water is absolutely still.` },
+  canada:     { lang:'French Canadian', pre:['Tremblay','Gagnon','Côté','Bouchard','Gauthier','Morin'], mid:['de','du','de la','des'], suf:['la Nuit','le Sang','les Ombres','le Froid'], titles:['Seigneur de la Nuit Froide','La Comtesse des Neiges'], clans:['Maison du Froid','Ordre des Neiges','Cour des Ombres Blanches'], powers:['Endurance of the Quebec winter','Feeding on Catholic guilt','Moving unseen through blizzards'], centuries:['The French colonial era','The British conquest','The quiet revolution'], mottos:[{t:'Le sang ne gèle pas',tr:'Blood does not freeze'},{t:'Je me souviens de tout',tr:'I remember everything'}], lore:(n,v)=>`Quebec\'s vampires are a French import that adapted over centuries to something colder and more patient. ${n} was turned somewhere between the Laurentian mountains and the St. Lawrence, in a winter so complete that the difference between alive and undead was almost academic.` },
+  mexico:     { lang:'Nahuatl / Spanish', pre:['Xipil','Tezca','Quetzal','Cihua','Yolot','Eheca','Mictlan'], mid:['tl','oc','ca','co','tz'], suf:['tecutli','ciatl','pilli','tzin','metl'], titles:['Tlatoani del Mictlan','La Cihuateteo','El Señor de la Sangre'], clans:['Casa Mictlan','Orden de la Sangre Antigua','Hermandad Xipe'], powers:['Command over the land of the dead','Feeding on sacrifice willingly given','Shapeshifting into obsidian jaguar'], centuries:['The age of the Triple Alliance','The Spanish conquest','The colonial era'], mottos:[{t:'Miquiztli amo tlamia',tr:'Death is not an ending'},{t:'Eztli to totlatqui',tr:'Blood is our inheritance'}], lore:(n,v)=>`Mexico\'s vampire tradition is older than the word vampire. ${n} encountered it through the place where Aztec cosmology and colonial Catholicism fused. What turned ${n} spoke Nahuatl and did not regard the transaction as unusual.` },
+  brazil:     { lang:'Portuguese / Tupi', pre:['Lobis','Boto','Cuca','Saci','Anhanga','Urutau'], mid:['homem','ari','ara','ura'], suf:['da Noite','do Sangue','da Floresta','da Sombra'], titles:['Senhor da Noite','A Rainha da Floresta','O Senhor do Sangue'], clans:['Casa da Noite','Ordem do Sangue','Irmandade da Floresta'], powers:['Jungle invisibility','Shapeshifting into the boto river dolphin','Command of the cerrado and rainforest'], centuries:['Pre-colonial indigenous era','The Portuguese colonial period','The imperial age'], mottos:[{t:'O sangue é nossa herança',tr:'Blood is our inheritance'},{t:'A noite é nossa pátria',tr:'The night is our homeland'}], lore:(n,v)=>`Brazil\'s dark tradition is not European in origin. It is older, rooted in the Amazon basin and the rivers that run deeper than any map records. ${n} was taken near water. What ${v} became is only partly what the Portuguese colonists brought with them.` },
+  argentina:  { lang:'Spanish', pre:['Sombra','Oscuro','Sangre','Noche','Muerte','Frío','Viento'], mid:['de la','del','de los'], suf:['Pampa Oscura','Sangre Fría','Noche Eterna','Viento Negro'], titles:['El Señor de la Pampa','La Condesa del Sur','El Príncipe Oscuro'], clans:['Casa del Sur','Orden de la Pampa','Corte Nocturna'], powers:['Command of the pampas winds','European vampire lineage adapted to the Southern Hemisphere'], centuries:['The Spanish colonial era','The independence wars','The Belle Epoque of Buenos Aires'], mottos:[{t:'La pampa nos recuerda',tr:'The pampa remembers us'},{t:'En el sur, somos eternos',tr:'In the south, we are eternal'}], lore:(n,v)=>`Argentina received its vampires as European immigrants, like almost everything else. But the pampa changed them. ${n} was turned somewhere between Buenos Aires and the Patagonian edge. ${v} carries old-world refinement and new-world rawness in equal measure.` },
+  japan:      { lang:'Japanese', pre:['Kuro','Yami','Chi','Yoru','Shi','Kage','Oni','Kumo'], mid:['no','na','ga','wo'], suf:['Mononoke','Oni','Yasha','Akuma','Kage','Kurayami'], titles:['Yami no Kami','Chi no Kimi','Yoru no Nushi'], clans:['Yami-gumi','Chi no Ikka','Kage no Kizoku'], powers:['The gashadokuro form','Feeding on the life-force rather than blood alone','Walking between the world of the living and the dead'], centuries:['The Heian period','The age of the samurai','The Edo period'], mottos:[{t:'Chi wa uso wo tsukanai',tr:'Blood does not lie'},{t:'Yoru wa waga kuni nari',tr:'The night is our country'}], lore:(n,v)=>`Japanese vampire mythology operates differently from the Western tradition. ${n} was hollowed out slowly by something that fed on grief and obsession before the final transformation. ${v} is the gashadokuro and the yasha all at once: something that does not map neatly onto European categories.` },
+  china:      { lang:'Classical Chinese', pre:['Xue','Hei','Ye','Gui','Mang','Ying','Ku','Mo'], mid:['zhi','de','an','ge'], suf:['Jiangshi','Gui Wang','Xue Shen','Ye Mo','Hei Long'], titles:['Xue Wang','Ye Shen','Hei Long Jun'], clans:['Xue Men','Gui Zu','Hei Ye Tang'], powers:['The jiangshi leap','Feeding on breath and qi as well as blood','Command of the hungry dead'], centuries:['The Tang dynasty','The Song dynasty','The Ming courts'], mottos:[{t:'Xue shi women de ming yun',tr:'Blood is our destiny'},{t:'Women bu si, women deng',tr:'We do not die, we wait'}], lore:(n,v)=>`The Chinese jiangshi is not the Western vampire, but ${v} contains both traditions. ${n} was turned during a dynasty that has since crumbled, by something that had watched each dynasty rise and fall with the detached patience of a river watching seasons.` },
+  india:      { lang:'Sanskrit', pre:['Raksha','Vetal','Pishach','Bhoot','Kali','Asur','Mrit','Tamas'], mid:['a','an','ara','endra'], suf:['dev','devi','pati','raj','nath','swami'], titles:['Vetala Raja','Pishachi Devi','Rakshasa Swami'], clans:['Vetala Kula','Pishachi Vamsha','Tamas Sangha'], powers:['The vetala possession of corpses','Riddle mastery and philosophical combat','Knowledge of all past lives'], centuries:['The Vedic age','The Gupta Empire','The Mughal courts'], mottos:[{t:'Rakta hi amrita hai',tr:'Blood is the nectar of immortality'},{t:'Mrityu hamara ghar hai',tr:'Death is our home'}], lore:(n,v)=>`The vetala told ${n} a riddle before the turning, as is traditional. ${n} answered correctly, which is why ${v} exists rather than simply being consumed. The Indian vampire tradition is deeply philosophical: the hunger is understood as part of a cosmic cycle.` },
+  southeast:  { lang:'Malay', pre:['Ponti','Penan','Lang','Hantu','Orang','Bajang'], mid:['anak','ibu','bapa'], suf:['Malam','Darah','Kegelapan','Kematian','Bayang'], titles:['Raja Malam','Ratu Darah','Tuan Kegelapan'], clans:['Keluarga Malam','Persaudaraan Darah','Klan Bayang'], powers:['The pontianak shriek','Shifting between beautiful woman and rotting corpse','Flight through jungle canopy'], centuries:['The Srivijayan Empire','The Malaccan Sultanate','The colonial era'], mottos:[{t:'Darah adalah ikatan kita',tr:'Blood is our bond'},{t:'Kami tidak mati, kami menunggu',tr:'We do not die, we wait'}], lore:(n,v)=>`The Southeast Asian tradition produces the pontianak, the langsuir, varieties of the undead that Western taxonomy cannot quite contain. ${n} was transformed near a banyan tree at midnight. ${v} can be beautiful, and that beauty is the primary weapon.` },
+  egypt:      { lang:'Ancient Egyptian', pre:['Akh','Kha','Bak','Sekhm','Ament','Nefer'], mid:['et','at','en','em'], suf:['Neferet','Khepri','Sekhmet','Amenti','Duat'], titles:['Neb en Duat','Hemet en Khem','Nesut en Gerh'], clans:['Per Amenti','Aat en Khem','Per Sekhmet'], powers:['Resurrection through the rites of Osiris','Feeding on the ka, the life-soul','Memory predating all other vampire lineages'], centuries:['The age of the Pharaohs','The Ptolemaic dynasty','The Roman occupation'], mottos:[{t:'Senef pu meket',tr:'Blood is our protection'},{t:'En em mut, en em ankh',tr:'We are not in death, we are in life'}], lore:(n,v)=>`Egypt made the first vampires, or something close enough that the distinction is academic. ${n} was taken in a tomb not listed in any archaeological survey, by something that remembered the building of the first pyramids as a recent event.` },
+  westafr:    { lang:'Akan / Yoruba', pre:['Adze','Asanbosam','Obayifo','Opoku','Kwame','Kofi'], mid:['a','o','e','i'], suf:['Tumi','Hunu','Sunsum','Mogya','Kra','Sasa'], titles:['Ohene na Anadwo','Ohemaa na Mogya'], clans:['Abusua Mogya','Fekuo Anadwo','Fie Sunsum'], powers:['The adze firefly form','Feeding on the sunsum, the spirit','Possession of living bodies'], centuries:['The age of the Ashanti Empire','The trans-Atlantic trade era','The colonial period'], mottos:[{t:'Mogya na yede kae yen ho',tr:'By blood we remember ourselves'},{t:'Onipa wuo nni awiei',tr:'Human death has no end'}], lore:(n,v)=>`The adze does not follow European rules because it predates them entirely. ${n} encountered the firefly form in the dark before understanding what it was. ${v} can feed on a person\'s spirit without ever touching their blood. This is considered more intimate, and considerably more lasting.` },
+  persia:     { lang:'Persian (Farsi)', pre:['Al','Div','Jad','Kh','Shab','Khun','Siy','Ahu'], mid:['dash','avaz','para','avar'], suf:['e Shab','e Khun','e Div','e Siyah','Parast'], titles:['Shah e Shab','Malake Khun','Amir e Div'], clans:['Khandan e Shab','Farman e Khun','Anjoman e Div'], powers:['The al shapeshifting into wind','Memory of the Zoroastrian age','Immunity to fire, the sacred element'], centuries:['The Achaemenid Empire','The Sassanid dynasty','The Islamic Golden Age'], mottos:[{t:'Khun raaste miguyad',tr:'Blood tells the truth'},{t:'Ma nemimirim, ma montazerim',tr:'We do not die, we wait'}], lore:(n,v)=>`Persian vampire mythology centers on the al, a spirit of the in-between places, and the div, a creature of darkness from the pre-Islamic tradition. ${n} was taken in the desert. ${v} carries a Persian relationship with beauty and poetry and cruelty that the court tradition cultivated across dynasties.` },
+  ottoman:    { lang:'Ottoman Turkish', pre:['Kara','Gece','Kan','Ölüm','Karanlık','Ruh','Şeytan','Cin'], mid:['li','ci','çi','lı'], suf:['Gece Efendisi','Kan İçici','Ölüm Beyi','Ruh Avcısı'], titles:['Gece Sultanı','Kan Paşası','Ölüm Beyi'], clans:['Gece Hanedanı','Kan Ocağı','Ölüm Tarikatı'], powers:['The vast Ottoman administrative memory','Command of the Janissary dead','Immunity to all Islamic sacred texts except the oldest'], centuries:['The founding of the Ottoman dynasty','The siege of Constantinople','The age of Suleiman the Magnificent'], mottos:[{t:'Kan hiç yalan söylemez',tr:'Blood never lies'},{t:'Ölmeyiz, bekleriz',tr:'We do not die, we wait'}], lore:(n,v)=>`The Ottoman court produced vampires through sheer concentration of power, ambition, and centuries of accumulated political violence. ${n} was turned somewhere in Constantinople, in the period when the city was still adjusting to its new name.` },
+  australia:  { lang:'Dreaming / English', pre:['Yara','Bunyip','Muldu','Wunda','Eerin','Mimi'], mid:['ma','ra','la','na','wa'], suf:['of the Red Earth','the Clever One','of the Dreaming','the Unbound'], titles:['The Clever One of the Dark','Keeper of the Long Night','Walker Between the Worlds'], clans:['The Red Earth Circle','Dreamtime Dark','The Unbound Mob'], powers:['Dreamtime walking between living and dead','Feeding through the songlines','Shapeshifting into min min light'], centuries:['Pre-colonial Dreaming time','The colonial disruption','The long recovery'], mottos:[{t:'Country remembers everything',tr:''},{t:'The Dreaming does not end',tr:''}], lore:(n,v)=>`Australia\'s dark tradition is about country, about the land itself holding memory. ${n} walked into the wrong part of the desert at the wrong hour. What ${v} became is something Western taxonomy struggles to categorize. Country knows what ${v} is. That is enough.` },
+  pacific:    { lang:'Polynesian', pre:['Tani','Mana','Haka','Noa','Kau','Aho','Tini','Rau'], mid:['wha','nga','roa','nui'], suf:['o te Po','o te Toto','o te Rangi','Atua','Tipua','Taniwha'], titles:['Ariki o te Po','Wahine Atua o te Toto','Taniwha Nui'], clans:['Iwi Po','Hapu Toto','Roopu Taniwha'], powers:['The taniwha form of water guardian','Feeding on mana rather than blood alone','Navigation by the dead stars'], centuries:['The age of the great voyages','The settlement of the Pacific','The colonial arrival'], mottos:[{t:'Ko toto ko toku iwi',tr:'Blood is my people'},{t:'E kore au e ngaro',tr:'I will not be lost'}], lore:(n,v)=>`The Pacific tradition understands the dark differently: as the beginning rather than the end, as po, the originating void from which everything emerged. ${n} was transformed near water. What ${v} became is a taniwha of a particular kind, a guardian turned predator, or perhaps a predator turned guardian.` },
+};
+
+function pick(arr, seed, offset) { return arr[Math.abs(seed + offset) % arr.length]; }
+
+function extractSeed(name) {
+  const n = name.toLowerCase().trim();
+  return n.split('').reduce((acc,c) => acc + c.charCodeAt(0), 0);
+}
+
+function generateName(name, regionId) {
+  const rd = RD[regionId]; if (!rd) return {name:'Unknown', pron:''};
+  const seed = extractSeed(name);
+  const pre = pick(rd.pre, seed, 0);
+  const mid = rd.mid ? pick(rd.mid, seed, 1) : '';
+  const suf = pick(rd.suf, seed, 2);
+  const full = mid ? `${pre}${mid} ${suf}` : `${pre} ${suf}`;
+  return { name: full, pron: `( ${full.toLowerCase().replace(/([aeiou])([^aeiou\s])/gi,'$1-$2')} )` };
+}
+
+let state = { name:'', continent:'', region:'' };
+
+function setStep(n) {
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById('step'+i);
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  });
+}
+
+function showScreen(id) {
+  ['name','continent','region','result'].forEach(s => {
+    document.getElementById('screen-'+s).style.display = s===id ? 'block' : 'none';
+  });
+}
+
+function goToContinent() {
+  const name = document.getElementById('mortal-name').value.trim();
+  if (!name) { document.getElementById('mortal-name').style.borderColor='var(--blood)'; return; }
+  document.getElementById('mortal-name').style.borderColor='var(--border-dim)';
+  state.name = name;
+  const grid = document.getElementById('continent-grid');
+  grid.innerHTML = CONTINENTS.map(c=>`
+    <button class="continent-btn" onclick="selectContinent('${c.id}')">
+      <span class="c-icon">${c.icon}</span>
+      <span><span class="c-name">${c.name}</span><span class="c-sub">${c.sub}</span></span>
+    </button>`).join('');
+  showScreen('continent'); setStep(2);
+}
+
+function selectContinent(id) {
+  state.continent = id;
+  const cont = CONTINENTS.find(c=>c.id===id);
+  document.getElementById('region-prompt').textContent = cont.name + ': choose your region.';
+  const regions = REGIONS[id] || [];
+  document.getElementById('region-list').innerHTML = regions.map(r=>`
+    <button class="region-btn" onclick="selectRegion('${r.id}')">
+      <span><span class="r-name">${r.name}</span><span class="r-flavor">${r.flavor}</span></span>
+      <span style="color:var(--border-bright)">→</span>
+    </button>`).join('');
+  showScreen('region'); setStep(3);
+}
+
+function selectRegion(id) {
+  state.region = id;
+  const rd = RD[id]; if (!rd) return;
+  const seed = extractSeed(state.name);
+  const { name: vname, pron } = generateName(state.name, id);
+  const title  = pick(rd.titles,   seed, 3);
+  const clan   = pick(rd.clans,    seed, 4);
+  const power  = pick(rd.powers,   seed, 5);
+  const cent   = pick(rd.centuries, seed, 6);
+  const motto  = pick(rd.mottos,   seed, 7);
+  const region = REGIONS[state.continent].find(r=>r.id===id);
+
+  document.getElementById('r-name').textContent    = vname;
+  document.getElementById('r-pron').textContent    = pron;
+  document.getElementById('r-tag').textContent     = (region?region.name:'') + '  |  ' + rd.lang;
+  document.getElementById('r-clan-disp').textContent  = clan.length > 16 ? clan.split(' ').slice(-1)[0] : clan;
+  document.getElementById('r-title-disp').textContent = title.split(' ').slice(0,2).join(' ');
+  document.getElementById('r-motto').textContent   = motto.t;
+  document.getElementById('r-motto-trans').textContent = motto.tr ? '"' + motto.tr + '"' : '';
+  document.getElementById('r-lore').textContent    = rd.lore(state.name, vname);
+  document.getElementById('r-power').textContent  = power;
+  document.getElementById('r-century').textContent = cent;
+
+  showScreen('result'); setStep(4);
+}
+
+function goBack() { showScreen('continent'); setStep(2); }
+
+function restart() {
+  state = {name:'',continent:'',region:''};
+  document.getElementById('mortal-name').value='';
+  showScreen('name'); setStep(1);
+}
+</script>
+
+<!-- ATMOSPHERIC AUDIO -->
+<audio id="bg-audio" loop preload="auto" style="display:none">
+  <source src="atmosphere.mp3" type="audio/mpeg">
+</audio>
+
+<!-- MUTE BUTTON -->
+<button id="audio-toggle" onclick="toggleAudio()" title="Toggle music" aria-label="Toggle music">
+  <span id="audio-icon">♪</span>
+</button>
+
+<style>
+#audio-toggle {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 100;
+  width: 36px;
+  height: 36px;
+  background: rgba(13,6,8,0.85);
+  border: 1px solid #3a1010;
+  color: #6b1a1a;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+#audio-toggle:hover {
+  border-color: #8b1a1a;
+  color: #c8102e;
+}
+#audio-toggle.muted {
+  color: #3a1010;
+  border-color: #1a0808;
+}
+</style>
+
+<script>
+(function() {
+  const audio = document.getElementById('bg-audio');
+  const btn   = document.getElementById('audio-toggle');
+  const icon  = document.getElementById('audio-icon');
+
+  // Read mute state from localStorage
+  let muted = localStorage.getItem('dh-muted') === 'true';
+
+  function applyMute() {
+    audio.muted = muted;
+    icon.textContent = muted ? '♪' : '♪';
+    btn.classList.toggle('muted', muted);
+    btn.title = muted ? 'Unmute music' : 'Mute music';
+  }
+
+  // Fade in from silence
+  audio.volume = 0;
+
+  function tryPlay() {
+    if (muted) { applyMute(); return; }
+    audio.play().then(() => {
+      // Fade in to 0.18 over 3 seconds
+      let vol = 0;
+      const target = 0.18;
+      const step = target / 60;
+      const fade = setInterval(() => {
+        vol = Math.min(vol + step, target);
+        audio.volume = vol;
+        if (vol >= target) clearInterval(fade);
+      }, 50);
+    }).catch(() => {
+      // Autoplay blocked — attach to first user interaction
+      const unlock = () => {
+        tryPlay();
+        document.removeEventListener('click', unlock);
+        document.removeEventListener('keydown', unlock);
+      };
+      document.addEventListener('click', unlock);
+      document.addEventListener('keydown', unlock);
+    });
+    applyMute();
+  }
+
+  function toggleAudio() {
+    muted = !muted;
+    localStorage.setItem('dh-muted', muted);
+    if (muted) {
+      // Fade out
+      const fade = setInterval(() => {
+        audio.volume = Math.max(audio.volume - 0.02, 0);
+        if (audio.volume <= 0) { audio.muted = true; clearInterval(fade); }
+      }, 40);
+    } else {
+      audio.muted = false;
+      tryPlay();
+    }
+    applyMute();
+  }
+
+  window.toggleAudio = toggleAudio;
+
+  // Start on page load
+  tryPlay();
+})();
+</script>
+
+
+<!-- MUSIC CREDIT -->
+<div style="position:fixed;bottom:1.25rem;left:1.25rem;z-index:99;font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:2px;color:#2a0e0e;line-height:1.6;pointer-events:none">
+  MUSIC<br>
+  <span style="pointer-events:auto">
+    <a href="https://ende.app" target="_blank" rel="noopener"
+       style="color:#3a1010;text-decoration:none;transition:color 0.2s"
+       onmouseover="this.style.color='#8b1a1a'"
+       onmouseout="this.style.color='#3a1010'">
+      SASCHA ENDE / ENDE.APP
+    </a>
+  </span>
+</div>
+
+</body>
+</html>

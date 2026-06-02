@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dark Hours — A Gothic Experience</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* LANDING PAGE SPECIFIC */
+.landing-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1.25rem;
+  position: relative;
+  z-index: 10;
+}
+
+.site-intro {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeUp 1.2s ease;
+}
+
+.site-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  font-weight: 700;
+  color: var(--blood);
+  text-shadow: 0 0 40px rgba(139,0,0,0.5), 0 0 80px rgba(139,0,0,0.2);
+  letter-spacing: 4px;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.site-tagline {
+  font-style: italic;
+  color: var(--gold-dim);
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+
+/* THREE DOORS */
+.doors {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 520px;
+  animation: fadeUp 1.4s ease;
+}
+
+.door {
+  display: block;
+  background: rgba(13,6,8,0.85);
+  border: 1px solid var(--border-dim);
+  padding: 1.5rem 1.75rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.door::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: linear-gradient(to right, rgba(139,26,26,0.15), transparent);
+  transition: width 0.35s;
+}
+
+.door:hover {
+  border-color: var(--border-bright);
+  background: rgba(20,5,5,0.9);
+}
+
+.door:hover::before { width: 100%; }
+
+.door-number {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 4px;
+  color: var(--blood-dark);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.door-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--parchment);
+  margin-bottom: 0.3rem;
+  letter-spacing: 1px;
+}
+
+.door-desc {
+  font-size: 0.95rem;
+  color: var(--gold-dim);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.door-arrow {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--border-bright);
+  font-size: 1.2rem;
+  transition: all 0.25s;
+  opacity: 0;
+}
+
+.door:hover .door-arrow {
+  opacity: 1;
+  right: 1.25rem;
+}
+
+.door.featured {
+  border-color: #3a1010;
+}
+
+.door.featured .door-title { color: var(--blood); }
+.door.featured .door-number { color: var(--blood-dark); }
+
+.footer-note {
+  margin-top: 2.5rem;
+  font-size: 0.75rem;
+  color: #3a1a1a;
+  font-style: italic;
+  letter-spacing: 1px;
+  text-align: center;
+  animation: fadeIn 2s ease;
+}
+</style>
+</head>
+<body>
+
+<!-- ROOM BACKGROUND -->
+<div class="room-bg state-open" id="roomBg">
+  <div class="room-walls"></div>
+  <div class="room-vignette state-open" id="roomVignette"></div>
+  <div class="candle-scene">
+
+    <!-- Ambient candles — placed around the room -->
+    <div class="candle amb" style="left:6%;bottom:28%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:32px"></div>
+    </div>
+    <div class="candle amb" style="left:12%;bottom:32%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:22px"></div>
+    </div>
+    <div class="candle amb" style="left:8%;bottom:24%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:42px"></div>
+    </div>
+    <div class="candle amb" style="right:7%;bottom:30%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:28px"></div>
+    </div>
+    <div class="candle amb" style="right:13%;bottom:26%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:38px"></div>
+    </div>
+    <div class="candle amb" style="right:5%;bottom:34%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:20px"></div>
+    </div>
+    <div class="candle amb" style="left:22%;bottom:18%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:26px"></div>
+    </div>
+    <div class="candle amb" style="right:22%;bottom:18%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:30px"></div>
+    </div>
+    <div class="candle amb" style="left:3%;bottom:50%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:18px"></div>
+    </div>
+    <div class="candle amb" style="right:3%;bottom:50%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:24px"></div>
+    </div>
+
+    <!-- THE SIGNIFICANT CANDLE — centered, prominent -->
+    <div class="candle sig" id="sigCandle" style="left:50%;transform:translateX(-50%);bottom:14%">
+      <div class="c-glow"></div><div class="c-flame"></div>
+      <div class="c-body" style="height:65px"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LANDING CONTENT -->
+<div class="landing-content">
+  <div class="site-intro">
+    <div class="ornament">✦ ✦ ✦</div>
+    <h1 class="site-title">The Dark Hours</h1>
+    <p class="site-tagline">Three ways to know what you are in the dark</p>
+  </div>
+
+  <div class="divider" style="width:100%;max-width:520px;margin-bottom:1.5rem">
+    <div class="divider-line"></div><div class="divider-gem">⬥</div><div class="divider-line"></div>
+  </div>
+
+  <div class="doors">
+
+    <a href="quiz.html" class="door">
+      <div class="door-number">I &nbsp;—&nbsp; The Divination</div>
+      <div class="door-title">What Blood Type Are You?</div>
+      <div class="door-desc">A gothic personality test. Five questions. Four archetypes. One truth about what kind of darkness lives in you.</div>
+      <span class="door-arrow">→</span>
+    </a>
+
+    <a href="generator.html" class="door">
+      <div class="door-number">II &nbsp;—&nbsp; The Naming</div>
+      <div class="door-title">The Vampire Name Generator</div>
+      <div class="door-desc">Your mortal name is a seed. Choose your origin from twenty-five regions across six continents. What grows from it is yours.</div>
+      <span class="door-arrow">→</span>
+    </a>
+
+    <a href="interview.html" class="door featured">
+      <div class="door-number">III &nbsp;—&nbsp; The Interview</div>
+      <div class="door-title">Speak With the Ancient</div>
+      <div class="door-desc">You have been granted an audience with something very old. Ten questions. Choose carefully. Not everyone walks out.</div>
+      <span class="door-arrow">→</span>
+    </a>
+
+  </div>
+
+  <p class="footer-note">Enter only if you intend to stay.</p>
+</div>
+
+
+<!-- ATMOSPHERIC AUDIO -->
+<audio id="bg-audio" loop preload="auto" style="display:none">
+  <source src="atmosphere.mp3" type="audio/mpeg">
+</audio>
+
+<!-- MUTE BUTTON -->
+<button id="audio-toggle" onclick="toggleAudio()" title="Toggle music" aria-label="Toggle music">
+  <span id="audio-icon">♪</span>
+</button>
+
+<style>
+#audio-toggle {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 100;
+  width: 36px;
+  height: 36px;
+  background: rgba(13,6,8,0.85);
+  border: 1px solid #3a1010;
+  color: #6b1a1a;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+#audio-toggle:hover {
+  border-color: #8b1a1a;
+  color: #c8102e;
+}
+#audio-toggle.muted {
+  color: #3a1010;
+  border-color: #1a0808;
+}
+</style>
+
+<script>
+(function() {
+  const audio = document.getElementById('bg-audio');
+  const btn   = document.getElementById('audio-toggle');
+  const icon  = document.getElementById('audio-icon');
+
+  // Read mute state from localStorage
+  let muted = localStorage.getItem('dh-muted') === 'true';
+
+  function applyMute() {
+    audio.muted = muted;
+    icon.textContent = muted ? '♪' : '♪';
+    btn.classList.toggle('muted', muted);
+    btn.title = muted ? 'Unmute music' : 'Mute music';
+  }
+
+  // Fade in from silence
+  audio.volume = 0;
+
+  function tryPlay() {
+    if (muted) { applyMute(); return; }
+    audio.play().then(() => {
+      // Fade in to 0.18 over 3 seconds
+      let vol = 0;
+      const target = 0.18;
+      const step = target / 60;
+      const fade = setInterval(() => {
+        vol = Math.min(vol + step, target);
+        audio.volume = vol;
+        if (vol >= target) clearInterval(fade);
+      }, 50);
+    }).catch(() => {
+      // Autoplay blocked — attach to first user interaction
+      const unlock = () => {
+        tryPlay();
+        document.removeEventListener('click', unlock);
+        document.removeEventListener('keydown', unlock);
+      };
+      document.addEventListener('click', unlock);
+      document.addEventListener('keydown', unlock);
+    });
+    applyMute();
+  }
+
+  function toggleAudio() {
+    muted = !muted;
+    localStorage.setItem('dh-muted', muted);
+    if (muted) {
+      // Fade out
+      const fade = setInterval(() => {
+        audio.volume = Math.max(audio.volume - 0.02, 0);
+        if (audio.volume <= 0) { audio.muted = true; clearInterval(fade); }
+      }, 40);
+    } else {
+      audio.muted = false;
+      tryPlay();
+    }
+    applyMute();
+  }
+
+  window.toggleAudio = toggleAudio;
+
+  // Start on page load
+  tryPlay();
+})();
+</script>
+
+
+<!-- MUSIC CREDIT -->
+<div style="position:fixed;bottom:1.25rem;left:1.25rem;z-index:99;font-family:'Cinzel',serif;font-size:0.48rem;letter-spacing:2px;color:#2a0e0e;line-height:1.6;pointer-events:none">
+  MUSIC<br>
+  <span style="pointer-events:auto">
+    <a href="https://ende.app" target="_blank" rel="noopener"
+       style="color:#3a1010;text-decoration:none;transition:color 0.2s"
+       onmouseover="this.style.color='#8b1a1a'"
+       onmouseout="this.style.color='#3a1010'">
+      SASCHA ENDE / ENDE.APP
+    </a>
+  </span>
+</div>
+
+</body>
+</html>
