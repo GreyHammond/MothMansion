@@ -1412,8 +1412,8 @@ const QUESTIONS = [
 
 function getEnding() {
   if (deathTrigger) return 'death';
-  if (trust >= 18 && aislingNamed) return 'trust';
   if (trust >= 20 && tension < 10 && aislingNamed) return 'offer';
+  if (trust >= 18 && aislingNamed) return 'trust';
   if (trust >= 14 && tension < 12) return 'changed';
   if (trust >= 14 && tension >= 12) return 'narrow';
   if (trust >= 8 && tension < 10) return 'safe';
@@ -1425,14 +1425,22 @@ const ENDINGS = {
   offer: {
     name: 'The Offer',
     body: () => '<p class="ending-text">He is at the open door.</p>' +
-      '<p class="ending-text">He pauses. Something changes in the quality of his stillness.</p>' +
+      beat('*He pauses.*') +
+      beat('*Something changes in the quality of his stillness. The interview is over. You both know that. And yet he is not moving. Something is being weighed.*') +
       speech('There is one more thing I want to ask you. Before you go.') +
       beat('*A pause.*') +
-      speech('You could leave tonight as you are. With the story. With everything this room gave you. That is not a small thing.') +
-      beat('*He looks at you with the full weight of two centuries behind his eyes.*') +
+      speech('You could leave tonight as you are. With the story. With everything this room gave you.') +
+      beat('*He looks at you.*') +
+      speech('That is not a small thing. The story you are carrying out of here is the most honest account of what I am that has ever existed. You earned it. It is yours.') +
+      beat('*A pause.*') +
       speech('Or you could stay.') +
-      '<p class="ending-text" style="margin-top:1rem">He does not elaborate. He does not need to. You understand exactly what he is offering and exactly what it would cost.</p>' +
-      '<p class="ending-text">The door is open either way.</p>'
+      '<p class="ending-text" style="margin-top:1.25rem">He does not elaborate. He does not need to. You understand exactly what he is offering. Not just what it would make you. What it would make you to him.</p>' +
+      '<p class="ending-text">The door is open either way.</p>' +
+      '<p class="ending-text">He waits.</p>' +
+      '<div class="death-choices" style="margin-top:1.5rem">' +
+        '<button class="death-btn" onclick="offerChoice(&apos;leave&apos;)">You walk out.</button>' +
+        '<button class="death-btn" onclick="offerChoice(&apos;stay&apos;)">You stay.</button>' +
+      '</div>'
   },
   trust: {
     name: 'The Trust Ending',
@@ -1481,18 +1489,30 @@ const ENDINGS = {
   dark: {
     name: 'The Dark Ending',
     body: () => {
-      // Kill all candles
+      document.querySelectorAll('.c-flame').forEach(f => {
+        f.style.opacity = '0'; f.style.transition = 'opacity 2s ease';
+      });
       setTimeout(() => {
-        document.querySelectorAll('.c-flame').forEach(f => { f.style.opacity = '0'; f.style.transition = 'opacity 3s ease'; });
         document.getElementById('roomBg').style.background = '#000';
-        document.getElementById('roomBg').style.transition = 'background 3s ease';
-      }, 500);
-      return '<p class="ending-text">The candles go out.</p>' +
-        '<p class="ending-text">All of them. All at once. Not one by one.</p>' +
-        '<p class="speech">You asked the wrong things. Or perhaps you asked them the wrong way."</p>' +
-        beat('*A pause.*') +
-        '<p class="speech">The interview is over."</p>' +
-        '<p class="ending-text" style="margin-top:1.5rem">The door does not open.</p>'
+        document.getElementById('roomBg').style.transition = 'background 2s ease';
+      }, 300);
+      setTimeout(() => {
+        const nb = document.getElementById('ending-name');
+        const cb = document.getElementById('ending-body');
+        if (nb) nb.textContent = 'The Dark Ending';
+        if (cb) cb.innerHTML =
+          '<p class="ending-text">The candles go out.</p>' +
+          '<p class="ending-text">All of them. All at once. Not one by one.</p>' +
+          '<p class="speech" style="margin-top:1rem">You asked the wrong things. Or perhaps you asked them the wrong way. I have not yet decided which."</p>' +
+          '<p class="beat">*A pause.*</p>' +
+          '<p class="speech">The interview is over."</p>' +
+          '<p class="ending-text" style="margin-top:1.5rem">The door does not open.</p>' +
+          '<div style="margin-top:2rem;text-align:center">' +
+            '<button class="action-btn" onclick="restartInterview()" style="max-width:320px;margin:0 auto 0.75rem;display:block">Begin Again</button>' +
+            '<a href="index.html" style="font-family:Cinzel,serif;font-size:0.58rem;letter-spacing:3px;color:var(--gold-deep);text-decoration:none;text-transform:uppercase">&larr; Return to the House</a>' +
+          '</div>';
+      }, 2500);
+      return '';
     }
   },
   death: {
@@ -1501,7 +1521,66 @@ const ENDINGS = {
   }
 };
 
+
+function offerChoice(choice) {
+  const es = document.getElementById('ending-screen');
+  const nameEl = document.getElementById('ending-name');
+  const bodyEl = document.getElementById('ending-body');
+
+  if (choice === 'leave') {
+    nameEl.textContent = 'The Trust Ending';
+    bodyEl.innerHTML =
+      '<p class="ending-text">You walk out.</p>' +
+      '<p class="ending-text">The night air is cold and you feel it completely.</p>' +
+      '<p class="ending-text">You write the story. It takes three weeks and it is the best thing you have ever written and you know it will be the best thing you will ever write.</p>' +
+      '<p class="ending-text">It is published. It wins every award there is to win.</p>' +
+      '<p class="ending-text">People read it and believe it and do not quite believe it simultaneously. That is correct. That is the right response to it.</p>' +
+      '<p class="ending-text">Years later, occasionally, you think about the door.</p>' +
+      '<div style="margin-top:2rem;text-align:center">' +
+        '<button class="action-btn" onclick="restartInterview()" style="max-width:320px;margin:0 auto 0.75rem;display:block">Begin Again</button>' +
+        '<a href="index.html" style="font-family:Cinzel,serif;font-size:0.58rem;letter-spacing:3px;color:var(--gold-deep);text-decoration:none;text-transform:uppercase">&larr; Return to the House</a>' +
+      '</div>';
+  } else {
+    // Stay — the consensual turning
+    // Fade all candles down slowly, room darkens
+    document.querySelectorAll('.c-flame').forEach(f => {
+      f.style.transition = 'opacity 6s ease';
+      f.style.opacity = '0.15';
+    });
+
+    nameEl.textContent = '';
+    bodyEl.innerHTML =
+      beat('*You do not walk out.*') +
+      beat('*The door closes.*') +
+      beat('*He looks at you for a long time.*') +
+      beat('*He does not move quickly. He does not move with hunger. He moves the way he does everything, with the particular patience of something that has all the time in the world and has chosen, tonight, to spend some of it on you.*') +
+      beat('*The cold arrives. Not the cold of the death ending. Something different. Something that feels less like warmth leaving and more like something else arriving.*') +
+      beat('*You understand, in the moment before it is done, that he is being careful. That he has been careful exactly once before.*') +
+      beat('*The candles go very low.*') +
+      beat('*The room is almost dark.*') +
+      beat('*Almost.*') +
+      '<div style="margin-top:2.5rem">' +
+      '<p class="ending-text">In the morning, someone finds the room.</p>' +
+      '<p class="ending-text">A notebook. A tape recorder.</p>' +
+      '<div class="tape-block" style="margin-top:1.25rem">' +
+        '<div style="font-family:Cinzel,serif;font-size:0.5rem;letter-spacing:3px;color:var(--blood);opacity:0.5;margin-bottom:0.75rem">&#9210; RECORDING</div>' +
+        '<p class="tape-line his">[ completely silent ]</p>' +
+        '<p class="tape-line his">[ no audio recorded ]</p>' +
+        '<p class="tape-line his">[ blank ]</p>' +
+      '</div>' +
+      '<p style="font-size:0.8rem;color:#4a2a2a;font-style:italic;margin-top:0.75rem;text-align:center;font-family:Cinzel,serif;letter-spacing:1px">The tape contains nothing. Not your voice. Not his. As if the room was empty the whole time.</p>' +
+      '<p class="ending-text" style="margin-top:1.5rem">A new story begins.</p>' +
+      '<p class="ending-text">This one is not written yet.</p>' +
+      '<div style="margin-top:2rem;text-align:center">' +
+        '<button class="action-btn" onclick="restartInterview()" style="max-width:320px;margin:0 auto 0.75rem;display:block">Begin Again</button>' +
+        '<a href="index.html" style="font-family:Cinzel,serif;font-size:0.58rem;letter-spacing:3px;color:var(--gold-deep);text-decoration:none;text-transform:uppercase">&larr; Return to the House</a>' +
+      '</div>' +
+      '</div>';
+  }
+}
+
 function buildDeathEnding() {
+  // Dim ambient candles, keep one
   document.querySelectorAll('.candle.amb .c-flame').forEach(f => {
     f.style.opacity = '0'; f.style.transition = 'opacity 4s ease';
   });
@@ -1526,11 +1605,12 @@ function buildDeathEnding() {
       '<button class="death-btn" onclick="deathChoice(&apos;close&apos;)">Close your eyes</button>' +
     '</div>' +
     '</div>';
-  }
+}
 
 function deathChoice(choice) {
   const container = document.getElementById('ending-body');
   if (choice === 'close') {
+    // All candles out
     document.querySelectorAll('.c-flame').forEach(f => { f.style.opacity = '0'; f.style.transition = 'opacity 2s ease'; });
     setTimeout(() => { document.getElementById('roomBg').style.background = '#000'; }, 2000);
     container.innerHTML += '<div style="animation:fadeUp 0.7s ease">' +
@@ -1547,9 +1627,9 @@ function deathChoice(choice) {
     '</div>';
   } else {
     container.innerHTML += '<div style="animation:fadeUp 0.7s ease">' +
-      '<p class="speech" style="margin-top:1.25rem">Please."</p>' +
+      '<p class="speech" style="margin-top:1.25rem">Please.\\"</p>' +
       beat('*Your voice comes out smaller than you expected.*') +
-      '<p class="speech">Please. Don\'t let me die."</p>' +
+      '<p class="speech">Please. Don’t let me die."</p>' +
       beat('*He is very still.*') +
       beat('*Something stirs in him. You can see it happen. Something old.*') +
       beat('*He looks at you for a very long time.*') +
@@ -1564,7 +1644,7 @@ function deathChoice(choice) {
       '</div>' +
     '</div>';
   }
-  }
+}
 
 function whyChoice(why) {
   const container = document.getElementById('ending-body');
