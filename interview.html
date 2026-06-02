@@ -1502,7 +1502,6 @@ const ENDINGS = {
 };
 
 function buildDeathEnding() {
-  // Dim ambient candles, keep one
   document.querySelectorAll('.candle.amb .c-flame').forEach(f => {
     f.style.opacity = '0'; f.style.transition = 'opacity 4s ease';
   });
@@ -1523,16 +1522,15 @@ function buildDeathEnding() {
     beat('*Then something unexpected happens. He straightens. Something working through him.*') +
     '<div class="death-pause"><div class="death-pause-line">&#10022; &#10022; &#10022;</div></div>' +
     '<div class="death-choices">' +
-      '<button class="death-btn" onclick="deathChoice(\\\'help\\\')">Ask him for help</button>' +
-      '<button class="death-btn" onclick="deathChoice(\\\'close\\\')">Close your eyes</button>' +
+      '<button class="death-btn" onclick="deathChoice(&apos;help&apos;)">Ask him for help</button>' +
+      '<button class="death-btn" onclick="deathChoice(&apos;close&apos;)">Close your eyes</button>' +
     '</div>' +
     '</div>';
-}
+  }
 
 function deathChoice(choice) {
   const container = document.getElementById('ending-body');
   if (choice === 'close') {
-    // All candles out
     document.querySelectorAll('.c-flame').forEach(f => { f.style.opacity = '0'; f.style.transition = 'opacity 2s ease'; });
     setTimeout(() => { document.getElementById('roomBg').style.background = '#000'; }, 2000);
     container.innerHTML += '<div style="animation:fadeUp 0.7s ease">' +
@@ -1549,9 +1547,9 @@ function deathChoice(choice) {
     '</div>';
   } else {
     container.innerHTML += '<div style="animation:fadeUp 0.7s ease">' +
-      '<p class="speech" style="margin-top:1.25rem">Please.\\"</p>' +
+      '<p class="speech" style="margin-top:1.25rem">Please."</p>' +
       beat('*Your voice comes out smaller than you expected.*') +
-      '<p class="speech">Please. Don’t let me die."</p>' +
+      '<p class="speech">Please. Don\'t let me die."</p>' +
       beat('*He is very still.*') +
       beat('*Something stirs in him. You can see it happen. Something old.*') +
       beat('*He looks at you for a very long time.*') +
@@ -1560,13 +1558,13 @@ function deathChoice(choice) {
       beat('*A pause.*') +
       speech('And why.') +
       '<div class="why-choices">' +
-        '<button class="why-btn" onclick="whyChoice(\\\'fear\\\')">Because I am afraid to die</button>' +
-        '<button class="why-btn" onclick="whyChoice(\\\'unfinished\\\')">Because I have not finished what I came here to do</button>' +
-        '<button class="why-btn" onclick="whyChoice(\\\'saw\\\')">Because of what I saw in you tonight</button>' +
+        '<button class="why-btn" onclick="whyChoice(&apos;fear&apos;)">Because I am afraid to die</button>' +
+        '<button class="why-btn" onclick="whyChoice(&apos;unfinished&apos;)">Because I have not finished what I came here to do</button>' +
+        '<button class="why-btn" onclick="whyChoice(&apos;saw&apos;)">Because of what I saw in you tonight</button>' +
       '</div>' +
     '</div>';
   }
-}
+  }
 
 function whyChoice(why) {
   const container = document.getElementById('ending-body');
