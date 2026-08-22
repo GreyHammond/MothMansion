@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moth Mansion — the porch light is on</title>
+<meta name="description" content="An adult gaming and nerd community. Goth-leaning, queer-safe, awake later than it should be.">
+<meta property="og:title" content="Moth Mansion">
+<meta property="og:description" content="A house for grown nerds. The porch light is on.">
+<meta name="theme-color" content="#0B0810">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=UnifrakturMaguntia&family=Karla:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B0810; --crypt:#16101F; --velvet:#1E1529; --velvet-hi:#261B33;
+  --candle:#D9A441; --bone:#E6DCE8; --ash:#9287A0;
+  --wine:#A63A4C; --wine-lit:#D97C8A;
+  --hair:rgba(230,220,232,.10); --hair-lit:rgba(217,164,65,.22);
+  --display:"Cormorant Garamond",Georgia,serif;
+  --gothic:"UnifrakturMaguntia",serif;
+  --body:"Karla",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --gut:clamp(1.25rem,5vw,3.5rem);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--ink);color:var(--ash);
+  font-family:var(--body);font-weight:300;font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;overflow:hidden;
+}
+body::after{ /* candle grain */
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+a{color:var(--candle);text-decoration:none}
+:focus-visible{outline:2px solid var(--candle);outline-offset:4px;border-radius:2px}
+
+/* ── the house ──────────────────────────────────────────────────── */
+#house{position:fixed;inset:0;overflow:hidden}
+
+/* ambient lamp, brightens/dims as you move */
+#lamp{
+  position:absolute;top:-18vh;left:50%;translate:-50% 0;
+  width:min(130vw,1050px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,
+    rgba(217,164,65,.19) 0%, rgba(217,164,65,.085) 30%,
+    rgba(166,58,76,.05) 50%, transparent 70%);
+  filter:blur(16px);animation:breathe 13s ease-in-out infinite;
+  transition:opacity .5s ease;
+}
+@keyframes breathe{0%,100%{opacity:.78;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+#vignette{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 26%,transparent 30%,rgba(11,8,16,.78) 80%);
+}
+
+/* the dark doorway you pass through */
+#veil{
+  position:fixed;inset:0;background:var(--ink);z-index:60;
+  opacity:0;pointer-events:none;transition:opacity .28s ease;
+}
+#veil.closed{opacity:1}
+
+/* ── panels ─────────────────────────────────────────────────────── */
+.room{
+  position:absolute;inset:0;display:grid;place-items:center;
+  padding:clamp(4.5rem,9vh,6rem) var(--gut) clamp(6rem,13vh,8rem);
+  opacity:0;pointer-events:none;overflow-y:auto;overscroll-behavior:contain;
+  transition:opacity .42s ease;
+}
+.room.here{opacity:1;pointer-events:auto}
+.inner{width:100%;max-width:880px;margin:auto}
+.room.wide .inner{max-width:1000px}
+
+.eyebrow{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--ash);opacity:.7;font-weight:500;
+  margin:0 0 1rem;
+}
+h1,h2{font-family:var(--display);font-weight:300;color:var(--bone);margin:0 0 1.1rem;line-height:1.08}
+h2{font-size:clamp(1.75rem,4.6vw,3rem)}
+h2 em,h1 em{font-style:italic;color:var(--candle)}
+h3{font-family:var(--body);font-weight:700;font-size:.98rem;color:var(--bone);margin:0 0 .45rem}
+p{margin:0 0 1rem;max-width:60ch}
+.muted{opacity:.85}
+
+/* porch */
+#porch{text-align:center}
+.window{
+  position:relative;width:96px;height:150px;margin:0 auto 2.2rem;
+  border-radius:48px 48px 4px 4px;border:1.5px solid rgba(217,164,65,.45);
+  background:linear-gradient(180deg,rgba(217,164,65,.30),rgba(217,164,65,.06));
+  box-shadow:0 0 46px rgba(217,164,65,.26),0 0 120px rgba(217,164,65,.11);
+}
+.window::before,.window::after{content:"";position:absolute;background:rgba(11,8,16,.66)}
+.window::before{top:0;bottom:0;left:50%;width:1.5px;translate:-50% 0}
+.window::after{left:0;right:0;top:58%;height:1.5px}
+.wordmark{
+  font-family:var(--gothic);font-size:clamp(2.4rem,8.5vw,5rem);color:var(--bone);
+  line-height:1;margin:0 0 1.2rem;text-shadow:0 0 34px rgba(217,164,65,.22);
+}
+#porch h1{
+  font-style:italic;font-size:clamp(1.35rem,3.6vw,2.1rem);
+  color:var(--candle);margin-bottom:1.2rem;
+}
+.lede{font-size:clamp(.98rem,1.8vw,1.12rem);max-width:36ch;margin:0 auto 2rem}
+#porch .eyebrow{margin-bottom:1.3rem}
+
+.btn{
+  font-family:var(--body);font-weight:500;font-size:.88rem;letter-spacing:.03em;
+  padding:.78rem 1.8rem;border-radius:1px;border:1px solid transparent;cursor:pointer;
+  transition:transform .18s ease,background .18s ease,border-color .18s ease,color .18s ease;
+  display:inline-block;background:none;
+}
+.btn-primary{background:var(--candle);color:#1A1206;font-weight:700}
+.btn-primary:hover{transform:translateY(-2px);background:#E8B95A}
+.btn-ghost{border-color:var(--hair-lit);color:var(--bone)}
+.btn-ghost:hover{border-color:var(--candle);color:var(--candle)}
+.cta-row{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+
+/* anecdote */
+.anecdote{
+  border-left:2px solid var(--wine);padding:.3rem 0 .3rem 1.5rem;margin:1.8rem 0;
+  font-family:var(--display);font-size:clamp(1.1rem,2.3vw,1.4rem);font-style:italic;
+  line-height:1.5;color:var(--bone);max-width:48ch;
+}
+.anecdote span{
+  display:block;font-family:var(--body);font-style:normal;font-size:.86rem;
+  color:var(--ash);margin-top:.85rem;line-height:1.65;
+}
+.stats{display:flex;gap:2.2rem;flex-wrap:wrap;margin-top:1.8rem}
+.stat b{display:block;font-family:var(--display);font-size:2.1rem;font-weight:300;color:var(--candle);line-height:1}
+.stat span{font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+
+/* card grid for rooms that need it */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:1.8rem}
+.cell{background:var(--crypt);padding:1.5rem 1.4rem}
+.cell p{font-size:.9rem;margin:0;max-width:none;line-height:1.65}
+.cell .eyebrow{color:var(--candle);opacity:.7;margin-bottom:.8rem}
+.chan{font-family:var(--mono);font-size:.68rem;opacity:.6;display:block;
+  margin-top:.9rem;line-height:1.9;word-break:break-word}
+
+/* ranks */
+.tier-note{font-size:.92rem;margin:1.4rem 0 0;max-width:60ch}
+.tier-note strong{color:var(--bone);font-weight:500}
+.tier-note em{font-style:italic;color:var(--ash)}
+
+.perkset{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:1.5rem;
+}
+@media(max-width:720px){.perkset{grid-template-columns:1fr}}
+.perkgroup{background:var(--crypt);padding:1.35rem 1.3rem}
+.perkgroup h3{
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--candle);opacity:.7;font-weight:500;margin-bottom:.95rem;
+}
+.perkgroup dl{margin:0}
+.perkgroup dt{
+  font-family:var(--mono);font-size:.74rem;color:var(--bone);margin-top:.75rem;
+}
+.perkgroup dt:first-child{margin-top:0}
+.perkgroup dd{margin:.1rem 0 0;font-size:.84rem;line-height:1.6;opacity:.85}
+
+.connect{
+  border:1px solid var(--hair-lit);background:rgba(217,164,65,.04);
+  padding:1.2rem 1.35rem;margin-top:1.8rem;border-radius:2px;
+}
+.connect h3{
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--candle);opacity:.75;margin-bottom:.9rem;
+}
+.ip{
+  display:flex;width:100%;align-items:stretch;gap:0;margin-bottom:.7rem;
+  background:rgba(11,8,16,.5);border:1px solid var(--hair);border-radius:2px;
+  padding:0;cursor:pointer;text-align:left;overflow:hidden;
+  transition:border-color .2s ease;font-family:var(--body);
+}
+.ip:hover{border-color:var(--hair-lit)}
+.ip-body{flex:1;padding:.7rem .95rem;min-width:0}
+.ip-lbl{
+  display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--candle);opacity:.65;margin-bottom:.2rem;
+}
+.ip-val{
+  display:block;font-family:var(--mono);font-size:1rem;color:var(--bone);
+  word-break:break-all;
+}
+.ip-btn{
+  display:grid;place-items:center;padding:0 1.2rem;flex:none;
+  background:var(--candle);color:#1A1206;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:500;transition:background .2s ease;
+}
+.ip:hover .ip-btn{background:#E8B95A}
+.ip.copied .ip-btn{background:#7FA86A;color:#0F1A0C}
+.invite{
+  display:flex;align-items:stretch;gap:0;margin-top:.9rem;max-width:26rem;
+  background:rgba(11,8,16,.5);border:1px solid var(--hair);border-radius:2px;
+  overflow:hidden;text-decoration:none;transition:border-color .2s ease,transform .2s ease;
+}
+.invite:hover{border-color:var(--hair-lit);transform:translateY(-1px)}
+.invite-mark{
+  display:grid;place-items:center;padding:0 .85rem;flex:none;
+  color:var(--candle);opacity:.8;border-right:1px solid var(--hair);
+  transition:opacity .2s ease;
+}
+.invite:hover .invite-mark{opacity:1}
+.invite-body{flex:1;padding:.62rem .9rem;min-width:0}
+.invite-lbl{
+  display:block;font-family:var(--mono);font-size:.53rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--candle);opacity:.65;margin-bottom:.15rem;
+}
+.invite-val{
+  display:block;font-family:var(--mono);font-size:.85rem;color:var(--bone);
+  word-break:break-all;
+}
+.invite-go{
+  display:grid;place-items:center;padding:0 1.05rem;flex:none;
+  background:var(--candle);color:#1A1206;font-family:var(--mono);font-size:.58rem;
+  letter-spacing:.16em;text-transform:uppercase;font-weight:500;
+  transition:background .2s ease;white-space:nowrap;
+}
+.invite:hover .invite-go{background:#E8B95A}
+@media(max-width:520px){
+  .invite-val{font-size:.74rem}
+  .invite-go{padding:0 .8rem}
+}
+
+.ip-note{font-size:.82rem;opacity:.7;margin:.9rem 0 0}
+
+/* boosts */
+.boost-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:1.8rem}
+.perk{background:var(--crypt);padding:1.4rem 1.35rem}
+.perk .eyebrow{color:var(--candle);opacity:.65;margin-bottom:.7rem}
+.perk p{font-size:.89rem;margin:0;max-width:none;line-height:1.65}
+.meter{height:3px;background:var(--hair);margin-top:2rem;border-radius:2px;overflow:hidden}
+.meter-fill{height:100%;width:41%;background:linear-gradient(90deg,var(--wine),var(--candle));
+  box-shadow:0 0 12px rgba(217,164,65,.5)}
+
+/* rules */
+.rules ul{padding-left:1.1rem;margin:1.4rem 0 0;list-style:none;max-width:58ch}
+.rules li{margin-bottom:.9rem;position:relative}
+.rules li::before{content:"†";position:absolute;left:-1.1rem;color:var(--wine-lit);opacity:.75}
+.rules strong{color:var(--bone);font-weight:500}
+
+/* door */
+.step{display:grid;grid-template-columns:auto 1fr;gap:1.4rem;padding:1.35rem 0;
+  border-top:1px solid var(--hair);align-items:start}
+.step:last-of-type{border-bottom:1px solid var(--hair)}
+.step-key{font-family:var(--mono);font-size:.64rem;letter-spacing:.18em;
+  color:var(--candle);opacity:.65;padding-top:.35rem;white-space:nowrap}
+.step p{margin:0;font-size:.92rem;max-width:56ch}
+.step p+p{margin-top:.45rem}
+.note{border-left:2px solid var(--wine);padding:.1rem 0 .1rem 1.3rem;
+  margin-top:1.6rem;font-size:.9rem;max-width:54ch}
+
+/* ── chrome ─────────────────────────────────────────────────────── */
+#brand{
+  position:fixed;top:clamp(1rem,3vh,1.7rem);left:var(--gut);z-index:70;
+  font-family:var(--gothic);font-size:1.35rem;color:var(--bone);opacity:0;
+  transition:opacity .5s ease;pointer-events:none;
+}
+#brand.on{opacity:.6;pointer-events:auto}
+#brand:hover{opacity:1}
+
+/* ── doors: navigation lives inside each room ───────────────────── */
+.doors{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:.9rem;margin-top:2.4rem;
+}
+.door{
+  display:block;text-align:left;background:none;cursor:pointer;
+  border:1px solid var(--hair);border-radius:2px;
+  padding:1.05rem 1.25rem;font-family:var(--body);
+  transition:border-color .25s ease,background .25s ease,transform .25s ease;
+  position:relative;overflow:hidden;
+}
+.door::after{ /* light spilling under the door on hover */
+  content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--candle),transparent);
+  opacity:0;transition:opacity .3s ease;
+}
+.door:hover,.door:focus-visible{
+  border-color:var(--hair-lit);background:rgba(217,164,65,.045);transform:translateY(-2px);
+}
+.door:hover::after,.door:focus-visible::after{opacity:.75}
+.door .way{
+  display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--ash);opacity:.65;margin-bottom:.4rem;
+}
+.door .where{
+  display:block;font-family:var(--display);font-size:1.3rem;font-style:italic;
+  color:var(--bone);line-height:1.2;
+}
+.door.lead .where{color:var(--candle)}
+.door.lead{border-color:var(--hair-lit)}
+
+/* floor plan overlay */
+#sound-btn{
+  position:fixed;top:clamp(1rem,3vh,1.7rem);right:calc(var(--gut) + 5.6rem);z-index:72;
+  display:flex;align-items:center;gap:.45rem;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ash);background:none;border:1px solid var(--hair);border-radius:1px;
+  padding:.44rem .8rem;cursor:pointer;opacity:.55;
+  transition:opacity .35s ease,color .2s ease,border-color .2s ease;
+}
+#sound-btn:hover{opacity:1;color:var(--candle);border-color:var(--hair-lit)}
+#sound-btn .waves{opacity:0;transition:opacity .3s ease}
+#sound-btn .cross{opacity:1;transition:opacity .3s ease}
+#sound-btn[aria-pressed="true"]{color:var(--candle);border-color:var(--hair-lit);opacity:.9}
+#sound-btn[aria-pressed="true"] .waves{opacity:1}
+#sound-btn[aria-pressed="true"] .cross{opacity:0}
+@media(max-width:600px){
+  #sound-btn{right:calc(var(--gut) + 4.4rem);padding:.42rem .55rem}
+  #sound-btn .s-lbl{display:none}
+}
+
+#plan-btn{
+  position:fixed;top:clamp(1rem,3vh,1.7rem);right:var(--gut);z-index:72;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ash);background:none;border:1px solid var(--hair);border-radius:1px;
+  padding:.5rem .85rem;cursor:pointer;opacity:0;pointer-events:none;
+  transition:opacity .5s ease,color .2s ease,border-color .2s ease;
+}
+#plan-btn.on{opacity:.7;pointer-events:auto}
+#plan-btn:hover{color:var(--candle);border-color:var(--hair-lit);opacity:1}
+#plan{
+  position:fixed;inset:0;z-index:80;background:rgba(11,8,16,.96);
+  display:grid;place-items:center;padding:var(--gut);
+  opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+#plan.open{opacity:1;pointer-events:auto}
+.plan-list{width:100%;max-width:520px}
+.plan-list button{
+  display:block;width:100%;text-align:left;background:none;cursor:pointer;
+  border:0;border-bottom:1px solid var(--hair);padding:1rem .2rem;
+  font-family:var(--display);font-size:1.5rem;font-style:italic;color:var(--ash);
+  transition:color .2s ease,padding-left .2s ease;
+}
+.plan-list button:hover{color:var(--bone);padding-left:.9rem}
+.plan-list button[aria-current="true"]{color:var(--candle)}
+.plan-list button span{
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;
+  display:block;font-style:normal;opacity:.55;margin-bottom:.15rem;
+}
+
+/* moths */
+.moth{position:absolute;pointer-events:none;opacity:0;color:var(--ash);z-index:1}
+.m1{left:12%;top:66%;animation:d1 26s ease-in-out infinite}
+.m2{left:82%;top:56%;animation:d2 33s ease-in-out infinite 4s}
+.m3{left:28%;top:32%;animation:d3 29s ease-in-out infinite 9s}
+@keyframes d1{0%{opacity:0;transform:translate(0,0)}18%{opacity:.4}50%{transform:translate(44px,-96px) rotate(11deg)}100%{opacity:0;transform:translate(-22px,-182px)}}
+@keyframes d2{0%{opacity:0;transform:translate(0,0)}22%{opacity:.34}55%{transform:translate(-60px,-78px) rotate(-12deg)}100%{opacity:0;transform:translate(-16px,-158px)}}
+@keyframes d3{0%{opacity:0;transform:translate(0,0)}25%{opacity:.24}60%{transform:translate(36px,-60px)}100%{opacity:0;transform:translate(70px,-124px)}}
+
+@media(max-width:600px){
+  .step{grid-template-columns:1fr;gap:.35rem}
+  .step-key{padding-top:0}
+  .doors{grid-template-columns:1fr;gap:.6rem;margin-top:1.8rem}
+  .door{padding:.85rem 1rem}
+  .door .where{font-size:1.12rem}
+  #sound-btn{
+  position:fixed;top:clamp(1rem,3vh,1.7rem);right:calc(var(--gut) + 5.6rem);z-index:72;
+  display:flex;align-items:center;gap:.45rem;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ash);background:none;border:1px solid var(--hair);border-radius:1px;
+  padding:.44rem .8rem;cursor:pointer;opacity:.55;
+  transition:opacity .35s ease,color .2s ease,border-color .2s ease;
+}
+#sound-btn:hover{opacity:1;color:var(--candle);border-color:var(--hair-lit)}
+#sound-btn .waves{opacity:0;transition:opacity .3s ease}
+#sound-btn .cross{opacity:1;transition:opacity .3s ease}
+#sound-btn[aria-pressed="true"]{color:var(--candle);border-color:var(--hair-lit);opacity:.9}
+#sound-btn[aria-pressed="true"] .waves{opacity:1}
+#sound-btn[aria-pressed="true"] .cross{opacity:0}
+@media(max-width:600px){
+  #sound-btn{right:calc(var(--gut) + 4.4rem);padding:.42rem .55rem}
+  #sound-btn .s-lbl{display:none}
+}
+
+#plan-btn{padding:.42rem .65rem;font-size:.55rem}
+  .plan-list button{font-size:1.2rem;padding:.8rem .2rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important}
+  #veil{transition:none}
+  .room{transition:none}
+}
+</style>
+</head>
+<body>
+
+<div id="house">
+  <div id="lamp" aria-hidden="true"></div>
+  <div id="vignette" aria-hidden="true"></div>
+  <div class="moth m1" aria-hidden="true"><svg width="17" height="13" viewBox="0 0 17 13" fill="currentColor"><path d="M8.5 6.5S5.8.6 3.1.9.2 5 1.9 7.4s6.6 5 6.6 5 4.9-2.6 6.6-5S16.6 1.2 13.9.9 8.5 6.5 8.5 6.5z"/></svg></div>
+  <div class="moth m2" aria-hidden="true"><svg width="12" height="9" viewBox="0 0 17 13" fill="currentColor"><path d="M8.5 6.5S5.8.6 3.1.9.2 5 1.9 7.4s6.6 5 6.6 5 4.9-2.6 6.6-5S16.6 1.2 13.9.9 8.5 6.5 8.5 6.5z"/></svg></div>
+  <div class="moth m3" aria-hidden="true"><svg width="20" height="15" viewBox="0 0 17 13" fill="currentColor"><path d="M8.5 6.5S5.8.6 3.1.9.2 5 1.9 7.4s6.6 5 6.6 5 4.9-2.6 6.6-5S16.6 1.2 13.9.9 8.5 6.5 8.5 6.5z"/></svg></div>
+
+  <!-- PORCH -->
+  <section class="room here" id="porch" data-room="porch" aria-label="The porch">
+    <div class="inner">
+      <div class="window" aria-hidden="true"></div>
+      <p class="eyebrow">Est. by Astrid · open to anyone who finds it</p>
+      <p class="wordmark">Moth Mansion</p>
+      <h1>The porch light is on.</h1>
+      <p class="lede">A house for grown nerds. Goth-leaning, queer-safe, and awake considerably later than it should be.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" data-go="who">Come in</button>
+        <a class="btn btn-ghost" href="https://discord.gg/vfAmXHX4mA" target="_blank" rel="noopener">Straight to the invite</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO -->
+  <section class="room" data-room="who" aria-label="Who ends up here" hidden>
+    <div class="inner">
+      <p class="eyebrow">Who keeps ending up here</p>
+      <h2>You have a job, maybe a kid, and <em>four hours a week</em> to be a person.</h2>
+      <p>Most servers are built for people with unlimited evenings. This one isn't. Half of us log on after bedtime, play for an hour, and go to sleep.</p>
+      <blockquote class="anecdote">
+        Somebody mentioned his four-year-old sister had broken her arm and was in hospital overnight. Three people asked how she was doing. He'd given her his Switch to keep her occupied.
+        <span>Fifteen minutes earlier the same channel was arguing about a Rickroll. Both of those are normal here.</span>
+      </blockquote>
+      <p class="muted">Mostly late twenties through forties. Tired in a friendly way. Looking for company their own age.</p>
+      <div class="stats">
+        <div class="stat"><b>16</b><span>Boosts</span></div>
+        <div class="stat"><b>7</b><span>Streamers</span></div>
+        <div class="stat"><b>0</b><span>Cost, ever</span></div>
+      </div>
+      <div class="doors">
+        <button class="door" data-go="porch"><span class="way">Back to the step</span><span class="where">The porch</span></button>
+        <button class="door lead" data-go="games"><span class="way">Down the hall</span><span class="where">The gamers wing</span></button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- GAMES -->
+  <section class="room wide" data-room="games" aria-label="The gamers wing" hidden>
+    <div class="inner">
+      <p class="eyebrow">The gamers wing</p>
+      <h2>A world that's <em>still running.</em></h2>
+      <div class="cols">
+        <div class="cell">
+          <p class="eyebrow">Minecraft</p>
+          <h3>Java and Bedrock, same world</h3>
+          <p>One server both can join, with a base-locations board so you can actually find everybody. It has survived several seasons and at least one incident.</p>
+          <span class="chan">moth-mansion-mc · mc-base-locations</span>
+        </div>
+        <div class="cell">
+          <p class="eyebrow">Everything else</p>
+          <h3>A channel per game</h3>
+          <p>Pick up the ping roles for what you play and ignore the rest. Nobody gets dragged into a lobby for a game they don't own.</p>
+          <span class="chan">deadbydaylight · marvel-rivals · phasmophobia · sea-of-thieves</span>
+        </div>
+        <div class="cell">
+          <p class="eyebrow">If you stream</p>
+          <h3>Your own channel</h3>
+          <p>Seven residents have one already. The house announces when you go live. You don't need a following to ask for one.</p>
+          <span class="chan">live-now · your-name-chat</span>
+        </div>
+      </div>
+      <div class="connect">
+        <h3>Come and play — running 26.2</h3>
+        <button class="ip" data-copy="MothMansion.mc.gg">
+          <span class="ip-body">
+            <span class="ip-lbl">Java server address</span>
+            <span class="ip-val">MothMansion.mc.gg</span>
+          </span>
+          <span class="ip-btn" aria-hidden="true">Copy</span>
+        </button>
+        <button class="ip" data-copy="88.211.211.202">
+          <span class="ip-body">
+            <span class="ip-lbl">Bedrock address · port 19132</span>
+            <span class="ip-val">88.211.211.202</span>
+          </span>
+          <span class="ip-btn" aria-hidden="true">Copy</span>
+        </button>
+        <p class="ip-note">Same world, same players, same chat. Pick whichever you already own.</p>
+      </div>
+      <div class="doors">
+        <button class="door" data-go="who"><span class="way">Back</span><span class="where">Who ends up here</span></button>
+        <button class="door lead" data-go="member"><span class="way">Up the stairs</span><span class="where">The Minecraft ranks</span></button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- MEMBER -->
+  <section class="room wide" data-room="member" aria-label="Member rank" hidden>
+    <div class="inner">
+      <p class="eyebrow">Minecraft · Rank one · Weight 1</p>
+      <h2>Member is what you get for <em>turning up.</em></h2>
+      <p class="tier-note">
+        No application, no interview, no waiting on a whitelist.
+        <strong>You land here the first time you log in</strong> and everything
+        below is already switched on.
+      </p>
+      <div class="perkset">
+          <div class="perkgroup">
+            <h3>Getting around</h3>
+            <dl>
+              <dt>/sethome</dt><dd>Three homes to name and teleport between. Sleeping in a bed sets one automatically.</dd>
+              <dt>/tpa</dt><dd>Ask another player to teleport to you, or to let you come to them.</dd>
+              <dt>/rtp</dt><dd>Drops you somewhere random and far out when you want fresh land.</dd>
+              <dt>/warp</dt><dd>Public destinations — spawn, the shopping district, whatever's been built.</dd>
+              <dt>/back</dt><dd>Returns you to wherever you teleported from. Doesn't cover deaths at this rank.</dd>
+              <dt>/top</dt><dd>Teleports you to the surface. For when a cave has gone badly.</dd>
+            </dl>
+          </div>
+          <div class="perkgroup">
+            <h3>Shops and money</h3>
+            <dl>
+              <dt>Trade signs</dt><dd>Stock a chest, put a sign on it, and people buy from you while you're offline. Your shop runs itself.</dd>
+              <dt>Protection signs</dt><dd>Locks a chest or door so only you can open it.</dd>
+              <dt>/sell</dt><dd>Sell what you farm to the server at a fixed rate.</dd>
+              <dt>/pay</dt><dd>Send money to another player, with a confirmation so you can't fat-finger it.</dd>
+              <dt>/baltop</dt><dd>See who's actually been working.</dd>
+            </dl>
+          </div>
+          <div class="perkgroup">
+            <h3>Talking to people</h3>
+            <dl>
+              <dt>/msg</dt><dd>Private messages, with /r to reply without retyping the name.</dd>
+              <dt>/mail</dt><dd>Leave a message for someone offline. They get it on login.</dd>
+              <dt>/helpop</dt><dd>Reaches staff directly. Use it for grief reports.</dd>
+              <dt>/ignore</dt><dd>Mutes someone for you and only you. No staff involvement needed.</dd>
+              <dt>/discord link</dt><dd>Ties your account to Discord so chat follows you off the server.</dd>
+            </dl>
+          </div>
+          <div class="perkgroup">
+            <h3>Small comforts</h3>
+            <dl>
+              <dt>/kit starter</dt><dd>Stone tools, food and torches, once, so your first night isn't spent punching a tree.</dd>
+              <dt>/book</dt><dd>Unlocks a signed book so you can keep editing it. Vanilla won't let you.</dd>
+              <dt>/recipe</dt><dd>Shows how to craft anything you're holding.</dd>
+              <dt>/afk</dt><dd>Marks you away with a reason so nobody wonders.</dd>
+              <dt>/seen</dt><dd>Plus /playtime, /ping and /tps — the usual "is it me or the server" questions.</dd>
+            </dl>
+          </div>
+        </div>
+      <div class="doors">
+        <button class="door" data-go="games"><span class="way">Back</span><span class="where">The gamers wing</span></button>
+        <button class="door lead" data-go="booster"><span class="way">Up the stairs</span><span class="where">The Booster rank</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOSTER -->
+  <section class="room wide" data-room="booster" aria-label="Booster rank" hidden>
+    <div class="inner">
+      <p class="eyebrow">Minecraft · Rank two · Weight 25 · 16 of 39 boosts</p>
+      <h2>Boost once. Keep it <em>forever.</em></h2>
+      <p class="tier-note">
+        Boosting applies this within a minute. No ticket, no proof, no waiting on
+        staff to notice. Then you get a second role that never comes off — so when
+        you stop boosting, <em>and you should stop boosting</em>,
+        <strong>everything below stays yours.</strong> One month buys it
+        permanently. Everything from Member still applies.
+      </p>
+      <div class="perkset">
+          <div class="perkgroup">
+            <h3>Your name and your things</h3>
+            <dl>
+              <dt>/nick</dt><dd>A custom display name in colour, in chat and above your head.</dd>
+              <dt>/itemname</dt><dd>Rename anything you're holding, colours included. /itemlore adds description lines underneath.</dd>
+              <dt>/hat</dt><dd>Wear whatever you're holding on your head. Pumpkins, cake, an anvil.</dd>
+              <dt>/skull</dt><dd>Player heads for decoration — yours or anyone else's.</dd>
+              <dt>/editsign</dt><dd>Rewrite signs after placing them, with colour. Shop fronts stop looking like a spreadsheet.</dd>
+            </dl>
+          </div>
+          <div class="perkgroup">
+            <h3>Getting around faster</h3>
+            <dl>
+              <dt>/sethome</dt><dd>Eight homes instead of three.</dd>
+              <dt>/back</dt><dd>Now works after you die. Straight to where you dropped everything, no corpse runs.</dd>
+              <dt>No waiting</dt><dd>Teleports fire instantly. No warmup countdown, no cooldown between them.</dd>
+              <dt>/jump</dt><dd>Teleports you to the block you're looking at. Good for scaling your own build.</dd>
+              <dt>/tpauto</dt><dd>Auto-accepts teleport requests so friends stop waiting on you to alt-tab.</dd>
+            </dl>
+          </div>
+          <div class="perkgroup">
+            <h3>Carry the workshop</h3>
+            <dl>
+              <dt>/grindstone</dt><dd>Plus /stonecutter, /loom, /smithingtable and /cartographytable. Every station, no blocks to place.</dd>
+              <dt>/enderchest</dt><dd>Opened from anywhere, and you can actually move things in and out.</dd>
+              <dt>/condense</dt><dd>Turns loose ingots and nuggets into blocks in one command.</dd>
+              <dt>/disposal</dt><dd>A bin you can open anywhere, for the cobble.</dd>
+            </dl>
+          </div>
+          <div class="perkgroup">
+            <h3>Odds and ends</h3>
+            <dl>
+              <dt>Reserved slot</dt><dd>You get in when the server is full and everyone else is queuing.</dd>
+              <dt>No AFK kick</dt><dd>Idle as long as you like without being dropped.</dd>
+              <dt>/ptime</dt><dd>Set your own time of day. /pweather does the same for rain — the server stays as it is, you just see it differently.</dd>
+              <dt>/firework</dt><dd>Build custom rockets with stacked effects and colours.</dd>
+              <dt>/kit boost</dt><dd>A decoration and convenience kit, once a day.</dd>
+            </dl>
+          </div>
+        </div>
+      <div class="doors">
+        <button class="door" data-go="member"><span class="way">Back</span><span class="where">The Member rank</span></button>
+        <button class="door lead" data-go="parlour"><span class="way">Through to the front</span><span class="where">The parlour</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARLOUR -->
+  <section class="room" data-room="parlour" aria-label="The parlour" hidden>
+    <div class="inner">
+      <p class="eyebrow">The parlour</p>
+      <h2>Where most of it <em>actually happens.</em></h2>
+      <p>Jokes, memes, and hanging around. A quotes board for things people wish they hadn't said out loud. Karaoke, sincerely. And a channel for photos of yourself outdoors, which is meant sincerely and used ironically.</p>
+      <span class="chan">lounge · lounge-off-topic · member-quotes · singing-and-karaoke · touching-grass · art · music · selfies</span>
+      <p class="muted" style="margin-top:1.6rem">There are adults-only rooms too. Opt-in, closed by default, verified members only. If you never ask for the key you'll never see them.</p>
+      <div class="doors">
+        <button class="door" data-go="booster"><span class="way">Back</span><span class="where">The Booster rank</span></button>
+        <button class="door lead" data-go="house"><span class="way">Find the host</span><span class="where">How the house works</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOUSE -->
+  <section class="room" data-room="house" aria-label="House rules" hidden>
+    <div class="inner rules">
+      <p class="eyebrow">How the house works</p>
+      <h2>Astrid keeps the <em>lamp lit.</em></h2>
+      <p>It started as somewhere for a handful of internet friends to land, and grew outward. It's still run that way: a host, a guest list, and a door somebody is actually watching.</p>
+      <ul>
+        <li><strong>Queer and trans people are safe here.</strong> Not tolerated. Not welcome as long as it isn't mentioned. Safe. It's the one thing that gets you removed without a conversation first.</li>
+        <li><strong>Bring arguments, not contempt.</strong> Disagree about anything. Be cruel about nothing.</li>
+        <li><strong>Staff step in early and mean it.</strong> Somebody too drunk to be sensible gets put somewhere quiet until morning. It isn't a punishment and nobody holds it against you.</li>
+        <li><strong>No pressure to perform.</strong> Nobody tracks whether you posted this week.</li>
+      </ul>
+      <div class="doors">
+        <button class="door" data-go="parlour"><span class="way">Back</span><span class="where">The parlour</span></button>
+        <button class="door lead" data-go="door"><span class="way">To the front door</span><span class="where">Getting in</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOOR -->
+  <section class="room" data-room="door" aria-label="Getting in" hidden>
+    <div class="inner">
+      <p class="eyebrow">Getting in</p>
+      <h2>Two doors. Take <em>whichever</em> is easier.</h2>
+      <div class="step">
+        <span class="step-key">FRONT DOOR</span>
+        <div>
+          <h3>Just join</h3>
+          <p>Read the rules, pick your ping roles, say hello wherever looks least intimidating. That's the whole process. You get the games, the streams, and everyone's company.</p>
+          <a class="invite" href="https://discord.gg/vfAmXHX4mA" target="_blank" rel="noopener">
+            <span class="invite-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 18" width="19" height="15" fill="currentColor">
+                <path d="M20.3 1.6A19.8 19.8 0 0 0 15.4.1a14 14 0 0 0-.63 1.29 18.4 18.4 0 0 0-5.53 0A13.9 13.9 0 0 0 8.6.1a19.7 19.7 0 0 0-4.9 1.5C.57 6.25-.28 10.78.14 15.25a19.9 19.9 0 0 0 6.03 3.05c.49-.66.92-1.36 1.29-2.1a13 13 0 0 1-2.03-.97c.17-.13.34-.26.5-.4a14.2 14.2 0 0 0 12.14 0c.16.14.33.27.5.4-.65.38-1.33.7-2.04.98.37.73.8 1.43 1.3 2.09a19.8 19.8 0 0 0 6.03-3.05c.5-5.18-.85-9.67-3.56-13.65ZM8.02 12.5c-1.18 0-2.15-1.08-2.15-2.4 0-1.33.95-2.41 2.15-2.41 1.2 0 2.17 1.08 2.15 2.4 0 1.33-.95 2.41-2.15 2.41Zm7.96 0c-1.18 0-2.15-1.08-2.15-2.4 0-1.33.95-2.41 2.15-2.41 1.2 0 2.17 1.08 2.15 2.4 0 1.33-.94 2.41-2.15 2.41Z"/>
+              </svg>
+            </span>
+            <span class="invite-body">
+              <span class="invite-lbl">Discord invite</span>
+              <span class="invite-val">discord.gg/vfAmXHX4mA</span>
+            </span>
+            <span class="invite-go" aria-hidden="true">Join &#8594;</span>
+          </a>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-key">VERIFY</span>
+        <div>
+          <h3>For the 18+ rooms</h3>
+          <p>Send a photo or short clip of yourself holding a handwritten note with the server name and today's date. It goes to Astrid, it's checked, and it's deleted.</p>
+          <p class="muted">Never an ID, a legal name, or a document.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-key">VOUCH</span>
+        <div>
+          <h3>Or have someone speak for you</h3>
+          <p>An established member can vouch for you instead, and you skip verification. If they're wrong about you, it lands on them too — which is why new members can't vouch.</p>
+        </div>
+      </div>
+      <p class="note">Not sure? Take the front door. Most people never use the other rooms, and nobody asks why.</p>
+      <div class="cta-row" style="justify-content:flex-start;margin-top:1.8rem">
+        <a class="btn btn-primary" href="https://discord.gg/vfAmXHX4mA" target="_blank" rel="noopener">Open the invite</a>
+      </div>
+      <div class="doors">
+        <button class="door" data-go="house"><span class="way">Back</span><span class="where">How the house works</span></button>
+        <button class="door lead" data-go="porch"><span class="way">Start again</span><span class="where">The porch</span></button>
+      </div>
+    </div>
+  </section>
+
+  <div id="veil" aria-hidden="true"></div>
+</div>
+
+<audio id="amb" loop preload="auto" aria-hidden="true">
+  <source src="atmosphere.mp3" type="audio/mpeg">
+</audio>
+
+<button id="sound-btn" aria-pressed="false" aria-label="Turn sound on" title="Sound">
+  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+       stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <polygon points="10 6 6 9.5 3 9.5 3 14.5 6 14.5 10 18 10 6"/>
+    <g class="waves"><path d="M13.5 9.5a3.5 3.5 0 0 1 0 5"/><path d="M16 7a7 7 0 0 1 0 10"/></g>
+    <g class="cross"><line x1="14" y1="9.5" x2="19" y2="14.5"/><line x1="19" y1="9.5" x2="14" y2="14.5"/></g>
+  </svg>
+  <span class="s-lbl">Sound</span>
+</button>
+
+<button id="plan-btn" aria-haspopup="dialog">Rooms</button>
+
+<div id="plan" role="dialog" aria-modal="true" aria-label="Floor plan" hidden>
+  <div class="plan-list">
+    <button data-go="porch"><span>Outside</span>The porch</button>
+    <button data-go="who"><span>Ground floor</span>Who ends up here</button>
+    <button data-go="games"><span>East wing</span>The gamers wing</button>
+    <button data-go="member"><span>East wing</span>The Member rank</button>
+    <button data-go="booster"><span>Upstairs</span>The Booster rank</button>
+    <button data-go="parlour"><span>Front room</span>The parlour</button>
+    <button data-go="house"><span>The study</span>How the house works</button>
+    <button data-go="door"><span>Front door</span>Getting in</button>
+  </div>
+</div>
+
+<button id="brand" data-go="porch" title="Back to the porch" aria-label="Back to the porch"
+        style="border:0;background:none;cursor:pointer;font-family:var(--gothic)">Moth Mansion</button>
+
+
+
+<script>
+(function(){
+  var ORDER=['porch','who','games','member','booster','parlour','house','door'];
+  var rooms={}, current='porch', moving=false;
+  var veil=document.getElementById('veil'),
+      brand=document.getElementById('brand'),
+      planBtn=document.getElementById('plan-btn'),
+      plan=document.getElementById('plan'),
+      lamp=document.getElementById('lamp');
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll('.room').forEach(function(r){ rooms[r.dataset.room]=r; });
+
+  function chrome(){
+    var inside = current!=='porch';
+    brand.classList.toggle('on',inside);
+    planBtn.classList.toggle('on',inside);
+    plan.querySelectorAll('button').forEach(function(b){
+      b.setAttribute('aria-current', String(b.dataset.go===current));
+    });
+    // brightest on the porch, dimmer as you go deeper into the house
+    lamp.style.opacity = (current==='porch') ? '1' : '.6';
+  }
+
+  function closePlan(){
+    plan.classList.remove('open');
+    setTimeout(function(){ plan.hidden=true; },300);
+    planBtn.setAttribute('aria-expanded','false');
+  }
+  function openPlan(){
+    plan.hidden=false;
+    void plan.offsetWidth;
+    plan.classList.add('open');
+    planBtn.setAttribute('aria-expanded','true');
+    var cur=plan.querySelector('[aria-current="true"]')||plan.querySelector('button');
+    if(cur) cur.focus();
+  }
+
+  function go(name){
+    if(moving || !rooms[name] || name===current) return;
+    moving=true;
+    if(!plan.hidden) closePlan();
+    var from=rooms[current], to=rooms[name];
+
+    function swap(){
+      from.classList.remove('here'); from.hidden=true;
+      to.hidden=false;
+      void to.offsetWidth;          // force layout so the fade actually runs
+      to.classList.add('here');
+      to.scrollTop=0;
+      current=name;
+      history.replaceState(null,'','#'+name);
+      chrome();
+      var h=to.querySelector('h1,h2');
+      if(h){ h.setAttribute('tabindex','-1'); h.focus({preventScroll:true}); }
+    }
+
+    if(reduce){ swap(); moving=false; return; }
+
+    veil.classList.add('closed');                 // walk into the dark
+    setTimeout(function(){
+      swap();
+      setTimeout(function(){
+        veil.classList.remove('closed');          // the lamp comes back up
+        setTimeout(function(){ moving=false; },420);
+      },60);
+    },290);
+  }
+
+  document.addEventListener('click',function(e){
+    if(e.target===plan){ closePlan(); return; }
+    if(e.target.closest('#plan-btn')){
+      plan.hidden ? openPlan() : closePlan(); return;
+    }
+    var g=e.target.closest('[data-go]');
+    if(g){ e.preventDefault(); go(g.dataset.go); }
+  });
+
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    if(e.key==='Escape'){
+      if(!plan.hidden){ closePlan(); planBtn.focus(); }
+      else if(current!=='porch'){ go('porch'); }
+      return;
+    }
+    if(!plan.hidden) return;
+    var i=ORDER.indexOf(current);
+    if(e.key==='ArrowRight'||e.key==='PageDown'){ if(i<ORDER.length-1){e.preventDefault();go(ORDER[i+1]);} }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ if(i>0){e.preventDefault();go(ORDER[i-1]);} }
+  });
+
+  // swipe, for phones
+  var x0=null,y0=null;
+  document.addEventListener('touchstart',function(e){
+    x0=e.touches[0].clientX; y0=e.touches[0].clientY;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(x0===null) return;
+    var dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>64 && Math.abs(dx)>Math.abs(dy)*1.8){
+      var i=ORDER.indexOf(current)+(dx<0?1:-1);
+      if(i>=0 && i<ORDER.length) go(ORDER[i]);
+    }
+    x0=y0=null;
+  },{passive:true});
+
+  // ── copy the server address ───────────────────────────────────────────
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-copy]');
+    if(!b) return;
+    var txt=b.dataset.copy, done=function(){
+      var lbl=b.querySelector('.ip-btn');
+      var was=lbl.textContent;
+      b.classList.add('copied'); lbl.textContent='Copied';
+      setTimeout(function(){ b.classList.remove('copied'); lbl.textContent=was; },1600);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done,fallback);
+    } else { fallback(); }
+    function fallback(){
+      // older browsers, and any page not served over https
+      var ta=document.createElement('textarea');
+      ta.value=txt; ta.setAttribute('readonly','');
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(_){}
+      document.body.removeChild(ta);
+    }
+  });
+
+  // ── ambience ──────────────────────────────────────────────────────────
+  // Browsers refuse to autoplay audio until the visitor has interacted with
+  // the page, so the first click anywhere starts it. The toggle is visible
+  // from the first frame regardless, so nobody is surprised by sound they
+  // cannot immediately find the switch for.
+  var amb=document.getElementById('amb'),
+      sBtn=document.getElementById('sound-btn'),
+      TARGET=0.30, fadeTimer=null, wants=true, started=false, broken=false;
+
+  amb.volume=0;
+  amb.addEventListener('error',function(){
+    broken=true; sBtn.style.display='none';   // no file, no toggle
+  });
+
+  function fadeTo(target,ms){
+    clearInterval(fadeTimer);
+    var from=amb.volume, steps=Math.max(1,Math.round(ms/50)), i=0;
+    fadeTimer=setInterval(function(){
+      i++;
+      amb.volume=Math.min(1,Math.max(0,from+(target-from)*(i/steps)));
+      if(i>=steps){
+        clearInterval(fadeTimer);
+        if(target===0 && !amb.paused) amb.pause();
+      }
+    },50);
+  }
+
+  function startAudio(){
+    if(broken || started || !wants) return;
+    var p=amb.play();
+    if(p && p.catch) p.catch(function(){ /* still blocked; try the next click */ });
+    started=true;
+    fadeTo(TARGET,2600);          // rise slowly, like a room warming up
+    sBtn.setAttribute('aria-pressed','true');
+    sBtn.setAttribute('aria-label','Turn sound off');
+  }
+
+  sBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    wants=!wants;
+    sBtn.setAttribute('aria-pressed',String(wants));
+    sBtn.setAttribute('aria-label', wants?'Turn sound off':'Turn sound on');
+    if(wants){
+      if(amb.paused){ var p=amb.play(); if(p&&p.catch) p.catch(function(){}); }
+      started=true; fadeTo(TARGET,1200);
+    } else {
+      fadeTo(0,600);
+    }
+  });
+
+  // any first interaction unlocks playback
+  ['click','keydown','touchstart'].forEach(function(ev){
+    document.addEventListener(ev,function once(){
+      startAudio();
+      if(started) document.removeEventListener(ev,once);
+    },{passive:true});
+  });
+
+  // don't leave sound running in a tab nobody is looking at
+  document.addEventListener('visibilitychange',function(){
+    if(broken) return;
+    if(document.hidden){ if(!amb.paused) amb.pause(); }
+    else if(wants && started){ var p=amb.play(); if(p&&p.catch) p.catch(function(){}); }
+  });
+
+  var start=location.hash.replace('#','');
+  if(ORDER.indexOf(start)>0){
+    rooms.porch.classList.remove('here'); rooms.porch.hidden=true;
+    rooms[start].hidden=false; rooms[start].classList.add('here');
+    current=start;
+  }
+  chrome();
+})();
+</script>
+</body>
+</html>
