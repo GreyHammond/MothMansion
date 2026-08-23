@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moth Mansion MC — Java &amp; Bedrock survival</title>
+<meta name="description" content="Near-vanilla survival on 26.2. Java and Bedrock share one world. Land claims, free ranks, grief rollback and a Discord chat bridge.">
+<meta property="og:title" content="Moth Mansion MC">
+<meta property="og:description" content="An old house with the lights left on. MothMansion.mc.gg">
+<meta name="theme-color" content="#0D0916">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jacquarda+Bastarda+9&family=Silkscreen:wght@400;700&family=Karla:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0D0916;
+  --obsidian:#171024;
+  --panel:#1F1630;
+  --stone:#2A1E3D;
+  --stone-hi:#3A2B52;
+  --stone-lo:#100B1C;
+  --amethyst:#B06BD9;
+  --magenta:#E05AAE;
+  --ember:#E8A83C;
+  --bone:#EDE4F2;
+  --ash:#9E8FB0;
+  --edge:rgba(176,107,217,.28);
+
+  --pixel:"Jacquarda Bastarda 9",serif;
+  --screen:"Silkscreen",monospace;
+  --body:"Karla",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --gut:clamp(1rem,4vw,2.5rem);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--void);color:var(--ash);
+  font-family:var(--body);font-weight:300;font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  image-rendering:pixelated;
+}
+/* nether haze */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(176,107,217,.16), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 12% 88%, rgba(224,90,174,.10), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 88% 84%, rgba(232,168,60,.08), transparent 60%);
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+a{color:var(--ember);text-decoration:none}
+a:hover{color:var(--magenta)}
+:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
+
+.shell{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 var(--gut) 4rem}
+
+/* ── chunky beveled panel, the whole visual language ─────────────── */
+.panel{
+  background:var(--panel);
+  border:3px solid var(--stone-lo);
+  box-shadow:
+    inset 0 3px 0 0 var(--stone-hi),
+    inset 3px 0 0 0 rgba(58,43,82,.55),
+    inset -3px 0 0 0 var(--stone-lo),
+    inset 0 -3px 0 0 var(--stone-lo);
+  position:relative;
+}
+.panel-hd{
+  background:var(--stone);
+  border-bottom:3px solid var(--stone-lo);
+  box-shadow:inset 0 3px 0 0 var(--stone-hi);
+  padding:.6rem 1rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;
+}
+.panel-hd h2,.panel-hd h3{margin:0}
+.panel-bd{padding:1.35rem 1.35rem 1.5rem}
+
+/* ── header ─────────────────────────────────────────────────────── */
+.masthead{padding:clamp(2rem,6vw,3.5rem) 0 1.5rem;text-align:center;position:relative}
+.torch{
+  position:absolute;top:2.2rem;width:14px;height:38px;background:var(--stone);
+  border:3px solid var(--stone-lo);
+}
+.torch.l{left:2%}
+.torch.r{right:2%}
+.torch::after{
+  content:"";position:absolute;left:50%;top:-14px;translate:-50% 0;
+  width:16px;height:16px;border-radius:50%;background:var(--ember);
+  box-shadow:0 0 18px 6px rgba(232,168,60,.55),0 0 44px 14px rgba(232,168,60,.22);
+  animation:flame 2.4s ease-in-out infinite;
+}
+@keyframes flame{
+  0%,100%{opacity:.85;transform:translateX(-50%) scale(1)}
+  40%{opacity:1;transform:translateX(-50%) scale(1.13)}
+  70%{opacity:.78;transform:translateX(-50%) scale(.95)}
+}
+h1{
+  font-family:var(--pixel);font-weight:400;
+  font-size:clamp(2.6rem,9vw,5.6rem);line-height:.92;margin:0 0 .5rem;
+  color:var(--bone);
+  text-shadow:4px 4px 0 var(--stone-lo),0 0 30px rgba(176,107,217,.5);
+}
+h1 em{font-style:normal;color:var(--amethyst);display:block;font-size:.62em}
+.tagline{
+  font-family:var(--screen);font-size:.68rem;letter-spacing:.14em;
+  color:var(--ember);text-transform:uppercase;margin:0 0 1.4rem;
+}
+
+/* ── nav ────────────────────────────────────────────────────────── */
+.mainnav{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+.mainnav a{
+  font-family:var(--screen);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--bone);background:var(--stone);padding:.62rem 1rem;
+  border:3px solid var(--stone-lo);
+  box-shadow:inset 0 3px 0 0 var(--stone-hi),inset 0 -3px 0 0 var(--stone-lo);
+  transition:background .15s steps(2),color .15s steps(2),transform .1s steps(2);
+}
+.mainnav a:hover{background:var(--amethyst);color:var(--void);transform:translateY(-2px)}
+
+/* ── status bar ─────────────────────────────────────────────────── */
+.status{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:0;margin-bottom:1.6rem;
+}
+.status .cell{
+  padding:.85rem 1rem;border-right:3px solid var(--stone-lo);
+}
+.status .cell:last-child{border-right:0}
+.status .k{
+  display:block;font-family:var(--screen);font-size:.58rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ash);margin-bottom:.2rem;
+}
+.status .v{font-family:var(--screen);font-size:.92rem;color:var(--bone)}
+.status .v.on{color:#6FE07A}
+.status .v.gold{color:var(--ember)}
+@media(max-width:640px){.status .cell{border-right:0;border-bottom:3px solid var(--stone-lo)}}
+
+/* ── layout ─────────────────────────────────────────────────────── */
+.cols{display:grid;grid-template-columns:1fr 268px;gap:1.4rem;align-items:start}
+@media(max-width:900px){.cols{grid-template-columns:1fr}}
+.stack>*+*{margin-top:1.4rem}
+.side{position:sticky;top:1.4rem}
+@media(max-width:900px){.side{position:static}}
+
+h2{
+  font-family:var(--pixel);font-weight:400;font-size:clamp(1.5rem,3.4vw,2.1rem);
+  color:var(--bone);line-height:1;margin:0;
+  text-shadow:2px 2px 0 var(--stone-lo);
+}
+h2 em{font-style:normal;color:var(--amethyst)}
+h3{
+  font-family:var(--screen);font-size:.78rem;letter-spacing:.04em;
+  color:var(--ember);margin:0 0 .4rem;font-weight:400;
+}
+p{margin:0 0 .95rem;max-width:66ch}
+p:last-child{margin-bottom:0}
+.muted{color:var(--ash);opacity:.85;font-size:.92rem}
+code{
+  font-family:var(--mono);font-size:.84rem;color:var(--ember);
+  background:var(--stone-lo);padding:.1rem .42rem;border:1px solid var(--edge);
+}
+strong{color:var(--bone);font-weight:500}
+
+/* ── copy address ───────────────────────────────────────────────── */
+.ip{
+  display:flex;width:100%;align-items:stretch;margin-bottom:.7rem;
+  background:var(--stone-lo);border:3px solid var(--stone-lo);
+  box-shadow:inset 0 3px 0 0 rgba(58,43,82,.6);
+  padding:0;cursor:pointer;text-align:left;overflow:hidden;font-family:var(--body);
+  transition:transform .1s steps(2);
+}
+.ip:hover{transform:translateY(-2px)}
+.ip-body{flex:1;padding:.6rem .85rem;min-width:0}
+.ip-lbl{display:block;font-family:var(--screen);font-size:.55rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--amethyst);margin-bottom:.15rem}
+.ip-val{display:block;font-family:var(--mono);font-size:.98rem;color:var(--bone);word-break:break-all}
+.ip-btn{
+  display:grid;place-items:center;padding:0 1rem;flex:none;background:var(--ember);
+  color:var(--void);font-family:var(--screen);font-size:.65rem;letter-spacing:.05em;
+  text-transform:uppercase;transition:background .12s steps(2);
+}
+.ip:hover .ip-btn{background:var(--magenta)}
+.ip.copied .ip-btn{background:#6FE07A}
+
+/* ── steps ──────────────────────────────────────────────────────── */
+.steps{counter-reset:st;margin-top:.4rem}
+.stepline{
+  display:grid;grid-template-columns:2rem 1fr;gap:.9rem;
+  padding:.85rem 0;border-top:1px solid var(--edge);
+}
+.stepline:first-child{border-top:0;padding-top:.2rem}
+.stepline::before{
+  counter-increment:st;content:counter(st);
+  font-family:var(--screen);font-size:.9rem;color:var(--amethyst);
+  background:var(--stone-lo);border:2px solid var(--edge);
+  width:2rem;height:2rem;display:grid;place-items:center;
+}
+.stepline p{font-size:.92rem;margin:0}
+
+/* ── join columns ───────────────────────────────────────────────── */
+.joins{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.4rem}
+.joins ol{margin:0;padding-left:1.15rem;font-size:.9rem;line-height:1.72}
+.joins li{margin-bottom:.55rem}
+.joins li::marker{color:var(--amethyst)}
+.plat{
+  display:block;font-family:var(--screen);font-size:.56rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ash);margin:-.25rem 0 .75rem;
+}
+
+/* ── command browser ────────────────────────────────────────────── */
+.tools{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:1.1rem}
+#q{
+  flex:1 1 190px;font-family:var(--mono);font-size:.86rem;color:var(--bone);
+  background:var(--stone-lo);border:3px solid var(--stone-lo);
+  box-shadow:inset 0 3px 0 0 rgba(58,43,82,.55);padding:.55rem .8rem;
+}
+#q::placeholder{color:var(--ash);opacity:.65}
+.chip{
+  font-family:var(--screen);font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--bone);background:var(--stone);border:3px solid var(--stone-lo);
+  box-shadow:inset 0 3px 0 0 var(--stone-hi);padding:.5rem .8rem;cursor:pointer;
+  transition:background .12s steps(2),color .12s steps(2);
+}
+.chip:hover{background:var(--stone-hi)}
+.chip[aria-pressed="true"]{background:var(--amethyst);color:var(--void)}
+.count{font-family:var(--screen);font-size:.6rem;color:var(--ash);margin-left:auto}
+
+.grp{margin-bottom:1.5rem}
+.grp:last-child{margin-bottom:0}
+.grp h3{
+  display:flex;align-items:center;gap:.55rem;margin-bottom:.7rem;
+}
+.grp h3 .tag{
+  font-size:.52rem;letter-spacing:.06em;padding:.16rem .42rem;
+  border:2px solid var(--edge);color:var(--amethyst);
+}
+.grp h3 .tag.b{color:var(--magenta);border-color:rgba(224,90,174,.4)}
+.cmd{
+  display:grid;grid-template-columns:minmax(7.5rem,auto) 1fr;gap:.9rem;
+  padding:.5rem 0;border-top:1px solid var(--edge);
+}
+.cmd:first-of-type{border-top:0}
+.cmd dt{font-family:var(--mono);font-size:.8rem;color:var(--ember)}
+.cmd dd{margin:0;font-size:.87rem;line-height:1.6}
+@media(max-width:560px){.cmd{grid-template-columns:1fr;gap:.1rem}}
+.empty{font-family:var(--screen);font-size:.7rem;color:var(--ash);padding:1.5rem 0}
+
+/* ── highlight box ──────────────────────────────────────────────── */
+.lit{
+  background:var(--stone-lo);border:3px solid var(--stone-lo);
+  box-shadow:inset 0 0 0 1px var(--edge),inset 0 3px 0 0 rgba(58,43,82,.5);
+  padding:1.05rem 1.15rem;margin:1.1rem 0;
+}
+.lit h3{color:var(--magenta)}
+.note{
+  border-left:4px solid var(--ember);background:rgba(232,168,60,.06);
+  padding:.9rem 1.1rem;margin:1.1rem 0 0;font-size:.9rem;
+}
+
+/* ── side panels ────────────────────────────────────────────────── */
+.side .panel-bd{padding:1rem 1.1rem 1.15rem}
+.side h3{margin-bottom:.6rem}
+.sidelist{list-style:none;padding:0;margin:0;font-size:.86rem}
+.sidelist li{
+  display:flex;justify-content:space-between;gap:.6rem;
+  padding:.42rem 0;border-top:1px solid var(--edge);
+}
+.sidelist li:first-child{border-top:0}
+.sidelist .v{font-family:var(--mono);font-size:.78rem;color:var(--bone)}
+.sidelist .v.gold{color:var(--ember)}
+
+.staff li{align-items:center}
+.staff .who{display:flex;align-items:center;gap:.5rem;color:var(--bone)}
+.pip{width:10px;height:10px;flex:none;border:2px solid var(--stone-lo)}
+.pip.host{background:var(--ember)}
+.pip.owner{background:var(--magenta)}
+.pip.admin{background:var(--amethyst)}
+.pip.mod{background:var(--ash)}
+.role{font-family:var(--screen);font-size:.54rem;color:var(--ash);text-transform:uppercase}
+
+.cta{
+  display:block;text-align:center;font-family:var(--screen);font-size:.72rem;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--void);
+  background:var(--ember);padding:.8rem;border:3px solid var(--stone-lo);
+  box-shadow:inset 0 3px 0 0 rgba(255,255,255,.28),inset 0 -3px 0 0 rgba(0,0,0,.22);
+  transition:background .12s steps(2),transform .1s steps(2);
+}
+.cta:hover{background:var(--magenta);color:var(--void);transform:translateY(-2px)}
+
+footer{
+  margin-top:2.5rem;padding-top:1.4rem;border-top:3px solid var(--stone-lo);
+  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  font-family:var(--screen);font-size:.58rem;letter-spacing:.06em;color:var(--ash);
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <header class="masthead">
+    <span class="torch l" aria-hidden="true"></span>
+    <span class="torch r" aria-hidden="true"></span>
+    <h1>Moth Mansion<em>MC</em></h1>
+    <p class="tagline">An old house with the lights left on · 26.2 · Java &amp; Bedrock</p>
+    <nav class="mainnav">
+      <a href="#connect">Connect</a>
+      <a href="#first">First night</a>
+      <a href="#land">Claiming</a>
+      <a href="#commands">Commands</a>
+      <a href="#ranks">Ranks</a>
+      <a href="index.html">The House</a>
+    </nav>
+  </header>
+
+  <div class="panel status">
+    <div class="cell"><span class="k">Status</span><span class="v on">Online</span></div>
+    <div class="cell"><span class="k">Version</span><span class="v">26.2</span></div>
+    <div class="cell"><span class="k">Platforms</span><span class="v">Java + Bedrock</span></div>
+    <div class="cell"><span class="k">Whitelist</span><span class="v gold">Yes — ask in Discord</span></div>
+  </div>
+
+  <div class="cols">
+    <main class="stack">
+
+      <!-- CONNECT -->
+      <section class="panel" id="connect">
+        <div class="panel-hd"><h2>Connecting</h2></div>
+        <div class="panel-bd">
+          <div class="lit" style="margin-top:0">
+            <h3>The server is whitelisted — get on the list first</h3>
+            <p>
+              Adding the address before you are whitelisted will only get you
+              turned away at the door. Join the Discord and ask; it is not an
+              application and nobody is going to interview you.
+            </p>
+            <a class="cta" style="margin-top:.9rem;max-width:16rem"
+               href="https://discord.gg/vfAmXHX4mA" target="_blank" rel="noopener">Ask in Discord</a>
+          </div>
+
+          <button class="ip" data-copy="MothMansion.mc.gg">
+            <span class="ip-body">
+              <span class="ip-lbl">Java address</span>
+              <span class="ip-val">MothMansion.mc.gg</span>
+            </span>
+            <span class="ip-btn" aria-hidden="true">Copy</span>
+          </button>
+          <button class="ip" data-copy="88.211.211.202">
+            <span class="ip-body">
+              <span class="ip-lbl">Bedrock address · port 19132</span>
+              <span class="ip-val">88.211.211.202</span>
+            </span>
+            <span class="ip-btn" aria-hidden="true">Copy</span>
+          </button>
+          <p class="muted" style="margin-top:.9rem">Same world, same players, same chat. Pick whichever you already own.</p>
+
+          <div class="joins" style="margin-top:1.5rem">
+            <div>
+              <h3>Java Edition</h3>
+              <span class="plat">Windows · Mac · Linux</span>
+              <ol>
+                <li>Open Minecraft, choose <strong>Multiplayer</strong>, then <strong>Add Server</strong>.</li>
+                <li>Name it anything. Paste <code>MothMansion.mc.gg</code> as the address.</li>
+                <li>Hit <strong>Done</strong>, then double-click it in your list.</li>
+              </ol>
+            </div>
+            <div>
+              <h3>Bedrock Edition</h3>
+              <span class="plat">Mobile · Console · Switch · Win 10/11</span>
+              <ol>
+                <li>Go to <strong>Play → Servers → Add Server</strong>.</li>
+                <li>Address <code>88.211.211.202</code>, port <code>19132</code></li>
+                <li>Save and join. Your gamertag becomes your name in game.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FIRST NIGHT -->
+      <section class="panel" id="first">
+        <div class="panel-hd"><h2>Your <em>first night</em></h2></div>
+        <div class="panel-bd">
+          <div class="steps">
+            <div class="stepline"><div>
+              <h3>Get whitelisted before anything else</h3>
+              <p>Ask in the Discord. Until your name is on the list the server will not let you in, and nothing below matters.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Run /kit starter</h3>
+              <p>Stone tools, food and torches. Once, so your first night is not spent punching a tree.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Run /rtp before you build anything</h3>
+              <p>Drops you somewhere random and far out. Spawn is picked over; the good land is elsewhere.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Set a home the moment you pick a spot</h3>
+              <p><code>/sethome base</code> names it. Sleeping in a bed sets one automatically. You get three.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Claim your spot</h3>
+              <p>Place a chest and the ground around it is claimed automatically. To do it properly, use the <a href="#land">golden shovel</a>.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Link your Discord</h3>
+              <p>Run <code>/discord link</code> in game and send the four digits to <strong>@MothCraft Community</strong>. Chat then follows you off the server.</p>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LAND -->
+      <section class="panel" id="land">
+        <div class="panel-hd"><h2>Claiming <em>land</em></h2></div>
+        <div class="panel-bd">
+          <p>
+            Everything you build is yours the moment you claim the ground under it.
+            Inside a claim, nobody else can break blocks, open chests, use your beds
+            or take from your farms — not because staff are watching, but because the
+            server will not let them.
+          </p>
+
+          <div class="lit">
+            <h3>The fastest way — put down a chest</h3>
+            <p>
+              Place a chest anywhere unclaimed and the ground around it is claimed
+              for you automatically. If all you want is a safe base, that is the
+              entire process. No commands, no shovel, no reading further.
+            </p>
+          </div>
+
+          <h3 style="margin-top:1.4rem">Doing it properly — the golden shovel</h3>
+          <div class="steps">
+            <div class="stepline"><div>
+              <h3>Hold a golden shovel</h3>
+              <p>Any golden shovel works. Holding it puts you in claiming mode; putting it away takes you out.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Right-click one corner</h3>
+              <p>Click the ground at one corner of the area you want. That sets your first point.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Right-click the opposite corner</h3>
+              <p>The claim snaps into place and glowing blocks show the edges. Claims run bedrock to sky, so you never claim twice for a basement.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Adjust it later</h3>
+              <p>Right-click a corner of an existing claim to drag it bigger or smaller. Nothing is permanent.</p>
+            </div></div>
+          </div>
+
+          <div class="note">
+            <strong>You start with 200 claim blocks.</strong> That is 200 blocks of
+            surface area, not a 200&times;200 square — roughly a 14&times;14 base to
+            begin with. Minimum claim size is <strong>5&times;5</strong>, so you
+            cannot fence off a single chest and call it a plot. You earn more the
+            longer you play.
+          </div>
+
+          <h3 style="margin-top:1.4rem">Letting people in</h3>
+          <p>
+            A claim locks everyone out by default, friends included.
+            <code>/trust &lt;player&gt;</code> gives full build access,
+            <code>/containertrust</code> allows chests and animals only, and
+            <code>/accesstrust</code> allows doors and beds only.
+            <code>/untrust</code> takes it back.
+          </p>
+          <p class="muted">
+            <code>/abandonclaim</code> returns a claim and its blocks to your pool.
+            <code>/claimslist</code> shows everything you hold.
+          </p>
+        </div>
+      </section>
+
+      <!-- COMMANDS -->
+      <section class="panel" id="commands">
+        <div class="panel-hd"><h2>Commands</h2></div>
+        <div class="panel-bd">
+          <div class="tools">
+            <input id="q" type="search" placeholder="Search commands…" aria-label="Search commands" autocomplete="off">
+            <button class="chip" data-rank="all" aria-pressed="true">All</button>
+            <button class="chip" data-rank="member" aria-pressed="false">Member</button>
+            <button class="chip" data-rank="booster" aria-pressed="false">Booster</button>
+            <span class="count" id="count"></span>
+          </div>
+          <div id="cmds"></div>
+          <p class="empty" id="empty" hidden>Nothing matches that.</p>
+        </div>
+      </section>
+
+      <!-- SAFE -->
+      <section class="panel" id="safe">
+        <div class="panel-hd"><h2>Keeping your stuff</h2></div>
+        <div class="panel-bd">
+          <div class="lit">
+            <h3>Block logging — already running</h3>
+            <p>
+              Every block placed and broken is logged. If someone raids or griefs you,
+              staff can see exactly who did what and roll it back. Report it with
+              <code>/helpop</code> and do not rebuild over the damage first.
+            </p>
+          </div>
+          <div class="note">
+            <strong>If you get griefed:</strong> leave it alone and report it.
+            Rebuilding on top makes the rollback messier, and you may lose your own
+            repairs along with the damage.
+          </div>
+          <p class="muted" style="margin-top:1.1rem">
+            Logging is the backstop, not the first line.
+            <a href="#land">Claim your land</a> and most of this never comes up.
+          </p>
+
+          <div class="lit" style="margin-top:1.5rem">
+            <h3>GriefPrevention — the part that stops it happening</h3>
+            <p>
+              Rollbacks fix damage after the fact. Claims prevent it. Inside a claim
+              the server physically refuses to let anyone else break a block, open a
+              container, trample a crop or take an animal — there is nothing to
+              report because there is nothing to undo.
+            </p>
+          </div>
+
+          <div class="steps" style="margin-top:1.1rem">
+            <div class="stepline"><div>
+              <h3>Explosions are off inside claims</h3>
+              <p>Creepers, beds in the Nether and stray TNT cannot crater your build. <code>/claimexplosions</code> toggles it if you actually want them, which you might for a working farm.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Trust is granular</h3>
+              <p>Someone can be allowed to open your doors without being allowed to touch your chests. <code>/trustlist</code> shows exactly who has what on the claim you are standing in, and <code>/untrust all</code> clears the lot in one go.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Subdivide instead of over-trusting</h3>
+              <p><code>/subdivideclaims</code> carves a room out of your claim so a friend can build in that room and nowhere else. <code>/restrictsubclaim</code> makes it inherit nothing from the parent. <code>/basicclaims</code> puts the shovel back to normal.</p>
+            </div></div>
+            <div class="stepline"><div>
+              <h3>Two commands worth remembering before you need them</h3>
+              <p><code>/trapped</code> gets you out of a claim you are stuck inside. <code>/unlockdrops</code> lets other people pick up your death pile so a friend can run it back to you.</p>
+            </div></div>
+          </div>
+
+          <div class="note">
+            <strong>Claims only cover what you claimed.</strong> The chest-placement
+            shortcut protects a small area around the chest, not the whole base. If
+            you have built outward since, run the <a href="#land">golden shovel</a>
+            over the real footprint.
+          </div>
+        </div>
+      </section>
+
+      <!-- RANKS -->
+      <section class="panel" id="ranks">
+        <div class="panel-hd"><h2>Ranks</h2></div>
+        <div class="panel-bd">
+          <p>
+            There are two. <strong>Member</strong> is automatic — once you are
+            whitelisted, it is already switched on the first time you log in. No
+            application, no interview, no proving yourself for a fortnight. It
+            includes homes, land claims, a starter kit and teleports.
+          </p>
+          <div class="lit">
+            <h3>Boost once. Keep it forever.</h3>
+            <p>
+              <strong>Booster</strong> applies within a minute of boosting the
+              Discord. No ticket, no proof, no waiting on staff to notice. Then you
+              get a second role that never comes off — so when you stop boosting,
+              and you should stop boosting, everything stays yours. One month buys
+              it permanently.
+            </p>
+          </div>
+          <p class="muted">
+            Filter the <a href="#commands">command list</a> by rank to see exactly
+            what each adds.
+          </p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside class="side stack">
+      <div class="panel">
+        <div class="panel-hd"><h3 style="color:var(--bone)">Server</h3></div>
+        <div class="panel-bd">
+          <ul class="sidelist">
+            <li><span>Version</span><span class="v">26.2</span></li>
+            <li><span>Java</span><span class="v gold">MothMansion.mc.gg</span></li>
+            <li><span>Bedrock port</span><span class="v">19132</span></li>
+            <li><span>Difficulty</span><span class="v">Survival</span></li>
+            <li><span>Whitelist</span><span class="v gold">Active</span></li>
+            <li><span>The End</span><span class="v gold">Open</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><h3 style="color:var(--bone)">Staff</h3></div>
+        <div class="panel-bd">
+          <ul class="sidelist staff">
+            <li><span class="who"><span class="pip host"></span>Astrid</span><span class="role">Discord Host</span></li>
+            <li><span class="who"><span class="pip owner"></span>Floor</span><span class="role">Server Owner</span></li>
+            <li><span class="who"><span class="pip admin"></span>Tem</span><span class="role">Lead Admin</span></li>
+            <li><span class="who"><span class="pip mod"></span>Hammond</span><span class="role">Server Admin</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><h3 style="color:var(--bone)">The End</h3></div>
+        <div class="panel-bd">
+          <p class="muted" style="margin-bottom:.7rem">
+            Opened by server vote in August. Portal hub at
+            <code>1714, 72, -1017</code> — enter from there and nowhere else.
+          </p>
+          <p class="muted" style="margin:0">
+            Free gear at the armory. The dragon respawns with four end crystals, so
+            missing the fight is not fatal.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><h3 style="color:var(--bone)">Getting help</h3></div>
+        <div class="panel-bd">
+          <p class="muted" style="margin-bottom:.9rem">
+            <code>/helpop</code> reaches staff in game. Everything else happens on
+            Discord.
+          </p>
+          <a class="cta" href="https://discord.gg/vfAmXHX4mA" target="_blank" rel="noopener">Join the Discord</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <span>Moth Mansion MC — hosted by Astrid, kept running by Floor</span>
+    <span>MOTHMANSION.MC.GG · 26.2</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var DATA=[
+    {g:'Getting around',r:'member',items:[
+      ['/sethome','Three homes to name and teleport between. Sleeping in a bed sets one automatically.'],
+      ['/tpa','Ask another player to teleport to you, or to let you come to them.'],
+      ['/rtp','Drops you somewhere random and far out when you want fresh land.'],
+      ['/warp','Public destinations — spawn, the end portal hub, whatever has been built.'],
+      ['/back','Returns you to wherever you teleported from. Does not cover deaths at this rank.'],
+      ['/top','Teleports you to the surface. For when a cave has gone badly.']
+    ]},
+    {g:'Claiming land',r:'member',items:[
+      ['Golden shovel','Right-click two opposite corners to claim the ground between them. Claims run bedrock to sky.'],
+      ['Place a chest','Claims the ground around it automatically. The lazy way, and it works.'],
+      ['/claimslist','Your claims, and how many claim blocks you have left.'],
+      ['/abandonclaim','Deletes the claim you are standing in and returns the blocks to your pool.'],
+      ['/claimexplosions','Toggles whether explosions are allowed inside the claim.'],
+      ['/trustlist','Lists the permissions on the claim you are standing in.']
+    ]},
+    {g:'Sharing a claim',r:'member',items:[
+      ['/trust','Full build access inside your claim. Alias /t.'],
+      ['/untrust','Revokes any permission you granted a player. Alias /ut.'],
+      ['/untrust all','Removes every permission for every player at once.'],
+      ['/containertrust','Buttons, levers, beds, crafting gear, containers and animals. No building. Alias /ct.'],
+      ['/accesstrust','Buttons, levers and beds only. The lightest level. Alias /at.'],
+      ['/permissiontrust','Lets a player share their own permission level with others. Alias /pt.'],
+      ['/givepet','Gives away a tamed animal.']
+    ]},
+    {g:'Subdividing',r:'member',items:[
+      ['/subdivideclaims','Switches the shovel to subdivision mode so you can carve rooms out of a claim. Alias /sc.'],
+      ['/restrictsubclaim','Makes a subclaim inherit nothing from its parent. Alias /rsc.'],
+      ['/basicclaims','Puts the shovel back into normal claiming mode. Alias /bc.']
+    ]},
+    {g:'When it goes wrong',r:'member',items:[
+      ['/trapped','Gets you out of a claim you are stuck inside.'],
+      ['/unlockdrops','Lets other players pick up what you dropped when you died.'],
+      ['/helpop','Reaches staff directly. Use it for grief reports.']
+    ]},
+    {g:'Talking to people',r:'member',items:[
+      ['/msg','Private messages, with /r to reply without retyping the name.'],
+      ['/mail','Leave a message for someone offline. They get it on login.'],
+      ['/ignore','Mutes someone for you and only you. No staff involvement needed. /unignore reverses it, /ignorelist shows who.'],
+      ['/discord link','Ties your account to Discord so chat follows you off the server.']
+    ]},
+    {g:'Small comforts',r:'member',items:[
+      ['/kit starter','Stone tools, food and torches, once, so your first night is not spent punching a tree.'],
+      ['/book','Unlocks a signed book so you can keep editing it. Vanilla will not let you.'],
+      ['/recipe','Shows how to craft anything you are holding.'],
+      ['/afk','Marks you away with a reason so nobody wonders.'],
+      ['/seen','Plus /playtime, /ping and /tps — the usual "is it me or the server" questions.']
+    ]},
+    {g:'Your name and your things',r:'booster',items:[
+      ['/nick','A custom display name in colour, in chat and above your head.'],
+      ['/itemname','Rename anything you are holding, colours included. /itemlore adds description lines underneath.'],
+      ['/hat','Wear whatever you are holding on your head. Pumpkins, cake, an anvil.'],
+      ['/skull','Player heads for decoration — yours or anyone else\'s.'],
+      ['/editsign','Rewrite signs after placing them, with colour. No more tearing one down over a typo.']
+    ]},
+    {g:'Getting around faster',r:'booster',items:[
+      ['/sethome','Eight homes instead of three.'],
+      ['/back','Now works after you die. Straight to where you dropped everything, no corpse runs.'],
+      ['No waiting','Teleports fire instantly. No warmup countdown, no cooldown between them.'],
+      ['/jump','Teleports you to the block you are looking at. Good for scaling your own build.'],
+      ['/tpauto','Auto-accepts teleport requests so friends stop waiting on you to alt-tab.']
+    ]},
+    {g:'Carry the workshop',r:'booster',items:[
+      ['/grindstone','Plus /stonecutter, /loom, /smithingtable and /cartographytable. Every station, no blocks to place.'],
+      ['/enderchest','Opened from anywhere, and you can actually move things in and out.'],
+      ['/condense','Turns loose ingots and nuggets into blocks in one command.'],
+      ['/disposal','A bin you can open anywhere, for the cobble.']
+    ]},
+    {g:'Odds and ends',r:'booster',items:[
+      ['Reserved slot','You get in when the server is full and everyone else is queuing.'],
+      ['No AFK kick','Idle as long as you like without being dropped.'],
+      ['/ptime','Set your own time of day. /pweather does the same for rain — the server stays as it is, you just see it differently.'],
+      ['/firework','Build custom rockets with stacked effects and colours.'],
+      ['/kit boost','A decoration and convenience kit, once a day.']
+    ]}
+  ];
+
+  var wrap=document.getElementById('cmds'),
+      empty=document.getElementById('empty'),
+      count=document.getElementById('count'),
+      q=document.getElementById('q'),
+      rank='all';
+
+  function esc(t){
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function render(){
+    var term=(q.value||'').trim().toLowerCase(), html='', shown=0;
+    DATA.forEach(function(sec){
+      if(rank!=='all' && sec.r!==rank) return;
+      var hits=sec.items.filter(function(it){
+        return !term || it[0].toLowerCase().indexOf(term)>-1
+                     || it[1].toLowerCase().indexOf(term)>-1;
+      });
+      if(!hits.length) return;
+      shown+=hits.length;
+      html+='<div class="grp"><h3>'+esc(sec.g)+
+            '<span class="tag'+(sec.r==='booster'?' b':'')+'">'+esc(sec.r)+'</span></h3><dl>';
+      hits.forEach(function(it){
+        html+='<div class="cmd"><dt>'+esc(it[0])+'</dt><dd>'+esc(it[1])+'</dd></div>';
+      });
+      html+='</dl></div>';
+    });
+    wrap.innerHTML=html;
+    empty.hidden=shown>0;
+    count.textContent=shown+(shown===1?' command':' commands');
+  }
+
+  q.addEventListener('input',render);
+  document.querySelectorAll('.chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      rank=c.dataset.rank;
+      document.querySelectorAll('.chip').forEach(function(o){
+        o.setAttribute('aria-pressed',String(o===c));
+      });
+      render();
+    });
+  });
+  render();
+
+  // copy the address
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-copy]');
+    if(!b) return;
+    var txt=b.dataset.copy;
+    function done(){
+      var lbl=b.querySelector('.ip-btn'), was=lbl.textContent;
+      b.classList.add('copied'); lbl.textContent='Copied';
+      setTimeout(function(){ b.classList.remove('copied'); lbl.textContent=was; },1500);
+    }
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=txt; ta.setAttribute('readonly','');
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(_){}
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done,fallback);
+    } else { fallback(); }
+  });
+})();
+</script>
+</body>
+</html>
