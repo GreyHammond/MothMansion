@@ -136,6 +136,11 @@ h1 em{font-style:normal;color:var(--amethyst);display:block;font-size:.62em}
 .status .v{font-family:var(--screen);font-size:.92rem;color:var(--bone)}
 .status .v.on{color:#6FE07A}
 .status .v.gold{color:var(--ember)}
+.status .v.off{color:var(--magenta)}
+.status .v.unknown{color:var(--ash)}
+.status .v.pending{color:var(--ash);opacity:.7}
+@keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+.status .v.pending{animation:pulse 1.4s ease-in-out infinite}
 @media(max-width:640px){.status .cell{border-right:0;border-bottom:3px solid var(--stone-lo)}}
 
 /* ── layout ─────────────────────────────────────────────────────── */
@@ -313,14 +318,15 @@ footer{
       <a href="#land">Claiming</a>
       <a href="#commands">Commands</a>
       <a href="#ranks">Ranks</a>
+      <a href="lore.html">Chronicle</a>
       <a href="index.html">The House</a>
     </nav>
   </header>
 
   <div class="panel status">
-    <div class="cell"><span class="k">Status</span><span class="v on">Online</span></div>
-    <div class="cell"><span class="k">Version</span><span class="v">26.2</span></div>
-    <div class="cell"><span class="k">Platforms</span><span class="v">Java + Bedrock</span></div>
+    <div class="cell"><span class="k">Status</span><span class="v" id="st-state">Checking…</span></div>
+    <div class="cell"><span class="k">Players</span><span class="v" id="st-players">—</span></div>
+    <div class="cell"><span class="k">Version</span><span class="v" id="st-version">26.2</span></div>
     <div class="cell"><span class="k">Whitelist</span><span class="v gold">Yes — ask in Discord</span></div>
   </div>
 
@@ -588,6 +594,7 @@ footer{
         <div class="panel-hd"><h3 style="color:var(--bone)">Server</h3></div>
         <div class="panel-bd">
           <ul class="sidelist">
+            <li><span>Status</span><span class="v" id="side-state">—</span></li>
             <li><span>Version</span><span class="v">26.2</span></li>
             <li><span>Java</span><span class="v gold">MothMansion.mc.gg</span></li>
             <li><span>Bedrock port</span><span class="v">19132</span></li>
@@ -617,10 +624,11 @@ footer{
             Opened by server vote in August. Portal hub at
             <code>1714, 72, -1017</code> — enter from there and nowhere else.
           </p>
-          <p class="muted" style="margin:0">
+          <p class="muted" style="margin:0 0 .9rem">
             Free gear at the armory. The dragon respawns with four end crystals, so
             missing the fight is not fatal.
           </p>
+          <a class="cta" href="lore.html">Read the Chronicle</a>
         </div>
       </div>
 
@@ -766,6 +774,70 @@ footer{
     });
   });
   render();
+
+  // ── live server status ────────────────────────────────────────────────
+  // mcsrvstat.us is a free public API with CORS enabled, which is what makes
+  // this possible from a static page with no backend. It caches for a few
+  // minutes, so this is "recently true" rather than real-time.
+  (function(){
+    var HOST='MothMansion.mc.gg';
+    var state=document.getElementById('st-state'),
+        players=document.getElementById('st-players'),
+        version=document.getElementById('st-version'),
+        side=document.getElementById('side-state');
+
+    function set(el,text,cls){
+      if(!el) return;
+      el.textContent=text;
+      el.className='v'+(cls?' '+cls:'');
+    }
+
+    function check(){
+      set(state,'Checking…','pending');
+      // 8s ceiling; a hung request should not leave the badge spinning forever
+      var done=false;
+      var timer=setTimeout(function(){
+        if(!done){ done=true; unknown(); }
+      },8000);
+
+      fetch('https://api.mcsrvstat.us/3/'+encodeURIComponent(HOST),{cache:'no-store'})
+        .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function(d){
+          if(done) return; done=true; clearTimeout(timer);
+          if(d && d.online){
+            set(state,'Online','on');
+            set(side,'Online','on');
+            var p=d.players||{};
+            set(players,(p.online!=null?p.online:'?')+(p.max?' / '+p.max:''),
+                p.online>0?'gold':null);
+            if(d.version) set(version,String(d.version).replace(/[^0-9.\s,-]/g,'').trim()||'26.2');
+          } else {
+            set(state,'Offline','off');
+            set(side,'Offline','off');
+            set(players,'—');
+          }
+        })
+        .catch(function(){
+          if(done) return; done=true; clearTimeout(timer);
+          unknown();
+        });
+    }
+
+    function unknown(){
+      // The status service being unreachable is not the same as the server
+      // being down, and saying "offline" would be a lie.
+      set(state,'Unknown','unknown');
+      set(side,'Unknown','unknown');
+      set(players,'—');
+    }
+
+    check();
+    // refresh while the tab is actually being looked at
+    setInterval(function(){ if(!document.hidden) check(); },120000);
+    document.addEventListener('visibilitychange',function(){
+      if(!document.hidden) check();
+    });
+  })();
 
   // copy the address
   document.addEventListener('click',function(e){
