@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Chronicle — Moth Mansion MC</title>
+<meta name="description" content="The recorded history of the Moth Mansion Minecraft server: the vote, the dragon, and the age that followed.">
+<meta property="og:title" content="The Chronicle — Moth Mansion MC">
+<meta property="og:description" content="Two votes, one dragon, and a creeper farm that took five hours.">
+<meta name="theme-color" content="#0D0916">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jacquarda+Bastarda+9&family=Silkscreen:wght@400;700&family=Karla:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0D0916; --obsidian:#171024; --panel:#1F1630; --stone:#2A1E3D;
+  --stone-hi:#3A2B52; --stone-lo:#100B1C;
+  --amethyst:#B06BD9; --magenta:#E05AAE; --ember:#E8A83C;
+  --bone:#EDE4F2; --ash:#9E8FB0; --edge:rgba(176,107,217,.28);
+  --pixel:"Jacquarda Bastarda 9",serif; --screen:"Silkscreen",monospace;
+  --body:"Karla",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  --gut:clamp(1rem,4vw,2.5rem);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--void);color:var(--ash);
+  font-family:var(--body);font-weight:300;font-size:16px;line-height:1.72;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(176,107,217,.16), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 10% 90%, rgba(224,90,174,.10), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 82%, rgba(232,168,60,.08), transparent 60%);
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+a{color:var(--ember);text-decoration:none}
+a:hover{color:var(--magenta)}
+:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
+.shell{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 var(--gut) 4rem}
+
+.panel{
+  background:var(--panel);border:3px solid var(--stone-lo);
+  box-shadow:inset 0 3px 0 0 var(--stone-hi),inset 3px 0 0 0 rgba(58,43,82,.55),
+    inset -3px 0 0 0 var(--stone-lo),inset 0 -3px 0 0 var(--stone-lo);
+}
+.panel-hd{
+  background:var(--stone);border-bottom:3px solid var(--stone-lo);
+  box-shadow:inset 0 3px 0 0 var(--stone-hi);padding:.6rem 1rem;
+}
+.panel-hd h2{margin:0}
+.panel-bd{padding:1.4rem 1.4rem 1.6rem}
+
+.masthead{padding:clamp(2rem,6vw,3.5rem) 0 1.4rem;text-align:center;position:relative}
+.torch{position:absolute;top:2rem;width:14px;height:38px;background:var(--stone);border:3px solid var(--stone-lo)}
+.torch.l{left:1%}.torch.r{right:1%}
+.torch::after{
+  content:"";position:absolute;left:50%;top:-14px;translate:-50% 0;
+  width:16px;height:16px;border-radius:50%;background:var(--ember);
+  box-shadow:0 0 18px 6px rgba(232,168,60,.55),0 0 44px 14px rgba(232,168,60,.22);
+  animation:flame 2.4s ease-in-out infinite;
+}
+@keyframes flame{0%,100%{opacity:.85;transform:translateX(-50%) scale(1)}40%{opacity:1;transform:translateX(-50%) scale(1.13)}70%{opacity:.78;transform:translateX(-50%) scale(.95)}}
+h1{
+  font-family:var(--pixel);font-weight:400;font-size:clamp(2.4rem,8vw,4.8rem);
+  line-height:.94;margin:0 0 .5rem;color:var(--bone);
+  text-shadow:4px 4px 0 var(--stone-lo),0 0 30px rgba(176,107,217,.5);
+}
+.tagline{font-family:var(--screen);font-size:.66rem;letter-spacing:.12em;
+  color:var(--ember);text-transform:uppercase;margin:0 0 1.3rem}
+.mainnav{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+.mainnav a{
+  font-family:var(--screen);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--bone);background:var(--stone);padding:.6rem .95rem;border:3px solid var(--stone-lo);
+  box-shadow:inset 0 3px 0 0 var(--stone-hi),inset 0 -3px 0 0 var(--stone-lo);
+  transition:background .15s steps(2),color .15s steps(2),transform .1s steps(2);
+}
+.mainnav a:hover{background:var(--amethyst);color:var(--void);transform:translateY(-2px)}
+
+h2{font-family:var(--pixel);font-weight:400;font-size:clamp(1.4rem,3.2vw,2rem);
+  color:var(--bone);line-height:1;margin:0;text-shadow:2px 2px 0 var(--stone-lo)}
+h2 em{font-style:normal;color:var(--amethyst)}
+h3{font-family:var(--screen);font-size:.76rem;letter-spacing:.04em;
+  color:var(--ember);margin:0 0 .4rem;font-weight:400}
+p{margin:0 0 .95rem;max-width:66ch}
+p:last-child{margin-bottom:0}
+.muted{opacity:.85;font-size:.92rem}
+strong{color:var(--bone);font-weight:500}
+code{font-family:var(--mono);font-size:.82rem;color:var(--ember);
+  background:var(--stone-lo);padding:.1rem .42rem;border:1px solid var(--edge)}
+.stack>*+*{margin-top:1.4rem}
+
+/* ── vote bars ──────────────────────────────────────────────────── */
+.vote{margin:1.1rem 0 0}
+.vote .q{font-family:var(--screen);font-size:.66rem;color:var(--bone);margin-bottom:.6rem;display:block}
+.bar{display:grid;grid-template-columns:3.4rem 1fr 2.8rem;gap:.6rem;align-items:center;margin-bottom:.45rem}
+.bar .lbl{font-family:var(--screen);font-size:.6rem;color:var(--ash)}
+/* track and fill must be block-level -- as inline spans they collapse and
+   width/height are ignored entirely, which renders the bar as a bare line. */
+.bar .track{
+  display:block;height:18px;width:100%;
+  background:var(--stone-lo);border:2px solid var(--stone-lo);
+  position:relative;overflow:hidden;
+}
+.bar .fill{
+  display:block;height:100%;background:var(--amethyst);
+  box-shadow:inset 0 2px 0 0 rgba(255,255,255,.18),inset 0 -2px 0 0 rgba(0,0,0,.22);
+}
+.bar.no .fill{background:var(--magenta)}
+.bar.win .fill{background:var(--ember)}
+.bar .pct{font-family:var(--screen);font-size:.62rem;color:var(--bone);text-align:right}
+.vote .total{font-family:var(--screen);font-size:.56rem;color:var(--ash);margin-top:.4rem;display:block}
+
+/* ── chapter entries ────────────────────────────────────────────── */
+.entry{display:grid;grid-template-columns:5.2rem 1fr;gap:1.2rem;
+  padding:1.15rem 0;border-top:1px solid var(--edge)}
+.entry:first-of-type{border-top:0;padding-top:.2rem}
+.when{font-family:var(--screen);font-size:.6rem;color:var(--amethyst);padding-top:.25rem;white-space:nowrap}
+.entry p{font-size:.92rem}
+@media(max-width:600px){.entry{grid-template-columns:1fr;gap:.3rem}.when{padding-top:0}}
+
+/* ── quotes ─────────────────────────────────────────────────────── */
+.quote{
+  background:var(--stone-lo);border-left:4px solid var(--ember);
+  padding:.85rem 1.1rem;margin:1rem 0;
+}
+.quote p{font-family:var(--mono);font-size:.88rem;color:var(--bone);margin:0;line-height:1.6}
+.quote .who{display:block;font-family:var(--screen);font-size:.58rem;
+  color:var(--ash);margin-top:.5rem;text-transform:uppercase;letter-spacing:.06em}
+.quote.mag{border-left-color:var(--magenta)}
+.quote.ame{border-left-color:var(--amethyst)}
+
+/* ── figures ────────────────────────────────────────────────────── */
+.figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1px;
+  background:var(--edge);border:1px solid var(--edge);margin-top:1.2rem}
+.fig{background:var(--panel);padding:1.1rem 1.15rem}
+.fig .name{font-family:var(--screen);font-size:.72rem;color:var(--bone);display:block;margin-bottom:.15rem}
+.fig .title{font-family:var(--screen);font-size:.54rem;color:var(--ember);
+  text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.55rem}
+.fig p{font-size:.85rem;margin:0;line-height:1.6}
+
+.note{border-left:4px solid var(--ember);background:rgba(232,168,60,.06);
+  padding:.9rem 1.1rem;margin:1.1rem 0 0;font-size:.9rem}
+.lit{background:var(--stone-lo);border:3px solid var(--stone-lo);
+  box-shadow:inset 0 0 0 1px var(--edge);padding:1.05rem 1.15rem;margin:1.1rem 0}
+.lit h3{color:var(--magenta)}
+
+footer{margin-top:2.5rem;padding-top:1.4rem;border-top:3px solid var(--stone-lo);
+  display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  font-family:var(--screen);font-size:.56rem;letter-spacing:.06em;color:var(--ash)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="masthead">
+    <span class="torch l" aria-hidden="true"></span>
+    <span class="torch r" aria-hidden="true"></span>
+    <h1>The Chronicle</h1>
+    <p class="tagline">Moth Mansion MC · recorded history · 2026</p>
+    <nav class="mainnav">
+      <a href="minecraft.html">The Server</a>
+      <a href="#end">The Vote</a>
+      <a href="#dragon">The Dragon</a>
+      <a href="#after">The Age After</a>
+      <a href="index.html">The House</a>
+    </nav>
+  </header>
+
+  <div class="stack">
+
+    <div class="panel">
+      <div class="panel-bd">
+        <p>
+          Everything here happened. It was pulled out of the server's own logs
+          and the announcement channel, and none of it was decided by staff on
+          their own — the two things that mattered most went to a vote, and the
+          first one failed.
+        </p>
+      </div>
+    </div>
+
+    <!-- CHAPTER ONE -->
+    <section class="panel" id="end">
+      <div class="panel-hd"><h2>I. The <em>Vote</em></h2></div>
+      <div class="panel-bd">
+        <p>
+          The End had been sealed since the world began. On the second of August,
+          Floor asked whether it was time.
+        </p>
+
+        <div class="vote">
+          <span class="q">2 Aug — "Open up the end?"</span>
+          <div class="bar"><span class="lbl">Yuh uh</span><span class="track"><span class="fill" style="width:27%"></span></span><span class="pct">27%</span></div>
+          <div class="bar no"><span class="lbl">Nuh uh</span><span class="track"><span class="fill" style="width:73%"></span></span><span class="pct">73%</span></div>
+          <span class="total">15 votes · rejected</span>
+        </div>
+
+        <div class="quote mag">
+          <p>Overwhelming vote against opening up the end dimension! Next vote coming up next week, or when people are up to it.</p>
+          <span class="who">Floor · 3 August</span>
+        </div>
+
+        <p>
+          It stayed shut. That is the part worth noticing — the question was put,
+          the answer was no, and the answer held.
+        </p>
+        <p>A week later, he asked again.</p>
+
+        <div class="vote">
+          <span class="q">10 Aug — "Shall we open up the end at last?"</span>
+          <div class="bar win"><span class="lbl">YAH</span><span class="track"><span class="fill" style="width:82%"></span></span><span class="pct">82%</span></div>
+          <div class="bar no"><span class="lbl">NOH</span><span class="track"><span class="fill" style="width:18%"></span></span><span class="pct">18%</span></div>
+          <span class="total">17 votes · carried</span>
+        </div>
+
+        <p class="muted">
+          Two more people turned out for the second vote than the first. Same
+          question, different answer, and nobody had to be talked into anything.
+        </p>
+      </div>
+    </section>
+
+    <!-- CHAPTER TWO -->
+    <section class="panel" id="dragon">
+      <div class="panel-hd"><h2>II. The <em>Dragon</em></h2></div>
+      <div class="panel-bd">
+
+        <div class="entry">
+          <span class="when">11 AUG</span>
+          <div>
+            <h3>Version 1.2, and the seal breaks</h3>
+            <p>
+              Player head commands and miniblocks, new anti-grief software, daily
+              automatic backups to private cloud, and serverwide entity culling.
+              The End was unlocked the same day, with strict instructions not to
+              go in yet.
+            </p>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">11 AUG</span>
+          <div>
+            <h3>The portal hub</h3>
+            <p>
+              A build went up at <code>1714, 72, -1017</code> — the only sanctioned
+              way in. Enchanting table, grindstone, anvil, free lapis. And an
+              armory: diamond armour, swords, shields, bows, arrows and blocks,
+              free to take.
+            </p>
+            <p class="muted">Nobody had to show up rich.</p>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">12 AUG</span>
+          <div>
+            <h3>The date vote tied three ways</h3>
+            <p>
+              Five dates on the ballot, 22 votes cast, and three of them level at
+              23%. Floor called it for the 16th and told everyone not to panic
+              about missing it — the dragon can always be brought back with four
+              end crystals.
+            </p>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">16 AUG</span>
+          <div>
+            <h3>The dragon is designed by committee, that morning</h3>
+            <p>
+              Ten hours before the fight, Floor asked the channel how much health
+              it should have. A vanilla dragon has 200.
+            </p>
+            <div class="quote ame" style="margin-top:.7rem">
+              <p>Since there will be so many of us I feel it should have more then usual but not too much<br>— <span style="color:var(--ash)">_cherriii.</span><br><br>i agree. will make it scale of how many players are fighting it.<br>— <span style="color:var(--ash)">jongetje420</span></p>
+              <span class="who">10:24am · the scaling health pool was Cherri's idea</span>
+            </div>
+            <p class="muted" style="margin-top:.7rem">
+              By 10:28 it respawned crystals above 50% health. By 14:15 he had
+              buffed its damage "ever so slightly more." Tundra's entire response
+              was <em>"Oh lort."</em>
+            </p>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">16 AUG</span>
+          <div>
+            <h3>20:00 UTC+2</h3>
+            <p>
+              A waiting room in the End hub. A ten-minute warning, requested by
+              Hayden and delivered by Floor. Free gear in the armory for anyone
+              who turned up in iron.
+            </p>
+            <div class="quote" style="margin-top:.7rem">
+              <p>We've got a lot of players online again. Im so stoked.</p>
+              <span class="who">jongetje420 · six minutes to go</span>
+            </div>
+            <p class="muted" style="margin-top:.7rem">
+              Not everyone made it. Masterchief was at work. Emerald was asleep.
+              Irkie went six thousand blocks looking for an end city and found
+              nothing.
+            </p>
+          </div>
+        </div>
+
+        <div class="quote">
+          <p>Today is the day a new golden age of adventure and creativity rises. We will need help defeating this monstrous beast. We will wait for you before the fight starts.</p>
+          <span class="who">Floor · the morning of</span>
+        </div>
+
+        <p>
+          They killed it. There is a group photograph, taken in the End, and
+          everyone who turned up is in it.
+        </p>
+
+        <div class="lit">
+          <h3>And that evening, the walls came down</h3>
+          <p>
+            The Minecraft server and the Discord were bridged the same night.
+            Since then the two have been one room, which is why the rest of this
+            page exists at all — everything after this point is on the record
+            because people were talking in a channel that keeps them.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER THREE -->
+    <section class="panel" id="after">
+      <div class="panel-hd"><h2>III. The Age <em>After</em></h2></div>
+      <div class="panel-bd">
+        <p>
+          What follows is a week of ordinary server life, which turns out to be
+          the more interesting half.
+        </p>
+
+        <div class="entry">
+          <span class="when">16 AUG</span>
+          <div>
+            <h3>A villain declares himself, briefly</h3>
+            <p>
+              Hammond spawned in beside Xumar's valley, admired the clock tower and
+              the house built into the mountainside, and announced his intentions.
+            </p>
+            <div class="quote mag" style="margin-top:.7rem">
+              <p>Im gonna go grief everyone's shit<br>Ima put a lava caste over the end<br><br>New MothMC season villain: Hammond<br><br>Jkjkjk</p>
+              <span class="who">hammond · four minutes, start to retraction</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">17 AUG</span>
+          <div>
+            <h3>The elytra rush</h3>
+            <p>
+              With the End open, people went looking. Cherri came back with twelve
+              shulker boxes and immediately needed more. Tundra had not been back
+              since the fight and was starting to feel left behind.
+            </p>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">16 AUG</span>
+          <div>
+            <h3>The prank, and the deterrent it created</h3>
+            <p>
+              An hour after the dragon died, Humbly announced to the whole role
+              that she had destroyed everyone's bases. Floor replied
+              <em>"Banned!!!!"</em> Xumar and Yellow Duck both asked whether it
+              was true. Duck's verdict was one word: <em>hypocrite.</em>
+            </p>
+            <div class="quote mag" style="margin-top:.7rem">
+              <p>it was just a VERBAL. Prank, no I haven't touched anybody's base but my own! I'm making this super clear right now!</p>
+              <span class="who">averagehumbly · walking it back at speed</span>
+            </div>
+            <p style="margin-top:.7rem">
+              It was too late. Hayden had already begun.
+            </p>
+            <div class="quote" style="margin-top:.7rem">
+              <p>just a warning i am making a double chest of TNT so that will be a promise<br><br>but once its made im making A FUCKING NUKE</p>
+              <span class="who">hayden48787848 · 21:31, the same evening</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">17 AUG</span>
+          <div>
+            <h3>The nuke becomes a standing dispute</h3>
+            <p>
+              Overnight it turned into policy. Tundra threatened to have their
+              brother trap a hundred-block square around Hayden's base. Humbly
+              threatened to replace his build with grass. Hayden's position never
+              moved.
+            </p>
+            <div class="quote ame" style="margin-top:.7rem">
+              <p>IF ANY OF YOU FUCKS MESS WITH MY SHIT ❤️<br>— <span style="color:var(--ash)">hayden48787848</span><br><br>STOP BUILDING A FUCKING NUKE THEN BRO<br>— <span style="color:var(--ash)">tundra1015</span><br><br>all i got is time...<br>— <span style="color:var(--ash)">hayden48787848</span></p>
+              <span class="who">Later, in the other channel: "hayden stop building a nuke smh" / "hayden build a nuke faster"</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">17 AUG</span>
+          <div>
+            <h3>A lesson in what lives underground</h3>
+            <p>
+              Tem, who had been quietly building a house and not much else, asked
+              what a deep dark was. Hayden explained the warden, the wither, the
+              dragon and the elder guardians to him in about ninety seconds.
+            </p>
+            <div class="quote" style="margin-top:.7rem">
+              <p>I'm just building my house and being online. I don't know any of this stuff.</p>
+              <span class="who">temfly</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">18 AUG</span>
+          <div>
+            <h3>Cherri investigates a conspiracy</h3>
+            <div class="quote mag" style="margin-top:.2rem">
+              <p>I feel like someones put a villager and zombies under my base to make me go insane<br><br><span style="color:var(--ash)">two minutes later</span><br><br>Nevermind I was going insane</p>
+              <span class="who">_cherriii.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">21 AUG</span>
+          <div>
+            <h3>The creeper farm, and five hours of Hayden's life</h3>
+            <p>
+              A two-in-one sugar cane and gunpowder farm went up at
+              <code>30, 250, 1223</code>, reachable from the nether highway. It
+              came with a warning, posted in full, which then had to be reposted
+              because it was too long for Minecraft chat to carry.
+            </p>
+            <div class="quote" style="margin-top:.7rem">
+              <p>don't touch it if you are not 10000% sure how it works i spent like 5 hours already today making it and it can easily go boom and i will cry.</p>
+              <span class="who">hayden48787848 · disclaimer for everyone</span>
+            </div>
+            <p class="muted" style="margin-top:.7rem">
+              He also built a chunk loader at Irkie's base for her sugar cane farm,
+              unprompted, and mentioned it in passing four days earlier.
+            </p>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">22 AUG</span>
+          <div>
+            <h3>The matter of Frederick</h3>
+            <p>
+              Vangz kept a fox. Hayden asked, innocently, whether she had found the
+              fox. She had not found <em>that</em> fox. This is the same person who
+              had, six days earlier, claimed to have destroyed the entire server —
+              so the threat that followed carried some weight.
+            </p>
+            <div class="quote mag" style="margin-top:.7rem">
+              <p>It was you wasn't it<br>— <span style="color:var(--ash)">v.angz</span><br><br>2nd time is the charm<br>— <span style="color:var(--ash)">hayden48787848</span><br><br>AWAY. FROM. FREDERICK.<br>— <span style="color:var(--ash)">v.angz</span><br><br>i always wanted a fox fur scarf...<br>— <span style="color:var(--ash)">hayden48787848</span></p>
+              <span class="who">The case remains open</span>
+            </div>
+            <p class="muted" style="margin-top:.7rem">
+              Tem asked whether staff needed to step in. Hayden's response entered
+              the record: <em>"she accusing me of a crime i did commit."</em>
+            </p>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">22 AUG</span>
+          <div>
+            <h3>Late, and pleased about it</h3>
+            <div class="quote ame" style="margin-top:.2rem">
+              <p>im really happy with what ive built today<br><br>as a none builder or minecraft person</p>
+              <span class="who">hayden48787848 · 1:08am, after the 502nd message of the week</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="entry">
+          <span class="when">22 AUG</span>
+          <div>
+            <h3>Seven withers, and one that went unseen</h3>
+            <p>
+              Hayden went hunting soul sand. Floor asked what for. Six withers for
+              a beacon hotel with every effect, and a seventh for the creeper farm.
+            </p>
+            <div class="quote" style="margin-top:.7rem">
+              <p>1 at the new creeper farm you didnt look at 😭<br>— <span style="color:var(--ash)">hayden48787848</span><br><br>I was supposed to go to the creeper farm? Didnt know sorry<br>— <span style="color:var(--ash)">jongetje420</span><br><br>yeah the one i made last night 😭 i wanted to show you<br><br>i was proud of myself<br>— <span style="color:var(--ash)">hayden48787848</span></p>
+              <span class="who">22:37, the most recent entry in the record</span>
+            </div>
+            <p class="muted" style="margin-top:.7rem">
+              Tundra immediately offered soul sand from a chest outside their base,
+              or possibly the basement, under the stairs.
+            </p>
+          </div>
+        </div>
+
+        <div class="note">
+          Also recorded: a proposed trader hall, an iron farm nobody can find
+          twice, a bed broken too early in the Nether, and a stated intention to
+          build gay frogs around a base. The chronicle does not judge.
+        </div>
+      </div>
+    </section>
+
+    <!-- FIGURES -->
+    <section class="panel">
+      <div class="panel-hd"><h2>Figures of the <em>Age</em></h2></div>
+      <div class="panel-bd">
+        <p class="muted">By volume of testimony in the surviving record.</p>
+        <div class="figures">
+          <div class="fig">
+            <span class="name">hayden48787848</span>
+            <span class="title">502 messages · the builder</span>
+            <p>Farms, chunk loaders, a nuke, and one fox-related incident. Maintains he is not a Minecraft person.</p>
+          </div>
+          <div class="fig">
+            <span class="name">tundra1015</span>
+            <span class="title">155 messages · the returner</span>
+            <p>Has not been to the End since the fight. Respawns at somebody else's base and considers this fine.</p>
+          </div>
+          <div class="fig">
+            <span class="name">_cherriii.</span>
+            <span class="title">129 messages · shulker magnate</span>
+            <p>Twelve boxes and counting. Briefly suspected the server of gaslighting her.</p>
+          </div>
+          <div class="fig">
+            <span class="name">jongetje420</span>
+            <span class="title">Floor · server owner</span>
+            <p>Ran the votes, rebuilt the dragon on the morning of, opened the End personally, and counted down to the minute.</p>
+          </div>
+          <div class="fig">
+            <span class="name">v.angz · averagehumbly</span>
+            <span class="title">Two accounts, one grudge</span>
+            <p>Claimed to have levelled every base on the server and had not, retracting within thirty-four minutes and in capitals. Also the keeper of Frederick, and the only person on this page to have issued a credible threat.</p>
+          </div>
+          <div class="fig">
+            <span class="name">irkieee</span>
+            <span class="title">The unlucky</span>
+            <p>Six thousand blocks through the End, no city. Received an unrequested chunk loader and took it well.</p>
+          </div>
+
+          <div class="fig">
+            <span class="name">temfly</span>
+            <span class="title">Lead admin · house builder</span>
+            <p>Did not know what a warden was. Built a house anyway. Asked whether he needed to step in, which he did not.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="panel">
+      <div class="panel-bd">
+        <p class="muted" style="margin:0">
+          Sources: the Minecraft announcement channel from 13 August, and the
+          bridged in-game chat from 16 August. Roughly two thousand messages,
+          taken from the server's own archive. Anything before that was not being
+          kept and is gone. If you were there and this is wrong, say so and it
+          will be corrected.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>The Chronicle — Moth Mansion MC</span>
+    <span>MOTHMANSION.MC.GG</span>
+  </footer>
+</div>
+</body>
+</html>
